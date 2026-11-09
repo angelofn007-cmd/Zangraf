@@ -1,0 +1,2883 @@
+[
+  {
+    "id": "album-24x34-antirrisco",
+    "name": "Álbum 24 × 34 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 34 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/6e84c37a84b828116bc8c141.jpg",
+    "imageUrls": [
+      "/catalogo/6e84c37a84b828116bc8c141.jpg",
+      "/catalogo/66e14cfcb28e0a5b5ad5c9a5.jpg",
+      "/catalogo/1158aeac435ec62a8c5a3d97.jpg",
+      "/catalogo/c1e81cb734caa23eba61568f.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 34 cm",
+        "widthMm": 240,
+        "heightMm": 340,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 34 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4900,
+        "sheetCents": 660
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4900,
+        "sheetCents": 1210
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4900,
+        "sheetCents": 1650
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4900,
+        "sheetCents": 790
+      }
+    ]
+  },
+  {
+    "id": "album-22x30-1500-gramas",
+    "name": "Álbum 22 × 30 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 22 × 30 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e9c681dad1f5f36f962dbafa.jpg",
+    "imageUrls": [
+      "/catalogo/e9c681dad1f5f36f962dbafa.jpg",
+      "/catalogo/f65739edc3a234ddba295643.jpg",
+      "/catalogo/cdc67e3865d9bbab12e33435.jpg",
+      "/catalogo/c047085ce23a66172f9519e5.jpg",
+      "/catalogo/0f290b4589ab9ab322b54465.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "22 × 30 cm",
+        "widthMm": 220,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "22 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 1980,
+        "sheetCents": 670,
+        "maxSheets": 40
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 1980,
+        "sheetCents": 1280,
+        "maxSheets": 40
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 1980,
+        "sheetCents": 1080,
+        "maxSheets": 40
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 1980,
+        "sheetCents": 650,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-24x24-1500-gramas",
+    "name": "Álbum 24 × 24 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 24 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e4a7b9736f0d3945524de9ce.jpg",
+    "imageUrls": [
+      "/catalogo/e4a7b9736f0d3945524de9ce.jpg",
+      "/catalogo/8360882707941e3b1e052312.jpg",
+      "/catalogo/5e689c076cae0c088689da06.jpg",
+      "/catalogo/14b529ee5eb0459fc59ddb77.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 24 cm",
+        "widthMm": 240,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 1650,
+        "sheetCents": 550,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 1650,
+        "sheetCents": 770,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 1650,
+        "sheetCents": 990,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 1650,
+        "sheetCents": 650,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-24x30-1500-gramas",
+    "name": "Álbum 24 × 30 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 30 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e9c681dad1f5f36f962dbafa.jpg",
+    "imageUrls": [
+      "/catalogo/e9c681dad1f5f36f962dbafa.jpg",
+      "/catalogo/f65739edc3a234ddba295643.jpg",
+      "/catalogo/cdc67e3865d9bbab12e33435.jpg",
+      "/catalogo/c047085ce23a66172f9519e5.jpg",
+      "/catalogo/0f290b4589ab9ab322b54465.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 30 cm",
+        "widthMm": 240,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 2200,
+        "sheetCents": 650,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 2200,
+        "sheetCents": 1199,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 2200,
+        "sheetCents": 1320,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 2200,
+        "sheetCents": 750,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-24x34-1500-gramas",
+    "name": "Álbum 24 × 34 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 34 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e9c681dad1f5f36f962dbafa.jpg",
+    "imageUrls": [
+      "/catalogo/e9c681dad1f5f36f962dbafa.jpg",
+      "/catalogo/f65739edc3a234ddba295643.jpg",
+      "/catalogo/cdc67e3865d9bbab12e33435.jpg",
+      "/catalogo/c047085ce23a66172f9519e5.jpg",
+      "/catalogo/0f290b4589ab9ab322b54465.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 34 cm",
+        "widthMm": 240,
+        "heightMm": 340,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 34 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 2200,
+        "sheetCents": 660,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 2200,
+        "sheetCents": 1210,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 2200,
+        "sheetCents": 1650,
+        "maxSheets": 40
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 2200,
+        "sheetCents": 790,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-30x22-1500-gramas",
+    "name": "Álbum 30 × 22 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 22 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/7b64c9d986dc512c32b4554f.jpg",
+    "imageUrls": [
+      "/catalogo/7b64c9d986dc512c32b4554f.jpg",
+      "/catalogo/bcc76e5cecd86cf088d57040.jpg",
+      "/catalogo/9a8fe1687b50caaf82bfc409.jpg",
+      "/catalogo/b6a04554bcc5b8633c998a86.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 22 cm",
+        "widthMm": 300,
+        "heightMm": 220,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 22 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 2420,
+        "sheetCents": 770,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 2420,
+        "sheetCents": 1375,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 2420,
+        "sheetCents": 1595,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 2420,
+        "sheetCents": 870,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-30x30-1500-gramas",
+    "name": "Álbum 30 × 30 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 30 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e4a7b9736f0d3945524de9ce.jpg",
+    "imageUrls": [
+      "/catalogo/e4a7b9736f0d3945524de9ce.jpg",
+      "/catalogo/8360882707941e3b1e052312.jpg",
+      "/catalogo/5e689c076cae0c088689da06.jpg",
+      "/catalogo/14b529ee5eb0459fc59ddb77.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 30 cm",
+        "widthMm": 300,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3500,
+        "sheetCents": 1100,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3500,
+        "sheetCents": 1540,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3500,
+        "sheetCents": 1700,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3500,
+        "sheetCents": 1200,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-30x40-1500-gramas",
+    "name": "Álbum 30 × 40 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 40 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/f68018240f64b8788260824d.jpg",
+    "imageUrls": [
+      "/catalogo/f68018240f64b8788260824d.jpg",
+      "/catalogo/844574bfa7d9c9f6985142d2.jpg",
+      "/catalogo/a893132c3241aa864bf42a57.jpg",
+      "/catalogo/2cd274e513c054f60f6968e5.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 40 cm",
+        "widthMm": 300,
+        "heightMm": 400,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 40 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3850,
+        "sheetCents": 1210,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3850,
+        "sheetCents": 1650,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3850,
+        "sheetCents": 1870,
+        "maxSheets": 40
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3850,
+        "sheetCents": 1350,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-34x24-1500-gramas",
+    "name": "Álbum 34 × 24 cm · 1500 gramas",
+    "category": "1500 gramas",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 34 × 24 cm com capa 1500 gramas e 10 a 40 lâminas (20 a 80 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/7b64c9d986dc512c32b4554f.jpg",
+    "imageUrls": [
+      "/catalogo/7b64c9d986dc512c32b4554f.jpg",
+      "/catalogo/bcc76e5cecd86cf088d57040.jpg",
+      "/catalogo/9a8fe1687b50caaf82bfc409.jpg",
+      "/catalogo/b6a04554bcc5b8633c998a86.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "34 × 24 cm",
+        "widthMm": 340,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "34 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas"
+      ],
+      "covers": [
+        "1500 gramas"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4200,
+        "sheetCents": 1300,
+        "maxSheets": 40
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4200,
+        "sheetCents": 1750,
+        "maxSheets": 40
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4200,
+        "sheetCents": 1990,
+        "maxSheets": 40
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4200,
+        "sheetCents": 1200,
+        "maxSheets": 40
+      }
+    ]
+  },
+  {
+    "id": "album-22x30-acrilico",
+    "name": "Álbum 22 × 30 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 22 × 30 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/ac381d6958818d3954bdcf2e.jpg",
+    "imageUrls": [
+      "/catalogo/ac381d6958818d3954bdcf2e.jpg",
+      "/catalogo/d07398722644e1cac8d03230.jpg",
+      "/catalogo/f90a70b52363bfe83a62b4d5.jpg",
+      "/catalogo/f712c3bb3bdc4ee561211866.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "22 × 30 cm",
+        "widthMm": 220,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "22 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4300,
+        "sheetCents": 670
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4300,
+        "sheetCents": 1280
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4300,
+        "sheetCents": 1080
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4300,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-24x24-acrilico",
+    "name": "Álbum 24 × 24 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 24 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/80f7fedbfe697b08c1814d21.jpg",
+    "imageUrls": [
+      "/catalogo/80f7fedbfe697b08c1814d21.jpg",
+      "/catalogo/16ecc36f23c0efe60aaa5602.jpg",
+      "/catalogo/f2d1b8e659025d1a0be5dae7.jpg",
+      "/catalogo/2cf60d5ac1515cace10fc487.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 24 cm",
+        "widthMm": 240,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3900,
+        "sheetCents": 550
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3900,
+        "sheetCents": 770
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3900,
+        "sheetCents": 990
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3900,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-24x30-acrilico",
+    "name": "Álbum 24 × 30 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 30 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/ac381d6958818d3954bdcf2e.jpg",
+    "imageUrls": [
+      "/catalogo/ac381d6958818d3954bdcf2e.jpg",
+      "/catalogo/d07398722644e1cac8d03230.jpg",
+      "/catalogo/f90a70b52363bfe83a62b4d5.jpg",
+      "/catalogo/f712c3bb3bdc4ee561211866.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 30 cm",
+        "widthMm": 240,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5100,
+        "sheetCents": 650
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5100,
+        "sheetCents": 1199
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5100,
+        "sheetCents": 1320
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5100,
+        "sheetCents": 750
+      }
+    ]
+  },
+  {
+    "id": "album-24x34-acrilico",
+    "name": "Álbum 24 × 34 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 34 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/ac381d6958818d3954bdcf2e.jpg",
+    "imageUrls": [
+      "/catalogo/ac381d6958818d3954bdcf2e.jpg",
+      "/catalogo/d07398722644e1cac8d03230.jpg",
+      "/catalogo/f90a70b52363bfe83a62b4d5.jpg",
+      "/catalogo/f712c3bb3bdc4ee561211866.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 34 cm",
+        "widthMm": 240,
+        "heightMm": 340,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 34 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5600,
+        "sheetCents": 660
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5600,
+        "sheetCents": 1210
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5600,
+        "sheetCents": 1650
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5600,
+        "sheetCents": 790
+      }
+    ]
+  },
+  {
+    "id": "album-30x22-acrilico",
+    "name": "Álbum 30 × 22 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 22 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/a725e23a6f003e89e78581f3.jpg",
+    "imageUrls": [
+      "/catalogo/a725e23a6f003e89e78581f3.jpg",
+      "/catalogo/3feedd210f1f605bb9431750.jpg",
+      "/catalogo/f387529520bdd6617aea16a5.jpg",
+      "/catalogo/5f8c24aa2215c9d2baa49a0d.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 22 cm",
+        "widthMm": 300,
+        "heightMm": 220,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 22 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4800,
+        "sheetCents": 770
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4800,
+        "sheetCents": 1375
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4800,
+        "sheetCents": 1595
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4800,
+        "sheetCents": 870
+      }
+    ]
+  },
+  {
+    "id": "album-30x30-acrilico",
+    "name": "Álbum 30 × 30 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 30 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/80f7fedbfe697b08c1814d21.jpg",
+    "imageUrls": [
+      "/catalogo/80f7fedbfe697b08c1814d21.jpg",
+      "/catalogo/16ecc36f23c0efe60aaa5602.jpg",
+      "/catalogo/f2d1b8e659025d1a0be5dae7.jpg",
+      "/catalogo/2cf60d5ac1515cace10fc487.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 30 cm",
+        "widthMm": 300,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 6000,
+        "sheetCents": 1100
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 6000,
+        "sheetCents": 1540
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 6000,
+        "sheetCents": 1700
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 6000,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-30x40-acrilico",
+    "name": "Álbum 30 × 40 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 40 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/bf1c9e2ace576a290c67dd38.png",
+    "imageUrls": [
+      "/catalogo/bf1c9e2ace576a290c67dd38.png",
+      "/catalogo/594e1d5e38e844ac818f592d.png",
+      "/catalogo/05dcddb5c9684a883aa4e16f.jpg",
+      "/catalogo/fa50750824ab054527a977cd.png"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 40 cm",
+        "widthMm": 300,
+        "heightMm": 400,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 40 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 7700,
+        "sheetCents": 1210
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 7700,
+        "sheetCents": 1650
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 7700,
+        "sheetCents": 1870
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 7700,
+        "sheetCents": 1350
+      }
+    ]
+  },
+  {
+    "id": "album-34x24-acrilico",
+    "name": "Álbum 34 × 24 cm · Acrílico",
+    "category": "Acrílico",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 34 × 24 cm com capa de acrílico com fotografia por baixo e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/a725e23a6f003e89e78581f3.jpg",
+    "imageUrls": [
+      "/catalogo/a725e23a6f003e89e78581f3.jpg",
+      "/catalogo/3feedd210f1f605bb9431750.jpg",
+      "/catalogo/f387529520bdd6617aea16a5.jpg",
+      "/catalogo/5f8c24aa2215c9d2baa49a0d.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "34 × 24 cm",
+        "widthMm": 340,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "34 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Acrílico"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5700,
+        "sheetCents": 1300
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5700,
+        "sheetCents": 1750
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5700,
+        "sheetCents": 1990
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5700,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-22x30-antirrisco",
+    "name": "Álbum 22 × 30 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 22 × 30 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/84acfefcc1ef51bc75a1d948.jpg",
+    "imageUrls": [
+      "/catalogo/84acfefcc1ef51bc75a1d948.jpg",
+      "/catalogo/1f05c1ff399e983a38834562.jpg",
+      "/catalogo/055b9765e2f8122fcf82153b.jpg",
+      "/catalogo/a0cc93c4f609693974ea9c3e.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "22 × 30 cm",
+        "widthMm": 220,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "22 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3800,
+        "sheetCents": 670
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3800,
+        "sheetCents": 1280
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3800,
+        "sheetCents": 1080
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3800,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-24x24-antirrisco",
+    "name": "Álbum 24 × 24 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 24 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/a715c2f2dc46ec9dcbd6c6c9.jpg",
+    "imageUrls": [
+      "/catalogo/a715c2f2dc46ec9dcbd6c6c9.jpg",
+      "/catalogo/2e741450ffa064fb04e236e1.jpg",
+      "/catalogo/90694c5e7ce24916165ca1f9.jpg",
+      "/catalogo/d967cefbd3d6c591f0c6dc63.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 24 cm",
+        "widthMm": 240,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3500,
+        "sheetCents": 550
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3500,
+        "sheetCents": 770
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3500,
+        "sheetCents": 990
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3500,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-24x30-antirrisco",
+    "name": "Álbum 24 × 30 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 30 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/84acfefcc1ef51bc75a1d948.jpg",
+    "imageUrls": [
+      "/catalogo/84acfefcc1ef51bc75a1d948.jpg",
+      "/catalogo/f5a6d4c2a12c7c803a76bbae.jpg",
+      "/catalogo/1f05c1ff399e983a38834562.jpg",
+      "/catalogo/055b9765e2f8122fcf82153b.jpg",
+      "/catalogo/a0cc93c4f609693974ea9c3e.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 30 cm",
+        "widthMm": 240,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4500,
+        "sheetCents": 650
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4500,
+        "sheetCents": 1199
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4500,
+        "sheetCents": 1320
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4500,
+        "sheetCents": 750
+      }
+    ]
+  },
+  {
+    "id": "album-30x22-antirrisco",
+    "name": "Álbum 30 × 22 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 22 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/f0705427496ef9203410160a.jpg",
+    "imageUrls": [
+      "/catalogo/f0705427496ef9203410160a.jpg",
+      "/catalogo/addd22b3512bde8c98b7a8b0.jpg",
+      "/catalogo/c1701f0eee1f07b16e2a017a.jpg",
+      "/catalogo/b6a04554bcc5b8633c998a86.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 22 cm",
+        "widthMm": 300,
+        "heightMm": 220,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 22 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4500,
+        "sheetCents": 770
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4500,
+        "sheetCents": 1375
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4500,
+        "sheetCents": 1595
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4500,
+        "sheetCents": 870
+      }
+    ]
+  },
+  {
+    "id": "album-30x30-antirrisco",
+    "name": "Álbum 30 × 30 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 30 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/a715c2f2dc46ec9dcbd6c6c9.jpg",
+    "imageUrls": [
+      "/catalogo/a715c2f2dc46ec9dcbd6c6c9.jpg",
+      "/catalogo/90694c5e7ce24916165ca1f9.jpg",
+      "/catalogo/d967cefbd3d6c591f0c6dc63.jpg",
+      "/catalogo/f5a6d4c2a12c7c803a76bbae.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 30 cm",
+        "widthMm": 300,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5400,
+        "sheetCents": 1100
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5400,
+        "sheetCents": 1540
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5400,
+        "sheetCents": 1700
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5400,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-30x40-antirrisco",
+    "name": "Álbum 30 × 40 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 40 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/1df1628ef02afb30598dd46d.jpg",
+    "imageUrls": [
+      "/catalogo/1df1628ef02afb30598dd46d.jpg",
+      "/catalogo/28980dd70a01d09736962020.jpg",
+      "/catalogo/d48fdec11506ee2492652637.jpg",
+      "/catalogo/da4f0173298e6c8993d8ed00.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 40 cm",
+        "widthMm": 300,
+        "heightMm": 400,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 40 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5500,
+        "sheetCents": 1210
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5500,
+        "sheetCents": 1650
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5500,
+        "sheetCents": 1870
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5500,
+        "sheetCents": 1350
+      }
+    ]
+  },
+  {
+    "id": "album-34x24-antirrisco",
+    "name": "Álbum 34 × 24 cm · Anti-Risco",
+    "category": "Anti-Risco",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 34 × 24 cm com capa Anti-Risco e 10 a 60 lâminas (20 a 120 páginas). Personalize as capas e cada página no diagramador Zangraf.",
+    "imageUrl": "/catalogo/f0705427496ef9203410160a.jpg",
+    "imageUrls": [
+      "/catalogo/f0705427496ef9203410160a.jpg",
+      "/catalogo/addd22b3512bde8c98b7a8b0.jpg",
+      "/catalogo/c1701f0eee1f07b16e2a017a.jpg",
+      "/catalogo/b6a04554bcc5b8633c998a86.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "34 × 24 cm",
+        "widthMm": 340,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "34 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Anti-Risco"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5500,
+        "sheetCents": 1300
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5500,
+        "sheetCents": 1750
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5500,
+        "sheetCents": 1990
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5500,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-22x30-ps",
+    "name": "Álbum 22 × 30 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 22 × 30 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/cb426fcce41a77f006130286.jpg",
+    "imageUrls": [
+      "/catalogo/cb426fcce41a77f006130286.jpg",
+      "/catalogo/108703554d6af4999d4b1a5b.jpg",
+      "/catalogo/192f47c21832df0967b3af7c.jpg",
+      "/catalogo/4fd756dde434f918d70fbd5d.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "22 × 30 cm",
+        "widthMm": 220,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "22 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4100,
+        "sheetCents": 670
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4100,
+        "sheetCents": 1280
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4100,
+        "sheetCents": 1080
+      },
+      {
+        "size": "22 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4100,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-24x24-ps",
+    "name": "Álbum 24 × 24 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 24 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e028ad581bee0f1a321112a6.jpg",
+    "imageUrls": [
+      "/catalogo/e028ad581bee0f1a321112a6.jpg",
+      "/catalogo/32c38e746480fac67571c7d9.jpg",
+      "/catalogo/f344b169f50a9337d47ffb0e.jpg",
+      "/catalogo/6ebd1d09cd2933892c79b417.jpg",
+      "/catalogo/e6b3b533739d34150f8d2231.jpg",
+      "/catalogo/45cb820b0f9ba41a1986c786.jpg",
+      "/catalogo/7ccda5ca9c9f35ce951ce913.jpg",
+      "/catalogo/136324190d74544189529601.jpg",
+      "/catalogo/6157c065d1f9925212f53416.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 24 cm",
+        "widthMm": 240,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3850,
+        "sheetCents": 550
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3850,
+        "sheetCents": 770
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3850,
+        "sheetCents": 990
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3850,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-24x30-ps",
+    "name": "Álbum 24 × 30 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 30 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/27bb7a85d27b5de100e29b49.jpg",
+    "imageUrls": [
+      "/catalogo/27bb7a85d27b5de100e29b49.jpg",
+      "/catalogo/229c8ba1d1fcad66ec5c56ed.jpg",
+      "/catalogo/345862b3bb69137afd58d542.jpg",
+      "/catalogo/8ad6213e12fe2d9af73f387b.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 30 cm",
+        "widthMm": 240,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4900,
+        "sheetCents": 650
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4900,
+        "sheetCents": 1199
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4900,
+        "sheetCents": 1320
+      },
+      {
+        "size": "24 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4900,
+        "sheetCents": 750
+      }
+    ]
+  },
+  {
+    "id": "album-24x34-ps",
+    "name": "Álbum 24 × 34 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 34 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/147fb17299ce40faf5a6c3e8.jpg",
+    "imageUrls": [
+      "/catalogo/147fb17299ce40faf5a6c3e8.jpg",
+      "/catalogo/336abffbfac864ca18712ee9.jpg",
+      "/catalogo/1158aeac435ec62a8c5a3d97.jpg",
+      "/catalogo/5a14b95c4583d2fe9377b2b5.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 34 cm",
+        "widthMm": 240,
+        "heightMm": 340,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 34 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5400,
+        "sheetCents": 660
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5400,
+        "sheetCents": 1210
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5400,
+        "sheetCents": 1650
+      },
+      {
+        "size": "24 × 34 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5400,
+        "sheetCents": 790
+      }
+    ]
+  },
+  {
+    "id": "album-30x22-ps",
+    "name": "Álbum 30 × 22 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 22 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/3075fe398887c1ce459ff83a.png",
+    "imageUrls": [
+      "/catalogo/3075fe398887c1ce459ff83a.png",
+      "/catalogo/42a41131248c4c0736c29ec5.png",
+      "/catalogo/6ff8461a5b1d8e923b4db2b9.png",
+      "/catalogo/5f8c24aa2215c9d2baa49a0d.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 22 cm",
+        "widthMm": 300,
+        "heightMm": 220,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 22 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 4700,
+        "sheetCents": 770
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 4700,
+        "sheetCents": 1375
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 4700,
+        "sheetCents": 1595
+      },
+      {
+        "size": "30 × 22 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 4700,
+        "sheetCents": 870
+      }
+    ]
+  },
+  {
+    "id": "album-30x30-ps",
+    "name": "Álbum 30 × 30 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 30 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/e028ad581bee0f1a321112a6.jpg",
+    "imageUrls": [
+      "/catalogo/e028ad581bee0f1a321112a6.jpg",
+      "/catalogo/32c38e746480fac67571c7d9.jpg",
+      "/catalogo/f344b169f50a9337d47ffb0e.jpg",
+      "/catalogo/6ebd1d09cd2933892c79b417.jpg",
+      "/catalogo/e6b3b533739d34150f8d2231.jpg",
+      "/catalogo/45cb820b0f9ba41a1986c786.jpg",
+      "/catalogo/7ccda5ca9c9f35ce951ce913.jpg",
+      "/catalogo/136324190d74544189529601.jpg",
+      "/catalogo/6157c065d1f9925212f53416.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 30 cm",
+        "widthMm": 300,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5900,
+        "sheetCents": 1100
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5900,
+        "sheetCents": 1540
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5900,
+        "sheetCents": 1700
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5900,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-30x40-ps",
+    "name": "Álbum 30 × 40 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 40 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/9b2bcc8f652e5c478ff5d2c8.jpg",
+    "imageUrls": [
+      "/catalogo/9b2bcc8f652e5c478ff5d2c8.jpg",
+      "/catalogo/fa50750824ab054527a977cd.png",
+      "/catalogo/84683e9742fe97bd866acb38.jpg",
+      "/catalogo/05dcddb5c9684a883aa4e16f.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 40 cm",
+        "widthMm": 300,
+        "heightMm": 400,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 40 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 7800,
+        "sheetCents": 1210
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 7800,
+        "sheetCents": 1650
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 7800,
+        "sheetCents": 1870
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 7800,
+        "sheetCents": 1350
+      }
+    ]
+  },
+  {
+    "id": "album-34x24-ps",
+    "name": "Álbum 34 × 24 cm · PS",
+    "category": "PS",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 34 × 24 cm com capa PS e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/24b7405883f5c21a85b596cf.png",
+    "imageUrls": [
+      "/catalogo/24b7405883f5c21a85b596cf.png",
+      "/catalogo/66e3ab2afb20e957da94676f.png",
+      "/catalogo/891d9991f35dcebf6b7221c2.png",
+      "/catalogo/b6a04554bcc5b8633c998a86.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "34 × 24 cm",
+        "widthMm": 340,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "34 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "PS"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 5500,
+        "sheetCents": 1300
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 5500,
+        "sheetCents": 1750
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 5500,
+        "sheetCents": 1990
+      },
+      {
+        "size": "34 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 5500,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-24x24-tecido",
+    "name": "Álbum 24 × 24 cm · Tecido",
+    "category": "Tecido",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 24 × 24 cm com capa tecido e 10 a 60 lâminas (20 a 120 páginas). Personalize cada lâmina no diagramador Zangraf. A capa em tecido não recebe personalização com fotos.",
+    "imageUrl": "/catalogo/c4eae0084ed3f4f07e975b2e.jpg",
+    "imageUrls": [
+      "/catalogo/c4eae0084ed3f4f07e975b2e.jpg",
+      "/catalogo/7dabd4256cd80d6ffa7576a9.jpg",
+      "/catalogo/3195321e50914ad81e017d9c.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "24 × 24 cm",
+        "widthMm": 240,
+        "heightMm": 240,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "24 × 24 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Tecido"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 3850,
+        "sheetCents": 550
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 3850,
+        "sheetCents": 770
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 3850,
+        "sheetCents": 990
+      },
+      {
+        "size": "24 × 24 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 3850,
+        "sheetCents": 650
+      }
+    ]
+  },
+  {
+    "id": "album-30x30-vidro",
+    "name": "Álbum 30 × 30 cm · Vidro",
+    "category": "Vidro",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 30 cm com capa vidro e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/7d980b78e6b74f3b440f314c.jpg",
+    "imageUrls": [
+      "/catalogo/7d980b78e6b74f3b440f314c.jpg",
+      "/catalogo/c88fdc22c948d34b418fa797.jpg",
+      "/catalogo/9c7579f26cfe6b6b6507eaf5.jpg",
+      "/catalogo/991a5e9bc0226f8138d7d1d5.jpg",
+      "/catalogo/0f029d9242e058b901f63dd7.jpg",
+      "/catalogo/da8d31e41779602176555dc4.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 30 cm",
+        "widthMm": 300,
+        "heightMm": 300,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 30 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Vidro"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 25000,
+        "sheetCents": 1100
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 25000,
+        "sheetCents": 1540
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 25000,
+        "sheetCents": 1700
+      },
+      {
+        "size": "30 × 30 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 25000,
+        "sheetCents": 1200
+      }
+    ]
+  },
+  {
+    "id": "album-30x40-vidro",
+    "name": "Álbum 30 × 40 cm · Vidro",
+    "category": "Vidro",
+    "color": "#d3c4a8",
+    "kind": "album",
+    "isDemo": false,
+    "description": "Álbum 30 × 40 cm com capa vidro e 10 a 60 lâminas (20 a 120 páginas). Personalize a frente da capa e cada lâmina no diagramador Zangraf.",
+    "imageUrl": "/catalogo/bcb9f4d2228267278d56f072.jpg",
+    "imageUrls": [
+      "/catalogo/bcb9f4d2228267278d56f072.jpg",
+      "/catalogo/7fd3389ff8f2de7f64172cc0.jpg",
+      "/catalogo/5df86871e0273203b33261b0.jpg",
+      "/catalogo/ece1123cb8915c41cbbe1448.jpg"
+    ],
+    "printSizes": [
+      {
+        "label": "30 × 40 cm",
+        "widthMm": 300,
+        "heightMm": 400,
+        "bleedMm": 3,
+        "dpi": 300
+      }
+    ],
+    "options": {
+      "sizes": [
+        "30 × 40 cm"
+      ],
+      "sheets": [
+        "10 lâminas",
+        "15 lâminas",
+        "20 lâminas",
+        "25 lâminas",
+        "30 lâminas",
+        "35 lâminas",
+        "40 lâminas",
+        "45 lâminas",
+        "50 lâminas",
+        "55 lâminas",
+        "60 lâminas"
+      ],
+      "covers": [
+        "Vidro"
+      ],
+      "finishes": [
+        "Brilho",
+        "Fosco"
+      ]
+    },
+    "albumPricing": [
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Brilho",
+        "bindingCents": 25000,
+        "sheetCents": 1210
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Brilho",
+        "bindingCents": 25000,
+        "sheetCents": 1650
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "800 g",
+        "finish": "Fosco",
+        "bindingCents": 25000,
+        "sheetCents": 1870
+      },
+      {
+        "size": "30 × 40 cm",
+        "stock": "500 g",
+        "finish": "Fosco",
+        "bindingCents": 25000,
+        "sheetCents": 1350
+      }
+    ]
+  },
+  {
+    "id": "estojo-24x24",
+    "name": "Estojo para álbum 24 × 24 cm",
+    "category": "Estojos",
+    "color": "#b6a58d",
+    "kind": "case",
+    "isDemo": false,
+    "description": "Estojo para apresentação do álbum 24 × 24 cm. Veja as fotos do conjunto e consulte a Zangraf sobre materiais e composição do pedido.",
+    "imageUrl": "/catalogo/1ae4b8e35efee6bedde2ba16.jpg",
+    "imageUrls": [
+      "/catalogo/1ae4b8e35efee6bedde2ba16.jpg",
+      "/catalogo/7e498163a60d9e30ab6c6a79.jpg"
+    ],
+    "options": {
+      "sizes": [
+        "24 × 24 cm"
+      ],
+      "sheets": [],
+      "covers": [],
+      "finishes": []
+    }
+  },
+  {
+    "id": "estojo-30x30",
+    "name": "Estojo para álbum 30 × 30 cm",
+    "category": "Estojos",
+    "color": "#b6a58d",
+    "kind": "case",
+    "isDemo": false,
+    "description": "Estojo para apresentação do álbum 30 × 30 cm. Veja as fotos do conjunto e consulte a Zangraf sobre materiais e composição do pedido.",
+    "imageUrl": "/catalogo/12fbd7fc0ba8ef35393b5bda.jpg",
+    "imageUrls": [
+      "/catalogo/12fbd7fc0ba8ef35393b5bda.jpg",
+      "/catalogo/6fb9243fe2a47fdd22adba1d.jpg"
+    ],
+    "options": {
+      "sizes": [
+        "30 × 30 cm"
+      ],
+      "sheets": [],
+      "covers": [],
+      "finishes": []
+    }
+  },
+  {
+    "id": "estojo-34x24",
+    "name": "Estojo para álbum 34 × 24 cm",
+    "category": "Estojos",
+    "color": "#b6a58d",
+    "kind": "case",
+    "isDemo": false,
+    "description": "Estojo para apresentação do álbum 34 × 24 cm. Veja as fotos do conjunto e consulte a Zangraf sobre materiais e composição do pedido.",
+    "imageUrl": "/catalogo/47981425e0935aeb3e8dc851.jpg",
+    "imageUrls": [
+      "/catalogo/47981425e0935aeb3e8dc851.jpg",
+      "/catalogo/ab417c01f7b2cf99ef839fe4.jpg"
+    ],
+    "options": {
+      "sizes": [
+        "34 × 24 cm"
+      ],
+      "sheets": [],
+      "covers": [],
+      "finishes": []
+    }
+  }
+]

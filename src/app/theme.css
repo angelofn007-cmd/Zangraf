@@ -1,0 +1,49 @@
+/* The appearance switch belongs to the site, never to an album's printable content. */
+.zg-header{position:sticky;top:0;background:color-mix(in srgb,var(--beige) 94%,transparent);backdrop-filter:blur(14px)}
+.zg-theme-toggle{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:0;border-radius:50%;background:transparent;color:var(--ink);padding:0}
+.zg-theme-toggle:hover{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.zg-theme-toggle svg{pointer-events:none}
+html.zg-theme-changing::view-transition-old(root),html.zg-theme-changing::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.zg-theme-changing::view-transition-old(root){z-index:1}
+html.zg-theme-changing::view-transition-new(root){z-index:2}
+html.zg-theme-changing::view-transition-group(root){animation-duration:.72s}
+:root[data-theme=dark]{color-scheme:dark;--beige:#191918;--ink:#f2eee6;--muted:#b4b0a7;--line:#3b3a34;--zg-surface:#242421;--zg-elevated:#2c2c27}
+html[data-theme=dark] body{background:var(--beige);color:var(--ink)}
+html[data-theme=dark] .zg-header{border-color:var(--line)}
+.zg-logo-night{display:none!important}
+html[data-theme=dark] .zg-logo-day{display:none!important}
+html[data-theme=dark] .zg-logo-night{display:block!important}
+.dm-brand img{object-fit:contain}
+html[data-theme=dark] .zg-hero-modern{background:radial-gradient(ellipse at 20% 15%,#393227 0,transparent 48%),radial-gradient(ellipse at 85% 50%,#35321a 0,transparent 46%)}
+html[data-theme=dark] :is(.zg-home,.zg-catalog) :is(h1,h2) em{color:#c4bc9f}
+html[data-theme=dark] :is(.zg-hero-copy>p,.zg-hero-note,.zg-showcase-caption,.zg-category-strip .zg-index,.zg-studio-caption,.zg-breadcrumbs,.zg-config-step>p,.zg-detail-price>p){color:var(--muted)}
+html[data-theme=dark] :is(.zg-hero-modern .zg-eyebrow,.zg-showcase-card,.zg-product-card,.zg-category-strip>a,.zg-configurator,.form-panel,.dashboard-card,.admin-row,.admin-editor,.zg-catalog-nav a,.zg-search,.zg-filters button,.zg-gallery-dialog){background:var(--zg-surface);border-color:var(--line)}
+html[data-theme=dark] .zg-category-strip>a:hover{background:var(--zg-elevated);border-color:#7b7249}
+html[data-theme=dark] :is(.zg-studio-section,.zg-closing,.zg-selection-summary,.zg-print-summary,.zg-price-breakdown,.zg-order-summary,.order-summary,.demo-notice){background:var(--zg-elevated);border-color:var(--line)}
+html[data-theme=dark] :is(.zg-studio-art,.zg-mini-toolbar,.zg-mini-pages){background:var(--zg-surface);border-color:var(--line)}
+html[data-theme=dark] .zg-mini-workspace{background:#1b1b18}
+html[data-theme=dark] .zg-mini-book{color:#292921;color-scheme:light}
+html[data-theme=dark] :is(.zg-mini-toolbar>span:last-child,.zg-studio-steps li>span,.zg-print-summary p,.zg-print-summary dt,.zg-print-summary small){color:var(--muted)}
+html[data-theme=dark] .zg-about-symbol{color:#4b473c}
+html[data-theme=dark] :is(.button,.zg-button.button,.cart-count,.zg-filters button.selected){color:#242317}
+html[data-theme=dark] .button:hover{background:#e8da37}
+html[data-theme=dark] .zg-button-dark.button{background:#f2eee6;color:#1d1e20}
+html[data-theme=dark] .zg-product-arrow{background:#292921e8;color:#f5f0e6}
+html[data-theme=dark] .zg-product-picture:hover .zg-product-arrow{color:#242317}
+html[data-theme=dark] .zg-catalog-nav a[aria-current=page]{background:var(--yellow);color:#242317;border-color:var(--yellow)}
+html[data-theme=dark] :is(.form-panel,.zg-configurator,.zg-catalog-tools,.zg-results-meta,.zg-size-filter,.admin-editor,.editor-toolbar) :is(input,select,textarea){background:var(--zg-surface);color:var(--ink);border-color:#5a574c}
+html[data-theme=dark] :is(.zg-config-options button,.options button,.quantity>button:not(.back),.admin-tabs button){background:var(--zg-surface);color:var(--ink);border-color:var(--line)}
+html[data-theme=dark] :is(.zg-config-options button.selected,.options button.selected,.admin-tabs button.selected){background:#413d1f;border-color:#bcb13f;color:#fffbc5}
+html[data-theme=dark] .zg-config-options button :is(span,small){color:var(--muted)}
+html[data-theme=dark] :is(.zg-selection-summary,.zg-order-summary,.zg-price-breakdown) :is(dl>div,div:last-child){border-color:var(--line)}
+html[data-theme=dark] :is(.back,.text-link,.zg-quiet-link,.zg-cart-quantity button){color:var(--ink)}
+.google-sign-in{width:100%;min-height:48px;border:1px solid #c8c5bf;border-radius:12px;background:white;color:#252720;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:550;font-size:14px}
+.google-sign-in svg{flex-shrink:0}.google-sign-in:hover:not(:disabled){background:#f7f6f2}.google-sign-in:disabled{opacity:.65}
+.login-divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:22px 0}.login-divider:before,.login-divider:after{content:'';height:1px;flex:1;background:var(--line)}
+.google-unavailable{font-size:11px;text-align:center;margin:8px 0 0;color:var(--muted)}
+html[data-theme=dark] .google-sign-in{background:var(--zg-surface);color:var(--ink);border-color:#5a574c}
+html[data-theme=dark] .google-sign-in:hover:not(:disabled){background:var(--zg-elevated)}
+@media(max-width:1000px){.zg-header{gap:18px}.zg-navigation{gap:20px}.zg-header-actions{gap:16px}}
+@media(max-width:760px){.zg-header-actions{gap:12px}.zg-header .zg-theme-toggle{width:36px;height:40px}.zg-account-link span{display:none}}
+@media(max-width:370px){.zg-header-actions{gap:7px}.zg-header{gap:10px}}
+@media(prefers-reduced-motion:reduce){html::view-transition-group(*),html::view-transition-new(*),html::view-transition-old(*){animation:none!important}}

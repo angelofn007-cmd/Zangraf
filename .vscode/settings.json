@@ -1,0 +1,8 @@
+{
+  "liveServer.settings.root": "/.live-preview",
+  "liveServer.settings.file": "index.html",
+  "liveServer.settings.NoBrowser": false,
+  "liveServer.settings.AdvanceCustomBrowserCmdLine": null,
+  "liveServer.settings.proxy": { "enable": false },
+  "liveServer.settings.ignoreFiles": ["**/.git/**", "**/node_modules/**", "**/.next/**", "**/.backups/**"]
+}

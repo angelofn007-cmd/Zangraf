@@ -1,0 +1,42 @@
+[
+  {
+    "family": "Playfair Display",
+    "url": "/fonts/playfair-display.ttf",
+    "bytes": 123240
+  },
+  {
+    "family": "Montserrat",
+    "url": "/fonts/montserrat.ttf",
+    "bytes": 180068
+  },
+  {
+    "family": "Lora",
+    "url": "/fonts/lora.ttf",
+    "bytes": 132188
+  },
+  {
+    "family": "Cinzel",
+    "url": "/fonts/cinzel.ttf",
+    "bytes": 45884
+  },
+  {
+    "family": "Great Vibes",
+    "url": "/fonts/great-vibes.ttf",
+    "bytes": 362736
+  },
+  {
+    "family": "Bebas Neue",
+    "url": "/fonts/bebas-neue.ttf",
+    "bytes": 56136
+  },
+  {
+    "family": "Cormorant Garamond",
+    "url": "/fonts/cormorant-garamond.ttf",
+    "bytes": 290236
+  },
+  {
+    "family": "Josefin Sans",
+    "url": "/fonts/josefin-sans.ttf",
+    "bytes": 57844
+  }
+]

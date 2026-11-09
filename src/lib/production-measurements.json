@@ -1,0 +1,473 @@
+{
+  "source": "Oito imagens enviadas pelo proprietário em 23/10/2026; correção dos acrílicos enviada pelo proprietário em 27/10/2026",
+  "unit": "mm",
+  "definitions": {
+    "acrilico": "Álbum com fotografia por baixo do acrílico. Não há álbum de acrílico transparente."
+  },
+  "covers": [
+    {
+      "sourceImage": 2,
+      "sourceLabel": "ENCADERNADO LAYFLAT 30X40 PS - UV",
+      "material": "ps",
+      "albumFormat": "30x40",
+      "widthMm": 288,
+      "heightMm": 405,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 2,
+      "sourceLabel": "ENCADERNADO LAYFLAT 30X22 PS - UV",
+      "material": "ps",
+      "albumFormat": "30x22",
+      "widthMm": 288,
+      "heightMm": 225,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 2,
+      "sourceLabel": "ENCADERNADO LAYFLAT 30X20 PS - UV",
+      "material": "ps",
+      "albumFormat": "30x20",
+      "widthMm": 288,
+      "heightMm": 205,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 2,
+      "sourceLabel": "ENCADERNADO LAYFLAT 20X30 PS - UV",
+      "material": "ps",
+      "albumFormat": "20x30",
+      "widthMm": 188,
+      "heightMm": 305,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 2,
+      "sourceLabel": "ENCADERNADO LAYFLAT 20X20 PS - UV",
+      "material": "ps",
+      "albumFormat": "20x20",
+      "widthMm": 188,
+      "heightMm": 205,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 2,
+      "sourceLabel": "ENCADERNADO LAYFLAT 24X24 PS - UV",
+      "material": "ps",
+      "albumFormat": "24x24",
+      "widthMm": 227,
+      "heightMm": 245,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 3,
+      "sourceLabel": "ENCADERNADO LAYFLAT 36x30 PS - UV",
+      "material": "ps",
+      "albumFormat": "36x30",
+      "widthMm": 348,
+      "heightMm": 305,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 3,
+      "sourceLabel": "ENCADERNADO LAYFLAT 35x25 PS - UV",
+      "material": "ps",
+      "albumFormat": "35x25",
+      "widthMm": 338,
+      "heightMm": 255,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ENCADERNADO LAYFLAT 20x20 TECIDO AZUL BEBE",
+      "material": "tecido",
+      "albumFormat": "20x20",
+      "widthMm": 200,
+      "heightMm": 200,
+      "scope": "sem-personalizacao"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ENCADERNADO LAYFLAT 20x20 TECIDO ROSA BEBE",
+      "material": "tecido",
+      "albumFormat": "20x20",
+      "widthMm": 200,
+      "heightMm": 200,
+      "scope": "sem-personalizacao"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ENCADERNADO LAYFLAT 15X15 TECIDO ROSA BEBE",
+      "material": "tecido",
+      "albumFormat": "15x15",
+      "widthMm": 153,
+      "heightMm": 155,
+      "scope": "sem-personalizacao"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ENCADERNADO LAYFLAT 24X24 TECIDO AZUL BEBE",
+      "material": "tecido",
+      "albumFormat": "24x24",
+      "widthMm": 243,
+      "heightMm": 245,
+      "scope": "sem-personalizacao"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ENCADERNADO LAYFLAT 24X24 TECIDO ROSA BEBE",
+      "material": "tecido",
+      "albumFormat": "24x24",
+      "widthMm": 243,
+      "heightMm": 245,
+      "scope": "sem-personalizacao"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ENCADERNADO LAYFLAT 24X24 TECIDO",
+      "material": "tecido",
+      "albumFormat": "24x24",
+      "widthMm": 243,
+      "heightMm": 245,
+      "scope": "sem-personalizacao"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ESTOJO LAYFLAT 24X24 C/CANUDO TECIDO AZUL BEBE",
+      "material": "estojo-tecido",
+      "albumFormat": "24x24",
+      "widthMm": 644,
+      "heightMm": 321,
+      "scope": "estojo"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ESTOJO LAYFLAT 24X24 C/CANUDO TECIDO ROSA BEBE",
+      "material": "estojo-tecido",
+      "albumFormat": "24x24",
+      "widthMm": 644,
+      "heightMm": 321,
+      "scope": "estojo"
+    },
+    {
+      "sourceImage": 4,
+      "sourceLabel": "ESTOJO LAYFLAT 24X24 TECIDO",
+      "material": "estojo-tecido",
+      "albumFormat": "24x24",
+      "widthMm": 644,
+      "heightMm": 321,
+      "scope": "estojo"
+    },
+    {
+      "sourceImage": 5,
+      "sourceLabel": "ENCADERNADO LAYFLAT 30X30 VIDRO",
+      "material": "vidro",
+      "albumFormat": "30x30",
+      "widthMm": 292,
+      "heightMm": 307,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 5,
+      "sourceLabel": "ENCADERNADO LAYFLAT 30X40 VIDRO",
+      "material": "vidro",
+      "albumFormat": "30x40",
+      "widthMm": 290,
+      "heightMm": 404,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": 5,
+      "sourceLabel": "ESTOJO LAYFLAT 30X30 LUXO VIDRO ARO 4CM",
+      "material": "estojo-vidro",
+      "albumFormat": "30x30",
+      "widthMm": 343,
+      "heightMm": 347,
+      "scope": "estojo"
+    },
+    {
+      "sourceImage": 5,
+      "sourceLabel": "ESTOJO LAYFLAT 30X40 LUXO VIDRO ARO 4CM",
+      "material": "estojo-vidro",
+      "albumFormat": "30x40",
+      "widthMm": 342,
+      "heightMm": 442,
+      "scope": "estojo"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "22x30",
+      "widthMm": 203,
+      "heightMm": 305,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "30x24",
+      "widthMm": 288,
+      "heightMm": 245,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "30x30",
+      "widthMm": 288,
+      "heightMm": 305,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "34x24",
+      "widthMm": 328,
+      "heightMm": 245,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "30x40",
+      "widthMm": 288,
+      "heightMm": 405,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "30x22",
+      "widthMm": 288,
+      "heightMm": 225,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "30x20",
+      "widthMm": 288,
+      "heightMm": 205,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "24x34",
+      "widthMm": 228,
+      "heightMm": 345,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "24x30",
+      "widthMm": 228,
+      "heightMm": 305,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "24x24",
+      "widthMm": 228,
+      "heightMm": 245,
+      "scope": "frente"
+    },
+    {
+      "sourceImage": "2026-10-27-acrilico",
+      "material": "acrilico",
+      "albumFormat": "20x20",
+      "widthMm": 188,
+      "heightMm": 205,
+      "scope": "frente"
+    }
+  ],
+  "spreads": [
+    {
+      "albumFormat": "36x30",
+      "widthMm": 726,
+      "heightMm": 306,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "35x25",
+      "widthMm": 706,
+      "heightMm": 256,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "15x15",
+      "widthMm": 306,
+      "heightMm": 156,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "30x24",
+      "widthMm": 606,
+      "heightMm": 246,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "22x30",
+      "widthMm": 446,
+      "heightMm": 306,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "25x25",
+      "widthMm": 506,
+      "heightMm": 256,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "34x24",
+      "widthMm": 686,
+      "heightMm": 246,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "30x40",
+      "widthMm": 606,
+      "heightMm": 406,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "30x30",
+      "widthMm": 606,
+      "heightMm": 306,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "30x22",
+      "widthMm": 606,
+      "heightMm": 226,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "30x20",
+      "widthMm": 606,
+      "heightMm": 206,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "24x34",
+      "widthMm": 486,
+      "heightMm": 346,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "24x30",
+      "widthMm": 486,
+      "heightMm": 306,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "24x24",
+      "widthMm": 486,
+      "heightMm": 246,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "20x30",
+      "widthMm": 406,
+      "heightMm": 306,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    },
+    {
+      "albumFormat": "20x20",
+      "widthMm": 406,
+      "heightMm": 206,
+      "stocks": [
+        "500 g",
+        "800 g"
+      ]
+    }
+  ],
+  "pending": [
+    "Dimensões não presentes nas capturas: outros Anti-Risco, Acrílico transparente 22x30/30x30 e PS 22x30/24x30/24x34/30x30/34x24."
+  ],
+  "confirmedRules": {
+    "acrilico-transparente": {
+      "label": "Acrílico transparente",
+      "coverMode": "front",
+      "leftFoldMm": 15
+    },
+    "acrilico-sobreposto": {
+      "label": "Acrílico",
+      "coverMode": "front",
+      "leftFoldMm": 15
+    },
+    "ps": {
+      "coverMode": "front",
+      "leftFoldMm": 15
+    },
+    "antirrisco": {
+      "coverMode": "wrap",
+      "allSidesFoldMm": 25
+    },
+    "1500-gramas": {
+      "coverMode": "wrap",
+      "allSidesMarginMm": 3
+    },
+    "vidro": {
+      "coverMode": "front",
+      "allSidesMarginMm": 0
+    },
+    "tecido": {
+      "coverMode": "none"
+    }
+  },
+  "acrylicPricingConfirmation": {
+    "date": "2026-10-26",
+    "rule": "Acrílico com foto por baixo utiliza o mesmo preço de encadernado do Acrílico transparente no mesmo formato."
+  },
+  "pendingClarifications": [
+    "A imagem de 27/10 também repete o rótulo 30x30 com 188 × 305 mm. Mantido 288 × 305 mm no 30x30; a linha conflitante não foi atribuída a outro formato."
+  ]
+}
