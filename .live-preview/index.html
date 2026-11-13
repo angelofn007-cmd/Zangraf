@@ -2,20 +2,22 @@
 <html lang="pt-BR">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Abrindo Zangraf local</title>
-<style>body{margin:0;background:#f5f0e7;color:#28241f;font:17px/1.6 system-ui;min-height:100vh;display:grid;place-items:center}main{max-width:560px;padding:40px}h1{font-size:42px;margin:0}a{color:inherit} .button{display:inline-block;background:#fdf153;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600}small{display:block;margin-top:24px}</style>
-<main><h1>Zangraf</h1><p id="status" role="status">Aguardando o servidor local iniciar…</p><p><a class="button" href="http://127.0.0.1:3000">Abrir site local</a></p><small>O servidor é iniciado pela tarefa do VS Code <strong>Zangraf: iniciar site local</strong>. Se necessário, use <strong>Terminal → Executar Tarefa</strong> e selecione essa opção. Mantenha o terminal aberto enquanto edita.</small></main>
+<title>Zangraf</title>
+<style>body{margin:0;background:#f5f0e7;color:#28241f;font:16px/1.6 system-ui}p{display:none;padding:40px;text-align:center}</style>
+<p id="aviso">O site local ainda não iniciou. Rode a tarefa <strong>Zangraf: iniciar site local</strong> no VS Code.</p>
 <script>
-let attempts=0;
-async function openLocal(){
-  try{
-    await fetch('http://127.0.0.1:3000/',{mode:'no-cors',cache:'no-store',signal:AbortSignal.timeout(2500)});
-    location.replace('http://127.0.0.1:3000/');
-  }catch{
-    if(++attempts<60)setTimeout(openLocal,1000);
-    else document.getElementById('status').textContent='Inicie a tarefa Zangraf no VS Code e clique em Abrir site local.';
+// "Go Live" abre esta página só para levar direto ao site Next.js.
+const SITE = 'http://127.0.0.1:3000/';
+let tentativas = 0;
+async function abrir() {
+  try {
+    await fetch(SITE, { mode: 'no-cors', cache: 'no-store' });
+    location.replace(SITE);
+  } catch {
+    if (++tentativas === 20) document.getElementById('aviso').style.display = 'block';
+    setTimeout(abrir, 1000);
   }
 }
-openLocal();
+abrir();
 </script>
 </html>
