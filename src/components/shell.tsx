@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useState} from 'react';
-import {ArrowUpRight, Instagram, Menu, Settings, UserRound, X} from 'lucide-react';
+import {ArrowUpRight, Instagram, Menu, Settings, Sparkles, UserRound, X} from 'lucide-react';
 import type {SiteContent} from '@/lib/site-content';
 import {CartLink} from './cart-link';
 import {ThemeToggle} from './theme';
@@ -27,6 +27,7 @@ export function Header({adminAuthorized = false}: {adminAuthorized?: boolean}) {
       {navigation.map(item => <Link key={item.href} href={item.href} aria-current={pathname.startsWith(item.href) ? 'page' : undefined} onClick={() => setMenuOpen(false)}>{item.label}</Link>)}
     </nav>
     <div className="zg-header-actions">
+      <Link href="/diagramador" className="zg-studio-link" aria-current={pathname.startsWith('/diagramador') ? 'page' : undefined} title="Abrir o diagramador" onClick={() => setMenuOpen(false)}><Sparkles size={17} strokeWidth={1.8} aria-hidden="true"/><span>Diagramador</span></Link>
       <ThemeToggle/>
       <Link href="/minha-conta" className="zg-account-link" aria-label="Entrar na minha conta" title="Minha conta" onClick={() => setMenuOpen(false)}><UserRound size={19} strokeWidth={1.5}/></Link>
       {adminAuthorized && <Link href="/admin" className="zg-admin-link" aria-label="Área administrativa" title="Área administrativa" onClick={() => setMenuOpen(false)}><Settings size={19} strokeWidth={1.5} aria-hidden="true"/></Link>}

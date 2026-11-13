@@ -171,3 +171,43 @@ footer.zg-footer{display:block;max-width:1440px;padding:60px 6% 25px;margin:0 au
 
 /* Production choices are shown before opening the album studio. */
 .zg-print-summary{padding:20px;border:1px solid #dcdccd;border-radius:8px;background:#f6f6ed;margin:22px 0}.zg-print-summary>strong{font-size:14px}.zg-print-summary>p{font-size:12px;color:#747663;margin:8px 0 15px}.zg-print-summary dl{margin:0}.zg-print-summary dl>div{display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-size:12px}.zg-print-summary dt{color:#77796c}.zg-print-summary dd{margin:0;text-align:right;white-space:nowrap}.zg-print-summary small{display:block;font-size:11px;line-height:1.7;color:#7d806e;margin-top:14px}
+.zg-size-filter{column-gap:28px}.zg-filter-field{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@media(max-width:760px){.zg-filter-field{width:100%;gap:8px}.zg-filter-field select{flex:1}}
+/* Botão "Diagramador" no cabeçalho */
+.zg-studio-link{display:inline-flex;align-items:center;gap:8px;background:var(--yellow);color:#242317;border:1px solid #d9cc1c;border-radius:30px;padding:10px 18px;font-size:13px;font-weight:600;letter-spacing:.01em;white-space:nowrap;box-shadow:0 6px 16px #c9bc0f40;transition:transform .2s ease,box-shadow .2s ease}
+.zg-studio-link:hover{transform:translateY(-1px);box-shadow:0 10px 22px #c9bc0f59}
+.zg-studio-link[aria-current=page]{box-shadow:0 0 0 3px color-mix(in srgb,var(--yellow) 35%,transparent)}
+.zg-studio-link svg{flex-shrink:0}
+@media(max-width:760px){.zg-studio-link{width:40px;height:40px;padding:0;justify-content:center}.zg-studio-link span{display:none}}
+@media(prefers-reduced-motion:reduce){.zg-studio-link{transition:none}.zg-studio-link:hover{transform:none}}
+/* Tela inicial do diagramador */
+.zg-studio-start{max-width:1100px}
+.zg-studio-intro h1{font-size:clamp(34px,4.6vw,58px);line-height:1.05;letter-spacing:-.03em;margin:0 0 18px}
+.zg-studio-intro h1 em{font-style:normal;color:var(--muted)}
+.zg-studio-intro p{font-size:15px;line-height:1.7;color:var(--muted);max-width:520px;margin:0}
+.zg-studio-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:44px 0 0}
+.zg-studio-choice{position:relative;display:flex;flex-direction:column;gap:10px;padding:30px 30px 34px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,#fff 55%,transparent);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.zg-studio-choice strong{font-size:21px;letter-spacing:-.01em}
+.zg-studio-choice>span:not(.zg-studio-choice-icon){font-size:13px;line-height:1.6;color:var(--muted);max-width:340px}
+.zg-studio-choice-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--beige);border:1px solid var(--line);margin-bottom:12px}
+.zg-studio-choice.is-primary{background:var(--yellow);border-color:#d9cc1c;color:#242317}
+.zg-studio-choice.is-primary>span:not(.zg-studio-choice-icon){color:#4a4a3c}
+.zg-studio-choice.is-primary .zg-studio-choice-icon{background:#fffbd0;border-color:#e3d63a}
+.zg-studio-choice-arrow{position:absolute;top:28px;right:28px;transition:transform .2s ease}
+a.zg-studio-choice:hover{transform:translateY(-3px);box-shadow:0 18px 34px #2527201a}
+a.zg-studio-choice:hover .zg-studio-choice-arrow{transform:translate(3px,-3px)}
+.zg-studio-choice.is-empty{border-style:dashed}
+.zg-studio-recent{margin-top:54px}
+.zg-studio-recent-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:16px}
+.zg-studio-recent-heading h2{font-size:18px;margin:0}
+.zg-studio-recent-heading a{font-size:12px;text-decoration:underline}
+.zg-studio-recent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.zg-studio-project{display:flex;flex-direction:column;gap:6px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,#fff 45%,transparent);transition:border-color .2s ease}
+.zg-studio-project:hover{border-color:#b9b38f}
+.zg-studio-project strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zg-studio-project span{font-size:12px;color:var(--muted)}
+.zg-studio-note{margin-top:40px;font-size:12px;color:var(--muted)}
+html[data-theme=dark] :is(.zg-studio-choice:not(.is-primary),.zg-studio-project){background:var(--zg-surface)}
+html[data-theme=dark] .zg-studio-choice.is-primary .zg-studio-choice-icon{background:#fffbd0}
+@media(max-width:760px){.zg-studio-choices{grid-template-columns:1fr;margin-top:32px}.zg-studio-choice{padding:24px 22px 26px}.zg-studio-choice strong{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.zg-studio-choice,.zg-studio-choice-arrow{transition:none}a.zg-studio-choice:hover{transform:none}}
