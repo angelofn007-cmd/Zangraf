@@ -39,13 +39,22 @@ export function Header({adminAuthorized = false}: {adminAuthorized?: boolean}) {
 
 export function Footer({content}: {content: SiteContent}) {
   const hasContact = content.contactEmail || content.whatsapp || content.instagramUrl;
-  return <footer className="zg-footer" id="contato">
-    <div className="zg-footer-top">
-      <div className="zg-footer-brand"><Link href="/" className="zg-logo" aria-label="Zangraf, página inicial"><Image className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={150} height={81}/><Image className="zg-logo-night" src="/brand/zangraf-noturno.png" alt="Zangraf" width={150} height={81}/></Link><p>Histórias para sentir,<br/>folhear e guardar.</p></div>
-      <div><h2>Explore a Zangraf</h2><Link href="/albuns">Álbuns</Link><Link href="/acessorios">Acessórios</Link><Link href="/estojos">Estojos</Link><Link href="/#sobre">Sobre a Zangraf</Link></div>
-      <div><h2>Seu espaço de criação</h2><Link href="/albuns">Escolher meu produto <ArrowUpRight size={13}/></Link><Link href="/minha-conta/projetos">Meus projetos</Link><Link href="/minha-conta/pedidos">Meus pedidos</Link><Link href="/entrar">Minha conta</Link></div>
-      <div><h2>Vamos conversar</h2>{content.contactEmail && <a href={'mailto:' + content.contactEmail}>{content.contactEmail}</a>}{content.whatsapp && <a href={'https://wa.me/' + content.whatsapp} target="_blank" rel="noopener noreferrer">Fale pelo WhatsApp <ArrowUpRight size={13}/></a>}{content.instagramUrl && <a href={content.instagramUrl} target="_blank" rel="noopener noreferrer"><Instagram size={15}/> Instagram</a>}{!hasContact && <p>Em breve, mais formas<br/>de falar com a Zangraf.</p>}</div>
+  return <footer className="zg-foot" id="contato">
+    <div className="zg-foot-rays" aria-hidden="true"><i/><i/><i/><i/><i/></div>
+    <div className="zg-foot-inner">
+      <div className="zg-foot-hero">
+        <div>
+          <Link href="/" className="zg-logo zg-foot-logo" aria-label="Zangraf, página inicial"><Image src="/brand/zangraf-noturno.png" alt="Zangraf" width={150} height={81}/></Link>
+          <p className="zg-foot-tagline">Histórias para sentir,<br/><em>folhear e guardar.</em></p>
+        </div>
+        <Link href="/diagramador" className="zg-foot-cta"><Sparkles size={18} strokeWidth={1.8} aria-hidden="true"/>Criar meu álbum<ArrowUpRight size={18} aria-hidden="true"/></Link>
+      </div>
+      <div className="zg-foot-columns">
+        <nav aria-label="Produtos"><h2>Explore a Zangraf</h2><Link href="/albuns">Álbuns</Link><Link href="/acessorios">Acessórios</Link><Link href="/estojos">Estojos</Link><Link href="/kits-layflat">Kits Layflat</Link><Link href="/#sobre">Sobre a Zangraf</Link></nav>
+        <nav aria-label="Seu espaço de criação"><h2>Seu espaço de criação</h2><Link href="/diagramador">Diagramador</Link><Link href="/minha-conta/projetos">Meus projetos</Link><Link href="/minha-conta/pedidos">Meus pedidos</Link><Link href="/minha-conta">Minha conta</Link></nav>
+        <div><h2>Vamos conversar</h2>{content.contactEmail && <a href={'mailto:' + content.contactEmail}>{content.contactEmail}</a>}{content.whatsapp && <a href={'https://wa.me/' + content.whatsapp} target="_blank" rel="noopener noreferrer">Fale pelo WhatsApp <ArrowUpRight size={14}/></a>}{content.instagramUrl && <a href={content.instagramUrl} target="_blank" rel="noopener noreferrer"><Instagram size={15}/> Instagram</a>}{!hasContact && <p>Em breve, mais formas<br/>de falar com a Zangraf.</p>}</div>
+      </div>
+      <div className="zg-foot-bottom"><span>© {new Date().getFullYear()} Zangraf · Histórias para guardar</span><Link href="/privacidade">Política de privacidade</Link></div>
     </div>
-    <div className="zg-footer-bottom"><span>© {new Date().getFullYear()} Zangraf</span><Link href="/privacidade">Privacidade</Link></div>
   </footer>;
 }

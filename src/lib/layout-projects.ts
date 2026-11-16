@@ -7,7 +7,8 @@ import type { Configuration } from './products';
 import {configuredSheetCount,physicalPrintDimensions,validatePhysicalPrintSpec,MAX_ALBUM_SHEETS} from './print-rules';
 
 export type LayoutName = 'inteira' | 'dupla' | 'quatro' | 'editorial' | 'seis' | 'respiro' | 'livre';
-export type Photo = { id: string; name: string; blob: Blob; preview?: Blob; thumbnail?: Blob; width?: number; height?: number };
+/** `takenAt`: quando a foto foi tirada (EXIF), em ms; ausente se o arquivo não tiver essa informação. */
+export type Photo = { id: string; name: string; blob: Blob; preview?: Blob; thumbnail?: Blob; width?: number; height?: number; takenAt?: number };
 export type Slot = { photoId: string | null; x: number; y: number; zoom?: number; flipX?: boolean; flipY?: boolean };
 export type FrameRect = {x:number;y:number;w:number;h:number};
 export type AlbumText = {id:string;text:string;x:number;y:number;width:number;fontSize:number;fontFamily:AlbumFont;color:string;bold:boolean;italic:boolean;align:'left'|'center'|'right';rotation?:0|90};
@@ -135,6 +136,18 @@ export function moveSpread(project:LayoutProject,from:number,to:number):LayoutPr
  const spreads=[...project.spreads];const [spread]=spreads.splice(from,1);spreads.splice(to,0,spread);return {...project,spreads};
 }
 /** Fill only empty frames with photos not yet used. Existing work is never replaced. */
+/** Resolução efetiva (DPI) da foto no tamanho em que será impressa, considerando recorte e zoom. */
+export function effectiveDpi(photo:{width?:number;height?:number}|undefined,imageWidthMm:number,imageHeightMm:number,slot:Slot):number|undefined{
+ if(!photo?.width||!photo.height||imageWidthMm<=0||imageHeightMm<=0)return undefined;
+ const crop=cropRectangle(photo.width,photo.height,imageWidthMm,imageHeightMm,slot);
+ return Math.min(crop.width/(imageWidthMm/25.4),crop.height/(imageHeightMm/25.4));
+}
+export type ResolutionLevel='ok'|'limit'|'low';
+/** Abaixo de 50% da resolução de impressão a foto fica visivelmente borrada; abaixo de 75% perde nitidez. */
+export function resolutionLevel(dpi:number|undefined,targetDpi:number):ResolutionLevel{
+ if(dpi===undefined)return 'ok';
+ return dpi<targetDpi*.5?'low':dpi<targetDpi*.75?'limit':'ok';
+}
 export function fillEmptyFrames(project: LayoutProject): {project:LayoutProject; placed:number; remaining:number} {
  const used=new Set(project.spreads.flatMap(s=>s.slots.map(slot=>slot.photoId)).filter(Boolean));
  if(project.cover?.photo.photoId)used.add(project.cover.photo.photoId);

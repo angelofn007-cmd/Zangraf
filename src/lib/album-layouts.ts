@@ -53,6 +53,27 @@ export function photoLayouts(count:number):PhotoLayout[]{
  ];
 }
 
+export type LayoutFit={layout:PhotoLayout;order:number[];score:number};
+/**
+ * Ordena layouts pelo quanto os formatos dos quadros combinam com os formatos das fotos
+ * (largura ÷ altura). `order[quadro]` diz qual foto vai em cada quadro.
+ * `spreadAspect` é a proporção da área inteira (lâmina aberta ou capa).
+ */
+export function rankLayoutsForPhotos(layouts:PhotoLayout[],photoAspects:number[],spreadAspect:number):LayoutFit[]{
+ const photos=photoAspects.map((aspect,index)=>({index,log:Math.log(aspect>0&&Number.isFinite(aspect)?aspect:1.5)}));
+ const sortedPhotos=[...photos].sort((a,b)=>a.log-b.log);
+ const fits=layouts.filter(layout=>layout.frames.length===photos.length).map((layout,position)=>{
+  const frames=layout.frames.map((rect,index)=>({index,log:Math.log(rect.w*spreadAspect/rect.h)}));
+  // Parear formatos ordenados minimiza a diferença total entre quadro e foto.
+  const sortedFrames=[...frames].sort((a,b)=>a.log-b.log);
+  const order=new Array<number>(frames.length);let cost=0;
+  sortedFrames.forEach((frame,i)=>{order[frame.index]=sortedPhotos[i].index;cost+=Math.abs(frame.log-sortedPhotos[i].log);});
+  return {layout,order,score:cost/Math.max(1,frames.length),position};
+ });
+ // Empates mantêm a ordem original da lista de layouts.
+ return fits.sort((a,b)=>a.score-b.score||a.position-b.position).map(({layout,order,score})=>({layout,order,score}));
+}
+
 /** Tiled compositions inspired by the supplied photographic spreads. Spacing is physical, not baked into frames. */
 export function referenceLayouts(n:number):PhotoLayout[]{
  const r=(x:number,y:number,w:number,h:number)=>({x,y,w,h});

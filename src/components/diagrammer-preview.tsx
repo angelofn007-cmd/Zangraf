@@ -2,8 +2,12 @@
 import {useEffect,useRef,useState,type CSSProperties,type DragEvent,type PointerEvent} from 'react';
 import {ensureTextFonts} from '@/lib/album-fonts';
 import {TextureLayer,IconLayer,type IconInteractions} from './diagrammer-decoration';
-import {ImagePlus} from 'lucide-react';
-import {spreadRectangles,frameGeometry,defaultPrintSpec,type Cover,type Slot,type Spread,type PrintSpec,type AlbumText,type FrameRect} from '@/lib/layout-projects';
+import {ArrowLeftRight,ImagePlus,TriangleAlert} from 'lucide-react';
+import {spreadRectangles,frameGeometry,defaultPrintSpec,effectiveDpi,resolutionLevel,type Cover,type Slot,type Spread,type PrintSpec,type AlbumText,type FrameRect} from '@/lib/layout-projects';
+
+/** Tipo de arraste usado para trocar fotos entre quadros da mesma área. */
+export const SLOT_DRAG_TYPE='application/x-zangraf-slot';
+export type PhotoSizes=Record<string,{width?:number;height?:number}>;
 import {drawCoverText,drawAlbumTexts,albumTextLines} from './diagrammer-text';
 
 type Images=Record<string,string>;
@@ -26,8 +30,9 @@ export function TextLayer({texts,width,height,selectedText,onTextSelect,onTextCh
  },[texts,width,height,draft,compact]);
  return <div className="zg-text-layer" ref={stage}><canvas ref={canvas} aria-hidden="true"/>{texts.map(text=>{const t=draft?.id===text.id?draft:text;const hitWidth=t.rotation===90?(boxes[t.id]||8)*height/width:t.width;const hitHeight=t.rotation===90?t.width*width/height:(boxes[t.id]||8);return onTextSelect?<button key={t.id} className={`zg-text-hit ${selectedText===t.id?'selected':''}`} aria-label={`Texto: ${t.text}`} style={{left:t.x+'%',top:t.y+'%',width:hitWidth+'%',height:hitHeight+'%'}} onClick={e=>{e.stopPropagation();onTextSelect(t.id)}} onPointerDown={e=>{if(e.button!==0)return;e.stopPropagation();onTextSelect(t.id);const r=stage.current!.getBoundingClientRect();drag.current={id:t.id,px:e.clientX,py:e.clientY,x:t.x,y:t.y,w:r.width,h:r.height,next:t};e.currentTarget.setPointerCapture(e.pointerId)}} onPointerMove={e=>{const d=drag.current;if(!d||d.id!==t.id)return;d.next={...t,x:clamp(d.x+(e.clientX-d.px)/d.w*100,0,100-hitWidth),y:clamp(d.y+(e.clientY-d.py)/d.h*100,0,Math.max(0,100-hitHeight))};setDraft(d.next)}} onPointerUp={e=>{const d=drag.current;if(!d)return;drag.current=null;setDraft(null);onTextChange?.(t.id,{x:d.next.x,y:d.next.y});e.currentTarget.releasePointerCapture(e.pointerId)}} onPointerCancel={()=>{drag.current=null;setDraft(null)}}><span className="sr-only">{t.text}</span></button>:<span className="sr-only" key={t.id}>{t.text}</span>})}</div>;
 }
-type Interaction={mode?:'crop'|'position';onCropRequest?:()=>void;onSlotChange?:(index:number,patch:Partial<Slot>)=>void;onFrameChange?:(index:number,rect:FrameRect)=>void;guides?:boolean;hideFold?:boolean;compact?:boolean}&TextProps&IconInteractions;
-export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,spec,mode='crop',onCropRequest,onSlotChange,onFrameChange,guides=false,hideFold=false,compact=false,selectedIcon,onIconSelect,onIconChange,...textProps}:{spread:Spread;urls:Images;selected?:number;ratio?:number;spec?:PrintSpec;onSelect?:(index:number)=>void;onPhotoDrop?:(index:number,id:string)=>void}&Interaction){
+type Interaction={mode?:'crop'|'position';onCropRequest?:()=>void;onSlotChange?:(index:number,patch:Partial<Slot>)=>void;onFrameChange?:(index:number,rect:FrameRect)=>void;onSlotSwap?:(from:number,to:number)=>void;photoSizes?:PhotoSizes;guides?:boolean;hideFold?:boolean;compact?:boolean}&TextProps&IconInteractions;
+export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,spec,mode='crop',onCropRequest,onSlotChange,onFrameChange,onSlotSwap,photoSizes,guides=false,hideFold=false,compact=false,selectedIcon,onIconSelect,onIconChange,...textProps}:{spread:Spread;urls:Images;selected?:number;ratio?:number;spec?:PrintSpec;onSelect?:(index:number)=>void;onPhotoDrop?:(index:number,id:string)=>void}&Interaction){
+ const [swapTarget,setSwapTarget]=useState<number|null>(null);
  const physical=spec||{...defaultPrintSpec(),widthMm:150*ratio};const stage=useRef<HTMLDivElement>(null);
  const drag=useRef<{index:number;px:number;py:number;w:number;h:number;slot:Slot;rect:FrameRect;resize:boolean;overflowX:number;overflowY:number;nextSlot?:Slot;nextRect?:FrameRect}|null>(null);
  const [draft,setDraft]=useState<{index:number;slot?:Slot;rect?:FrameRect}|null>(null);
@@ -46,9 +51,26 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
    const slot=draft?.index===index&&draft.slot?draft.slot:spread.slots[index];
    const content=<div><PhotoFrame slot={slot} urls={urls} geometry={geometry} alt={`Foto ${index+1}`}/></div>;
    if(!onSelect)return <div className={`zg-frame ${slot?.photoId?'':'empty'}`} key={index} style={style}>{content}</div>;
-   function drop(event:DragEvent){event.preventDefault();event.stopPropagation();const id=event.dataTransfer.getData('application/x-zangraf-photo');if(id)onPhotoDrop?.(index,id)}
-   return <div key={index} className={`zg-frame ${slot?.photoId?'':'empty'} ${selected===index?'is-selected':''} ${mode==='position'?'move-frame':''}`} style={style}>
-    <button type="button" className="zg-frame-hit" aria-label={`Selecionar quadro ${index+1}${slot?.photoId?' com foto':', vazio'}`} aria-pressed={selected===index} onClick={()=>onSelect(index)} onDoubleClick={()=>onCropRequest?.()} onPointerDown={e=>start(e,index)} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{drag.current=null;setDraft(null)}} onDragOver={event=>{if(event.dataTransfer.types.includes('application/x-zangraf-photo'))event.preventDefault()}} onDrop={drop}>{content}</button>
+   function drop(event:DragEvent){event.preventDefault();event.stopPropagation();setSwapTarget(null);
+    const from=event.dataTransfer.getData(SLOT_DRAG_TYPE);
+    if(from!==''){const source=Number(from);if(Number.isInteger(source)&&source!==index)onSlotSwap?.(source,index);return;}
+    const id=event.dataTransfer.getData('application/x-zangraf-photo');if(id)onPhotoDrop?.(index,id)}
+   const photo=slot?.photoId?photoSizes?.[slot.photoId]:undefined;
+   const dpi=photo?effectiveDpi(photo,geometry.image.w,geometry.image.h,slot):undefined;
+   const quality=resolutionLevel(dpi,physical.dpi);
+   const accepts=(event:DragEvent)=>event.dataTransfer.types.includes('application/x-zangraf-photo')||(!!onSlotSwap&&event.dataTransfer.types.includes(SLOT_DRAG_TYPE));
+   return <div key={index} className={`zg-frame ${slot?.photoId?'':'empty'} ${selected===index?'is-selected':''} ${mode==='position'?'move-frame':''} ${swapTarget===index?'is-swap-target':''}`} style={style}>
+    <button type="button" className="zg-frame-hit" aria-label={`Selecionar quadro ${index+1}${slot?.photoId?' com foto':', vazio'}${quality==='low'?', resolução baixa':quality==='limit'?', resolução no limite':''}`} aria-pressed={selected===index} onClick={()=>onSelect(index)} onDoubleClick={()=>onCropRequest?.()} onPointerDown={e=>start(e,index)} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{drag.current=null;setDraft(null)}} onDragOver={event=>{if(accepts(event)){event.preventDefault();if(swapTarget!==index)setSwapTarget(index)}}} onDragLeave={()=>setSwapTarget(current=>current===index?null:current)} onDrop={drop}>{content}</button>
+    {!compact&&quality!=='ok'&&dpi!==undefined&&<span className={`zg-dpi-badge ${quality}`} tabIndex={0} aria-describedby={`zg-dpi-tip-${index}`}><TriangleAlert size={12} aria-hidden="true"/>{Math.round(dpi)} DPI
+     <span role="tooltip" id={`zg-dpi-tip-${index}`} className={`zg-dpi-tip ${frame.y/physical.heightMm>.45?'up':''}`}>
+      <strong>{quality==='low'?'Esta foto pode sair borrada':'Qualidade no limite'}</strong>
+      <span className="zg-dpi-meter" aria-hidden="true"><i style={{width:`${Math.min(100,dpi/physical.dpi*100)}%`}}/></span>
+      <span>{quality==='low'?`Neste tamanho ela fica com ${Math.round(dpi)} DPI. Para uma impressão nítida, o ideal é ${physical.dpi}.`:`Neste tamanho ela fica com ${Math.round(dpi)} DPI. Vai imprimir bem, só um pouco menos nítida que o ideal (${physical.dpi}).`}</span>
+      <em>Como melhorar</em>
+      <ul><li>Diminua o zoom da foto</li><li>Use um quadro menor</li><li>Envie o arquivo original — fotos do WhatsApp perdem qualidade</li></ul>
+     </span>
+    </span>}
+    {onSlotSwap&&slot?.photoId&&spread.slots.length>1&&<button type="button" className="zg-swap-handle" draggable aria-label={`Trocar foto do quadro ${index+1} de lugar: arraste até outro quadro`} title="Arraste até outro quadro para trocar as fotos" onPointerDown={e=>e.stopPropagation()} onDragStart={e=>{e.stopPropagation();e.dataTransfer.setData(SLOT_DRAG_TYPE,String(index));e.dataTransfer.effectAllowed='move'}} onDragEnd={()=>setSwapTarget(null)}><ArrowLeftRight size={13} aria-hidden="true"/></button>}
     {selected===index&&mode==='position'&&<button className="zg-resize-handle" aria-label="Redimensionar quadro" onPointerDown={e=>start(e,index,true)} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{drag.current=null;setDraft(null)}}/>}
    </div>;
   })}
@@ -57,11 +79,11 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
   {!hideFold&&<span className="zg-fold" aria-hidden="true"/>}{guides&&<div className="zg-safe-guide" aria-hidden="true" style={{inset:`${5/physical.heightMm*100}% ${5/(physical.widthMm*2)*100}%`}}/>}
  </div>;
 }
-export function AlbumCover({cover,urls,onPhotoDrop,ratio=1,back=false,spec,guides=false,mode,onCropRequest,onSlotChange,onFrameChange,selected,onSelect,compact=false,selectedIcon,onIconSelect,onIconChange,...textProps}:{cover:Cover;urls:Images;ratio?:number;back?:boolean;spec?:PrintSpec;guides?:boolean;onPhotoDrop?:(id:string,index?:number)=>void;selected?:number;onSelect?:(index:number)=>void}&Interaction){
+export function AlbumCover({cover,urls,onPhotoDrop,ratio=1,back=false,spec,guides=false,mode,onCropRequest,onSlotChange,onFrameChange,onSlotSwap,photoSizes,selected,onSelect,compact=false,selectedIcon,onIconSelect,onIconChange,...textProps}:{cover:Cover;urls:Images;ratio?:number;back?:boolean;spec?:PrintSpec;guides?:boolean;onPhotoDrop?:(id:string,index?:number)=>void;selected?:number;onSelect?:(index:number)=>void}&Interaction){
  const textCanvas=useRef<HTMLCanvasElement>(null);
  useEffect(()=>{const canvas=textCanvas.current;if(!canvas)return;canvas.width=1000;canvas.height=Math.round(1000/ratio);const ctx=canvas.getContext('2d');if(ctx)drawCoverText(ctx,cover,1000,1000/ratio,back)},[cover,ratio,back]);
  const physical=spec||{...defaultPrintSpec(),widthMm:300*ratio};const bleed=physical.bleedMm;
- if(cover.composition)return <AlbumSpread spread={{...cover.composition,background:cover.color,texts:cover.texts,texture:cover.texture,icons:cover.icons}} urls={urls} ratio={ratio} spec={{...physical,widthMm:physical.widthMm/2}} selected={selected} onSelect={onSelect} onPhotoDrop={onPhotoDrop?(index,id)=>onPhotoDrop(id,index):undefined} mode={mode} onCropRequest={onCropRequest} onSlotChange={onSlotChange} onFrameChange={onFrameChange} guides={guides} hideFold compact={compact} selectedIcon={selectedIcon} onIconSelect={onIconSelect} onIconChange={onIconChange} {...textProps}/>;
+ if(cover.composition)return <AlbumSpread spread={{...cover.composition,background:cover.color,texts:cover.texts,texture:cover.texture,icons:cover.icons}} urls={urls} ratio={ratio} spec={{...physical,widthMm:physical.widthMm/2}} selected={selected} onSelect={onSelect} onPhotoDrop={onPhotoDrop?(index,id)=>onPhotoDrop(id,index):undefined} mode={mode} onCropRequest={onCropRequest} onSlotChange={onSlotChange} onFrameChange={onFrameChange} onSlotSwap={onSlotSwap} photoSizes={photoSizes} guides={guides} hideFold compact={compact} selectedIcon={selectedIcon} onIconSelect={onIconSelect} onIconChange={onIconChange} {...textProps}/>;
  const geometry={trim:{x:0,y:0,w:physical.widthMm,h:physical.heightMm},image:{x:-bleed,y:-bleed,w:physical.widthMm+bleed*2,h:physical.heightMm+bleed*2}};
  return <div className={`zg-cover ${cover.photo.photoId&&!cover.customText?'legacy-photo':''}`} style={{background:cover.color,color:cover.textColor,aspectRatio:ratio}} onDragOver={event=>{if(onPhotoDrop&&event.dataTransfer.types.includes('application/x-zangraf-photo'))event.preventDefault()}} onDrop={event=>{event.preventDefault();const id=event.dataTransfer.getData('application/x-zangraf-photo');if(id)onPhotoDrop?.(id)}}>
   <TextureLayer texture={cover.texture} width={physical.widthMm} height={physical.heightMm} compact={compact}/>
