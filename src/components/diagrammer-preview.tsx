@@ -65,7 +65,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
      <span role="tooltip" id={`zg-dpi-tip-${index}`} className={`zg-dpi-tip ${frame.y/physical.heightMm>.45?'up':''}`}>
       <strong>{quality==='low'?'Esta foto pode sair borrada':'Qualidade no limite'}</strong>
       <span className="zg-dpi-meter" aria-hidden="true"><i style={{width:`${Math.min(100,dpi/physical.dpi*100)}%`}}/></span>
-      <span>{quality==='low'?`Neste tamanho ela fica com ${Math.round(dpi)} DPI. Para uma impressão nítida, o ideal é ${physical.dpi}.`:`Neste tamanho ela fica com ${Math.round(dpi)} DPI. Vai imprimir bem, só um pouco menos nítida que o ideal (${physical.dpi}).`}</span>
+      <span>{quality==='low'?`Neste tamanho ela fica com ${Math.round(dpi)} DPI. Para uma impressão nítida nas máquinas HP da Zangraf, o ideal é ${physical.dpi}.`:`Neste tamanho ela fica com ${Math.round(dpi)} DPI. Vai imprimir bem, só um pouco menos nítida que o ideal (${physical.dpi}).`}</span>
       <em>Como melhorar</em>
       <ul><li>Diminua o zoom da foto</li><li>Use um quadro menor</li><li>Envie o arquivo original — fotos do WhatsApp perdem qualidade</li></ul>
      </span>

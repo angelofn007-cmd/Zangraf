@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {ArrowUpRight, Instagram, Menu, Settings, Sparkles, UserRound, X} from 'lucide-react';
 import type {SiteContent} from '@/lib/site-content';
 import {CartLink} from './cart-link';
@@ -19,7 +19,24 @@ const navigation = [
 export function Header({adminAuthorized = false}: {adminAuthorized?: boolean}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  return <header className="zg-header">
+  const headerRef = useRef<HTMLElement>(null);
+  // Quando o rodapé chega ao topo da tela, ele empurra o cabeçalho para cima em vez de passar por baixo dele.
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const header = headerRef.current, footer = document.querySelector('.zg-foot');
+      if (!header) return;
+      const push = footer ? Math.max(0, header.offsetHeight - footer.getBoundingClientRect().top) : 0;
+      header.style.transform = push ? `translateY(${-Math.min(push, header.offsetHeight)}px)` : '';
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', schedule, {passive: true});
+    window.addEventListener('resize', schedule);
+    return () => { window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule); cancelAnimationFrame(frame); };
+  }, [pathname]);
+  return <header className="zg-header" ref={headerRef}>
     <Link href="/" className="zg-logo" aria-label="Zangraf, página inicial" onClick={() => setMenuOpen(false)}>
       <Image className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={140} height={76} loading="eager"/><Image className="zg-logo-night" src="/brand/zangraf-noturno.png" alt="Zangraf" width={140} height={76} loading="eager"/>
     </Link>

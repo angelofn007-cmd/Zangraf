@@ -39,6 +39,15 @@ export default async function Home() {
       {albums.length ? <div className="zg-product-grid">{albums.map(product => <ProductCard key={product.id} product={product}/>)}</div> : <div className="zg-empty-collection"><BookOpen size={28}/><h3>Novas histórias estão chegando.</h3><p>Em breve, conheça a coleção de álbuns Zangraf.</p></div>}
     </section>
 
+    <section className="zg-section zg-print" aria-labelledby="print-title">
+      <div className="zg-print-head"><Image className="zg-print-logo" src="/brand/hp-logo.png" alt="HP" width={64} height={64}/><span className="zg-eyebrow">IMPRESSÃO PROFISSIONAL</span><h2 id="print-title">Impresso em<br/><em>equipamentos HP.</em></h2><p>Todos os álbuns Zangraf são impressos exclusivamente em máquinas HP, para que cada página tenha o mesmo cuidado do início ao fim.</p></div>
+      <ul className="zg-print-points">
+        <li><strong>Cores fiéis</strong><span>Tons de pele naturais e cores próximas das suas fotos.</span></li>
+        <li><strong>Detalhes nítidos</strong><span>Arquivos preparados em 300 DPI para aproveitar a impressão.</span></li>
+        <li><strong>Padrão em todas as páginas</strong><span>A mesma qualidade da primeira à última lâmina.</span></li>
+      </ul>
+    </section>
+
     <section className="zg-closing"><span className="zg-eyebrow">DO PRIMEIRO CLIQUE À ÚLTIMA PÁGINA</span><h2>Suas fotos têm histórias.<br/><em>Vamos dar forma a elas?</em></h2><Link className="button zg-button zg-button-dark" href="/albuns">Comece pelo seu álbum <ArrowUpRight size={18}/></Link></section>
   </div>;
 }
