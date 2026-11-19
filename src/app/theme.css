@@ -85,3 +85,6 @@ html.zg-home-soft .zg-home-sweep{position:fixed;top:0;left:0;z-index:1000;displa
 html.zg-home-soft main{animation:zg-home-in .9s cubic-bezier(.22,.8,.24,1) .1s both}
 @keyframes zg-home-in{from{opacity:0;transform:translateY(14px)}}
 @media(prefers-reduced-motion:reduce){html.zg-home-soft .zg-home-sweep,html.zg-home-soft main{animation:none}}
+/* Páginas de entrar e criar conta: sem o rodapé escuro, só o cartão de acesso */
+body:has(.auth-shell) .zg-foot{display:none}
+body:has(.auth-shell) main{padding-bottom:40px}
