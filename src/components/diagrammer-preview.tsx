@@ -9,26 +9,58 @@ import {spreadRectangles,frameGeometry,defaultPrintSpec,effectiveDpi,resolutionL
 export const SLOT_DRAG_TYPE='application/x-zangraf-slot';
 export type PhotoSizes=Record<string,{width?:number;height?:number}>;
 import {drawCoverText,drawAlbumTexts,albumTextLines} from './diagrammer-text';
+import {surfaceFit,surfaceUrl} from '@/lib/album-decorations';
+import {photoFilterCss,photoWarmthLayer} from '@/lib/photo-adjust';
 
 type Images=Record<string,string>;
 type Box={x:number;y:number;w:number;h:number};
+/** Camada da textura fotográfica de fundo, na mesma posição usada no arquivo de impressão. */
+function SurfaceLayer({surface,width,height,bleed,compact}:{surface?:string;width:number;height:number;bleed:number;compact:boolean}){
+ if(!surface)return null;
+ const fit=surfaceFit(surface,width,height,bleed);
+ return <div aria-hidden="true" style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:`url(${surfaceUrl(surface,compact)})`,backgroundRepeat:'no-repeat',backgroundPosition:'center',backgroundSize:`${fit.w/width*100}% ${fit.h/height*100}%`}}/>;
+}
 export function PhotoFrame({slot,urls,alt,geometry}:{slot:Slot;urls:Images;alt:string;geometry?:{trim:Box;image:Box}}){
  if(!slot?.photoId||!urls[slot.photoId])return <span className="zg-empty-frame"><ImagePlus size={24}/><span>Arraste uma foto</span></span>;
  const {trim,image}=geometry||{trim:{x:0,y:0,w:1,h:1},image:{x:0,y:0,w:1,h:1}};
- return <span style={{position:'absolute',display:'block',left:`${(image.x-trim.x)/trim.w*100}%`,top:`${(image.y-trim.y)/trim.h*100}%`,width:`${image.w/trim.w*100}%`,height:`${image.h/trim.h*100}%`,overflow:'hidden'}}><span style={{display:'block',position:'absolute',inset:0,transform:`scale(${slot.flipX?-1:1},${slot.flipY?-1:1})`}}><img src={urls[slot.photoId]} alt={alt} draggable={false} style={{objectPosition:`${slot.x}% ${slot.y}%`,transform:`scale(${slot.zoom||1})`,transformOrigin:`${slot.x}% ${slot.y}%`}}/></span></span>;
+ const warmth=photoWarmthLayer(slot.adjust);
+ return <span style={{position:'absolute',display:'block',left:`${(image.x-trim.x)/trim.w*100}%`,top:`${(image.y-trim.y)/trim.h*100}%`,width:`${image.w/trim.w*100}%`,height:`${image.h/trim.h*100}%`,overflow:'hidden'}}><span style={{display:'block',position:'absolute',inset:0,transform:`scale(${slot.flipX?-1:1},${slot.flipY?-1:1})`,filter:photoFilterCss(slot.adjust)}}><img src={urls[slot.photoId]} alt={alt} draggable={false} style={{objectPosition:`${slot.x}% ${slot.y}%`,transform:`scale(${slot.zoom||1})`,transformOrigin:`${slot.x}% ${slot.y}%`}}/></span>{warmth&&<span aria-hidden="true" style={{position:'absolute',inset:0,background:warmth.color,opacity:warmth.opacity,mixBlendMode:'soft-light',pointerEvents:'none'}}/>}</span>;
 }
 const clamp=(v:number,min:number,max:number)=>Math.min(max,Math.max(min,v));
 type TextProps={selectedText?:string;onTextSelect?:(id:string)=>void;onTextChange?:(id:string,patch:Partial<AlbumText>)=>void};
+type Handle='n'|'s'|'e'|'w'|'ne'|'nw'|'se'|'sw';
 export function TextLayer({texts,width,height,selectedText,onTextSelect,onTextChange,compact=false}:{texts:AlbumText[];width:number;height:number;compact?:boolean}&TextProps&IconInteractions){
  const canvas=useRef<HTMLCanvasElement>(null);const stage=useRef<HTMLDivElement>(null);
- const drag=useRef<{id:string;px:number;py:number;x:number;y:number;w:number;h:number;next:AlbumText}|null>(null);
+ const drag=useRef<{id:string;px:number;py:number;x:number;y:number;width:number;boxH:number;textH:number;fontSize:number;w:number;h:number;mode:Handle|'move';next:AlbumText}|null>(null);
  const [draft,setDraft]=useState<AlbumText|null>(null);const [boxes,setBoxes]=useState<Record<string,number>>({});
  useEffect(()=>{
   const c=canvas.current;if(!c)return;c.width=compact?240:1600;c.height=Math.round(c.width*height/width);const ctx=c.getContext('2d');if(!ctx)return;
   ctx.scale(c.width/width,c.width/width);const displayed=texts.map(t=>draft?.id===t.id?draft:t);let active=true;void ensureTextFonts(displayed).then(()=>{if(!active)return;drawAlbumTexts(ctx,displayed,width,height);
   const heights:Record<string,number>={};for(const t of displayed){const {lines,lineHeight}=albumTextLines(ctx,t,width);heights[t.id]=lines.length*lineHeight/height*100;}setBoxes(heights);}).catch(()=>{});return()=>{active=false;};
  },[texts,width,height,draft,compact]);
- return <div className="zg-text-layer" ref={stage}><canvas ref={canvas} aria-hidden="true"/>{texts.map(text=>{const t=draft?.id===text.id?draft:text;const hitWidth=t.rotation===90?(boxes[t.id]||8)*height/width:t.width;const hitHeight=t.rotation===90?t.width*width/height:(boxes[t.id]||8);return onTextSelect?<button key={t.id} className={`zg-text-hit ${selectedText===t.id?'selected':''}`} aria-label={`Texto: ${t.text}`} style={{left:t.x+'%',top:t.y+'%',width:hitWidth+'%',height:hitHeight+'%'}} onClick={e=>{e.stopPropagation();onTextSelect(t.id)}} onPointerDown={e=>{if(e.button!==0)return;e.stopPropagation();onTextSelect(t.id);const r=stage.current!.getBoundingClientRect();drag.current={id:t.id,px:e.clientX,py:e.clientY,x:t.x,y:t.y,w:r.width,h:r.height,next:t};e.currentTarget.setPointerCapture(e.pointerId)}} onPointerMove={e=>{const d=drag.current;if(!d||d.id!==t.id)return;d.next={...t,x:clamp(d.x+(e.clientX-d.px)/d.w*100,0,100-hitWidth),y:clamp(d.y+(e.clientY-d.py)/d.h*100,0,Math.max(0,100-hitHeight))};setDraft(d.next)}} onPointerUp={e=>{const d=drag.current;if(!d)return;drag.current=null;setDraft(null);onTextChange?.(t.id,{x:d.next.x,y:d.next.y});e.currentTarget.releasePointerCapture(e.pointerId)}} onPointerCancel={()=>{drag.current=null;setDraft(null)}}><span className="sr-only">{t.text}</span></button>:<span className="sr-only" key={t.id}>{t.text}</span>})}</div>;
+ return <div className="zg-text-layer" ref={stage}><canvas ref={canvas} aria-hidden="true"/>{texts.map(text=>{const t=draft?.id===text.id?draft:text;const hitWidth=t.rotation===90?(boxes[t.id]||8)*height/width:t.width;const textH=boxes[t.id]||8;const hitHeight=t.rotation===90?t.width*width/height:Math.max(textH,t.height||0);const begin=(e:React.PointerEvent<HTMLElement>,mode:Handle|'move',target:HTMLElement)=>{const r=stage.current!.getBoundingClientRect();drag.current={id:t.id,px:e.clientX,py:e.clientY,x:t.x,y:t.y,width:t.width,boxH:hitHeight,textH,fontSize:t.fontSize,w:r.width,h:r.height,mode,next:t};target.setPointerCapture(e.pointerId);};
+  const handles:Handle[]=t.rotation===90?['nw','ne','sw','se','s']:['nw','n','ne','e','se','s','sw','w'];
+  return onTextSelect?<button key={t.id} className={`zg-text-hit ${selectedText===t.id?'selected':''}`} aria-label={`Texto: ${t.text}`} style={{left:t.x+'%',top:t.y+'%',width:hitWidth+'%',height:hitHeight+'%'}} onClick={e=>{e.stopPropagation();onTextSelect(t.id)}}
+   onPointerDown={e=>{if(e.button!==0)return;e.stopPropagation();onTextSelect(t.id);begin(e,'move',e.currentTarget)}}
+   onPointerMove={e=>{const d=drag.current;if(!d||d.id!==t.id)return;const dx=(e.clientX-d.px)/d.w*100,dy=(e.clientY-d.py)/d.h*100;const m=d.mode;
+    if(m==='move'){d.next={...t,x:clamp(d.x+dx,0,100-hitWidth),y:clamp(d.y+dy,0,Math.max(0,100-hitHeight))};setDraft(d.next);return;}
+    if(t.rotation===90&&m==='s'){d.next={...t,width:clamp(d.width+dy*height/width,5,100)};setDraft(d.next);return;}
+    if(m.length===2){
+     // Canto: aumenta ou diminui o texto inteiro, na proporção, preso ao canto oposto.
+     const grow=m.includes('e')?dx:-dx;let factor=Math.max(.2,(d.width+grow)/d.width);
+     factor=clamp(factor,8/d.fontSize,Math.min(144/d.fontSize,(m.includes('e')?100-d.x:d.x+d.width)/d.width));
+     const nextWidth=d.width*factor,nextBox=d.boxH*factor;
+     d.next={...t,fontSize:Math.round(d.fontSize*factor*10)/10,width:nextWidth,height:t.height?nextBox:t.height,x:m.includes('w')?d.x+d.width-nextWidth:d.x,y:m.includes('n')?clamp(d.y+d.boxH-nextBox,0,100):d.y};
+    }
+    else if(m==='e')d.next={...t,width:clamp(d.width+dx,5,100-d.x)};
+    else if(m==='w'){const x=clamp(d.x+dx,0,d.x+d.width-5);d.next={...t,x,width:d.width-(x-d.x)};}
+    else if(m==='s')d.next={...t,height:clamp(d.boxH+dy,d.textH,100-d.y)};
+    else {const y=clamp(d.y+dy,0,d.y+d.boxH-d.textH);d.next={...t,y,height:d.boxH-(y-d.y)};}
+    setDraft(d.next)}}
+   onPointerUp={e=>{const d=drag.current;if(!d)return;drag.current=null;setDraft(null);const n=d.next;onTextChange?.(t.id,d.mode==='move'?{x:n.x,y:n.y}:{x:n.x,y:n.y,width:Math.round(n.width*10)/10,fontSize:Math.max(8,Math.min(144,Math.round(n.fontSize))),...(n.height!==undefined?{height:Math.round(n.height*10)/10}:{})});if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId)}}
+   onPointerCancel={()=>{drag.current=null;setDraft(null)}}><span className="sr-only">{t.text}</span>
+   {selectedText===t.id&&handles.map(side=><span key={side} className={`zg-text-resize ${side}`} aria-hidden="true" title={side.length===2?'Arraste para aumentar ou diminuir o texto':side==='n'||side==='s'?'Arraste para mudar a altura':'Arraste para mudar a largura'} onPointerDown={e=>{if(e.button!==0)return;e.stopPropagation();e.preventDefault();begin(e,side,e.currentTarget.parentElement as HTMLElement)}}/>)}
+  </button>:<span className="sr-only" key={t.id}>{t.text}</span>})}</div>;
 }
 type Interaction={mode?:'crop'|'position';onCropRequest?:()=>void;onSlotChange?:(index:number,patch:Partial<Slot>)=>void;onFrameChange?:(index:number,rect:FrameRect)=>void;onSlotSwap?:(from:number,to:number)=>void;photoSizes?:PhotoSizes;guides?:boolean;hideFold?:boolean;compact?:boolean}&TextProps&IconInteractions;
 export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,spec,mode='crop',onCropRequest,onSlotChange,onFrameChange,onSlotSwap,photoSizes,guides=false,hideFold=false,compact=false,selectedIcon,onIconSelect,onIconChange,...textProps}:{spread:Spread;urls:Images;selected?:number;ratio?:number;spec?:PrintSpec;onSelect?:(index:number)=>void;onPhotoDrop?:(index:number,id:string)=>void}&Interaction){
@@ -43,6 +75,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
  }
  function end(){const d=drag.current;drag.current=null;setDraft(null);if(d?.nextRect)onFrameChange?.(d.index,d.nextRect);else if(d?.nextSlot)onSlotChange?.(d.index,d.nextSlot);}
  return <div ref={stage} className="zg-spread" aria-label="Lâmina do álbum" style={{aspectRatio:ratio,background:spread.background||'#fffdf8'}}>
+  <SurfaceLayer surface={spread.surface} width={physical.widthMm*2} height={physical.heightMm} bleed={physical.bleedMm} compact={compact}/>
   {spread.rightBackground&&<div className="zg-right-background" style={{background:spread.rightBackground}}/>}
   <TextureLayer texture={spread.texture} width={physical.widthMm*2} height={physical.heightMm} compact={compact}/>
   {spreadRectangles(spread).map((original,index)=>{
@@ -50,7 +83,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
    const style:CSSProperties={left:`${frame.x/(physical.widthMm*2)*100}%`,top:`${frame.y/physical.heightMm*100}%`,width:`${frame.w/(physical.widthMm*2)*100}%`,height:`${frame.h/physical.heightMm*100}%`};
    const slot=draft?.index===index&&draft.slot?draft.slot:spread.slots[index];
    const content=<div><PhotoFrame slot={slot} urls={urls} geometry={geometry} alt={`Foto ${index+1}`}/></div>;
-   if(!onSelect)return <div className={`zg-frame ${slot?.photoId?'':'empty'}`} key={index} style={style}>{content}</div>;
+   if(!onSelect)return <div className={`zg-frame ${slot?.photoId?'':'empty'} ${frame.w<frame.h*.3?'is-narrow':''}`} key={index} style={style}>{content}</div>;
    function drop(event:DragEvent){event.preventDefault();event.stopPropagation();setSwapTarget(null);
     const from=event.dataTransfer.getData(SLOT_DRAG_TYPE);
     if(from!==''){const source=Number(from);if(Number.isInteger(source)&&source!==index)onSlotSwap?.(source,index);return;}
@@ -59,7 +92,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
    const dpi=photo?effectiveDpi(photo,geometry.image.w,geometry.image.h,slot):undefined;
    const quality=resolutionLevel(dpi,physical.dpi);
    const accepts=(event:DragEvent)=>event.dataTransfer.types.includes('application/x-zangraf-photo')||(!!onSlotSwap&&event.dataTransfer.types.includes(SLOT_DRAG_TYPE));
-   return <div key={index} className={`zg-frame ${slot?.photoId?'':'empty'} ${selected===index?'is-selected':''} ${mode==='position'?'move-frame':''} ${swapTarget===index?'is-swap-target':''}`} style={style}>
+   return <div key={index} className={`zg-frame ${slot?.photoId?'':'empty'} ${frame.w<frame.h*.3?'is-narrow':''} ${selected===index?'is-selected':''} ${mode==='position'?'move-frame':''} ${swapTarget===index?'is-swap-target':''}`} style={style}>
     <button type="button" className="zg-frame-hit" aria-label={`Selecionar quadro ${index+1}${slot?.photoId?' com foto':', vazio'}${quality==='low'?', resolução baixa':quality==='limit'?', resolução no limite':''}`} aria-pressed={selected===index} onClick={()=>onSelect(index)} onDoubleClick={()=>onCropRequest?.()} onPointerDown={e=>start(e,index)} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{drag.current=null;setDraft(null)}} onDragOver={event=>{if(accepts(event)){event.preventDefault();if(swapTarget!==index)setSwapTarget(index)}}} onDragLeave={()=>setSwapTarget(current=>current===index?null:current)} onDrop={drop}>{content}</button>
     {!compact&&quality!=='ok'&&dpi!==undefined&&<span className={`zg-dpi-badge ${quality}`} tabIndex={0} aria-describedby={`zg-dpi-tip-${index}`}><TriangleAlert size={12} aria-hidden="true"/>{Math.round(dpi)} DPI
      <span role="tooltip" id={`zg-dpi-tip-${index}`} className={`zg-dpi-tip ${frame.y/physical.heightMm>.45?'up':''}`}>
@@ -83,9 +116,10 @@ export function AlbumCover({cover,urls,onPhotoDrop,ratio=1,back=false,spec,guide
  const textCanvas=useRef<HTMLCanvasElement>(null);
  useEffect(()=>{const canvas=textCanvas.current;if(!canvas)return;canvas.width=1000;canvas.height=Math.round(1000/ratio);const ctx=canvas.getContext('2d');if(ctx)drawCoverText(ctx,cover,1000,1000/ratio,back)},[cover,ratio,back]);
  const physical=spec||{...defaultPrintSpec(),widthMm:300*ratio};const bleed=physical.bleedMm;
- if(cover.composition)return <AlbumSpread spread={{...cover.composition,background:cover.color,texts:cover.texts,texture:cover.texture,icons:cover.icons}} urls={urls} ratio={ratio} spec={{...physical,widthMm:physical.widthMm/2}} selected={selected} onSelect={onSelect} onPhotoDrop={onPhotoDrop?(index,id)=>onPhotoDrop(id,index):undefined} mode={mode} onCropRequest={onCropRequest} onSlotChange={onSlotChange} onFrameChange={onFrameChange} onSlotSwap={onSlotSwap} photoSizes={photoSizes} guides={guides} hideFold compact={compact} selectedIcon={selectedIcon} onIconSelect={onIconSelect} onIconChange={onIconChange} {...textProps}/>;
+ if(cover.composition)return <AlbumSpread spread={{...cover.composition,background:cover.color,texts:cover.texts,texture:cover.texture,surface:cover.surface,icons:cover.icons}} urls={urls} ratio={ratio} spec={{...physical,widthMm:physical.widthMm/2}} selected={selected} onSelect={onSelect} onPhotoDrop={onPhotoDrop?(index,id)=>onPhotoDrop(id,index):undefined} mode={mode} onCropRequest={onCropRequest} onSlotChange={onSlotChange} onFrameChange={onFrameChange} onSlotSwap={onSlotSwap} photoSizes={photoSizes} guides={guides} hideFold compact={compact} selectedIcon={selectedIcon} onIconSelect={onIconSelect} onIconChange={onIconChange} {...textProps}/>;
  const geometry={trim:{x:0,y:0,w:physical.widthMm,h:physical.heightMm},image:{x:-bleed,y:-bleed,w:physical.widthMm+bleed*2,h:physical.heightMm+bleed*2}};
  return <div className={`zg-cover ${cover.photo.photoId&&!cover.customText?'legacy-photo':''}`} style={{background:cover.color,color:cover.textColor,aspectRatio:ratio}} onDragOver={event=>{if(onPhotoDrop&&event.dataTransfer.types.includes('application/x-zangraf-photo'))event.preventDefault()}} onDrop={event=>{event.preventDefault();const id=event.dataTransfer.getData('application/x-zangraf-photo');if(id)onPhotoDrop?.(id)}}>
+  <SurfaceLayer surface={cover.surface} width={physical.widthMm} height={physical.heightMm} bleed={bleed} compact={compact}/>
   <TextureLayer texture={cover.texture} width={physical.widthMm} height={physical.heightMm} compact={compact}/>
   {cover.photo.photoId&&<div className="zg-cover-photo"><PhotoFrame slot={cover.photo} urls={urls} geometry={geometry} alt="Fotografia da capa"/></div>}
   <canvas ref={textCanvas} className="zg-cover-text-canvas" aria-label={cover.customText?undefined:`${back?'Verso':'Capa'}: ${cover.title}. ${cover.subtitle}`}/>

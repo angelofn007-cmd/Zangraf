@@ -29,3 +29,231 @@ body{letter-spacing:-.015em}
 @media(max-width:760px){.zg-header{min-height:78px}.zg-hero-modern .zg-hero-copy{padding-top:42px}.zg-hero-modern .zg-hero-copy>p{font-size:15px}.zg-hero-note{gap:8px;font-size:10px}.zg-hero-note span+span::before{margin-right:8px}.zg-album-showcase{gap:10px;padding:16px 0 40px;margin:6px -3% 10px}.zg-showcase-card{width:34%;padding:5px;border-radius:14px}.zg-showcase-card>div{aspect-ratio:.83;border-radius:9px}.zg-showcase-card>span{font-size:9px;padding:9px 4px 5px}.zg-showcase-card svg{display:none}.zg-showcase-caption{font-size:9px}.zg-category-strip{padding:12px 5%;gap:9px;grid-template-columns:1fr}.zg-category-strip>a,.zg-category-strip>a:not(:first-child),.zg-category-strip>a:last-child{padding:18px}.zg-category-strip>a>span:nth-child(2){font-size:20px}.zg-category-strip small{display:inline;margin-left:12px}.zg-product-grid{gap:12px}.zg-product-card{padding:6px;border-radius:15px}.zg-product-picture{border-radius:10px}.zg-product-info{padding:13px 6px 6px}.zg-product-info h3{font-size:17px}.zg-product-info p{font-size:11px}.zg-product-bottom{flex-wrap:wrap;gap:8px;font-size:12px}.zg-studio-section{margin:15px 5%;border-radius:22px}.zg-closing{margin-bottom:35px}.zg-configurator{padding:22px}.zg-section{padding-top:42px;padding-bottom:42px}.zg-catalog-nav a{padding:10px 17px}.form-panel{padding:25px}}
 @media(prefers-reduced-motion:reduce){.zg-showcase-card,.zg-product-card,.zg-button.button{transition:none}.zg-showcase-card:hover,.zg-product-card:hover{transform:none}}
 .zg-price-breakdown{background:#fffef1;border:1px solid #e1dab8;border-radius:14px;padding:16px;margin:15px 0;font-size:12px}.zg-price-breakdown>div{display:flex;justify-content:space-between;gap:20px;padding:6px 0}.zg-price-breakdown>div:last-child{border-top:1px solid #e1dab8;margin-top:6px;padding-top:12px;font-weight:650}.zg-price-breakdown dd{margin:0}
+
+/* ===================== Catálogo (álbuns, acessórios, estojos, kits): visual e animações ===================== */
+.zg-catalog{position:relative;isolation:isolate}
+.zg-catalog:before{content:'';position:absolute;z-index:-1;top:0;right:0;width:46%;height:420px;background:radial-gradient(ellipse at 70% 30%,#fdf15330,transparent 65%);pointer-events:none}
+/* Entrada em cascata do topo */
+.zg-catalog-intro>*,.zg-catalog-nav,.zg-catalog-toolbar,.zg-results-meta{animation:zg-rise .7s cubic-bezier(.22,.8,.24,1) both}
+.zg-catalog-intro>:nth-child(2){animation-delay:.07s}
+.zg-catalog-intro>:nth-child(3){animation-delay:.14s}
+.zg-catalog-nav{animation-delay:.2s}
+.zg-catalog-toolbar{animation-delay:.27s}
+.zg-results-meta{animation-delay:.32s}
+@keyframes zg-rise{from{opacity:0;transform:translateY(16px)}}
+/* Título no tema do site: segunda linha em itálico serifado oliva */
+.zg-catalog-intro .zg-eyebrow{display:inline-flex;align-items:center;gap:9px;width:max-content;padding:7px 14px;border:1px solid var(--line);border-radius:30px;background:#ffffffa6}
+.zg-catalog-intro .zg-eyebrow:before{content:'';width:7px;height:7px;border-radius:50%;background:#5a5c38;box-shadow:0 0 0 4px #5a5c381f}
+.zg-catalog .zg-catalog-intro h1 em{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;letter-spacing:-.03em;color:#5a5c38}
+.zg-catalog-intro p{padding-left:18px;border-left:2px solid #fdf153}
+/* Categorias: pílulas com leve elevação */
+.zg-catalog-nav a{transition:background .25s,color .25s,border-color .25s,transform .3s cubic-bezier(.34,1.5,.64,1),box-shadow .3s}
+.zg-catalog-nav a:not([aria-current=page]):hover{transform:translateY(-2px);background:#fff;box-shadow:0 8px 20px #2527200f}
+.zg-catalog-nav a[aria-current=page]{box-shadow:0 8px 22px #25272033}
+/* Busca e filtros juntos num só cartão */
+.zg-catalog-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;margin:30px 0 8px;padding:14px 18px;border:1px solid var(--line);border-radius:20px;background:#ffffffb3;backdrop-filter:blur(8px)}
+.zg-catalog-toolbar .zg-catalog-tools{flex:1 1 280px;margin:0}
+.zg-catalog-toolbar .zg-search{width:100%;max-width:none;padding:10px 16px;border:1px solid var(--line);border-radius:30px;background:#fff;transition:border-color .2s,box-shadow .2s}
+.zg-catalog-toolbar .zg-search:focus-within{border-color:#c9bc2a;box-shadow:0 0 0 4px #fdf15340}
+.zg-catalog-toolbar .zg-size-filter{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0;padding:0;border:0}
+.zg-catalog-toolbar .zg-filter-field{display:flex;align-items:center;gap:9px}
+.zg-catalog-toolbar .zg-filter-field label{font-size:12.5px;color:var(--muted)}
+.zg-catalog-toolbar .zg-filter-field select{appearance:none;padding:9px 34px 9px 14px;border:1px solid var(--line);border-radius:30px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23252720' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center;font:inherit;font-size:13px;color:var(--ink);cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.zg-catalog-toolbar .zg-filter-field select:hover{border-color:#c9c2ad}
+.zg-catalog-toolbar .zg-filter-field select:focus{outline:none;border-color:#c9bc2a;box-shadow:0 0 0 4px #fdf15340}
+.zg-catalog-toolbar .zg-size-filter>button{padding:8px 14px;border:0;border-radius:30px;background:#fdf153;font-size:12.5px;font-weight:600;color:#2f2d12;animation:zg-pop .35s cubic-bezier(.34,1.6,.64,1)}
+@keyframes zg-pop{from{opacity:0;transform:scale(.7)}}
+/* Produtos entram em cascata e reagem ao mouse */
+.zg-catalog .zg-product-card{animation:zg-card-in .6s cubic-bezier(.22,.8,.24,1) both;animation-delay:calc(.35s + var(--i,0) * 60ms);transition:box-shadow .35s ease,transform .35s cubic-bezier(.34,1.4,.64,1),border-color .25s}
+@keyframes zg-card-in{from{opacity:0;transform:translateY(22px) scale(.98)}}
+.zg-catalog .zg-product-card:hover{transform:translateY(-6px);border-color:#d9d2bf;box-shadow:0 22px 46px #2823101a}
+.zg-catalog .zg-product-picture{overflow:hidden}
+.zg-catalog .zg-product-picture>:first-child{transition:transform .7s cubic-bezier(.22,.8,.24,1)}
+.zg-catalog .zg-product-card:hover .zg-product-picture>:first-child{transform:scale(1.05)}
+.zg-catalog .zg-product-arrow{transition:transform .35s cubic-bezier(.34,1.6,.64,1),background .25s}
+.zg-catalog .zg-product-card:hover .zg-product-arrow{transform:rotate(45deg);background:#fdf153}
+html[data-theme=dark] .zg-catalog-toolbar,html[data-theme=dark] .zg-catalog-intro .zg-eyebrow{background:var(--zg-surface);border-color:var(--line)}
+html[data-theme=dark] .zg-catalog-toolbar :is(.zg-search,.zg-filter-field select){background-color:var(--zg-elevated);color:var(--ink);border-color:var(--line)}
+html[data-theme=dark] .zg-catalog .zg-catalog-intro h1 em{color:#c4bc9f}
+@media(max-width:760px){.zg-catalog-toolbar{padding:12px;border-radius:16px}.zg-catalog-toolbar .zg-filter-field{flex:1 1 100%;justify-content:space-between}.zg-catalog:before{width:100%}}
+@media(prefers-reduced-motion:reduce){.zg-catalog *{animation:none!important}}
+
+/* ===================== Página inicial: coleções e "Encontre o seu próximo álbum" ===================== */
+/* Antes de entrar na tela, os itens ficam um pouco abaixo e transparentes */
+.zg-reveal:not(.is-in) :is(.zg-section-heading>div,.zg-product-card),.zg-reveal.zg-category-strip:not(.is-in)>a{opacity:0;transform:translateY(24px)}
+.zg-reveal.is-in :is(.zg-section-heading>div){animation:zg-rise .8s cubic-bezier(.22,.8,.24,1) both}
+.zg-reveal.is-in .zg-section-heading>div:nth-child(2){animation-delay:.12s}
+
+/* Cartões das coleções */
+.zg-home .zg-category-strip{counter-reset:colecao}
+.zg-home .zg-category-strip>a{counter-increment:colecao;position:relative;overflow:hidden;isolation:isolate;min-height:136px;align-items:flex-end;border-radius:22px;background:#ffffffb8;transition:transform .45s cubic-bezier(.34,1.4,.64,1),box-shadow .4s ease,border-color .3s ease,background .3s ease}
+.zg-reveal.is-in.zg-category-strip>a{animation:zg-rise .75s cubic-bezier(.22,.8,.24,1) both}
+.zg-reveal.is-in.zg-category-strip>a:nth-child(2){animation-delay:.1s}
+.zg-reveal.is-in.zg-category-strip>a:nth-child(3){animation-delay:.2s}
+/* Número grande e discreto no fundo */
+.zg-home .zg-category-strip>a:before{content:'0' counter(colecao);position:absolute;z-index:-1;right:22px;bottom:-26px;font:italic 400 110px/1 Georgia,'Times New Roman',serif;letter-spacing:-.04em;color:#ece6d6;transition:transform .6s cubic-bezier(.34,1.4,.64,1),color .4s ease}
+/* Faixa amarela que se desenha embaixo ao passar o mouse */
+.zg-home .zg-category-strip>a:after{content:'';position:absolute;left:23px;right:23px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:#fdf153;transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,.8,.24,1)}
+.zg-home .zg-category-strip>a>span{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+.zg-home .zg-category-strip svg{position:absolute;top:20px;right:20px;box-sizing:content-box;padding:9px;border:1px solid #e2ded6;border-radius:50%;background:#fff;transition:transform .45s cubic-bezier(.34,1.6,.64,1),background .3s ease,border-color .3s ease}
+.zg-home .zg-category-strip>a:hover{transform:translateY(-6px);background:#fffdf6;border-color:#d9d0b0;box-shadow:0 22px 44px #2823101a}
+.zg-home .zg-category-strip>a:hover:before{color:#f6eba0;transform:translateY(-10px) rotate(-4deg)}
+.zg-home .zg-category-strip>a:hover:after{transform:scaleX(1)}
+.zg-home .zg-category-strip>a:hover>span{transform:translateX(4px)}
+.zg-home .zg-category-strip>a:hover svg{transform:rotate(45deg);background:#fdf153;border-color:#fdf153}
+.zg-home .zg-category-strip>a:active{transform:translateY(-2px) scale(.99)}
+
+/* Título da seção no tema do site */
+.zg-home .zg-collection .zg-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;border:1px solid var(--line);border-radius:30px;background:#ffffffa6}
+.zg-home .zg-collection .zg-eyebrow:before{content:'';width:7px;height:7px;border-radius:50%;background:#5a5c38;box-shadow:0 0 0 4px #5a5c381f}
+.zg-home .zg-collection h2 em{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;letter-spacing:-.03em;color:#5a5c38}
+.zg-home .zg-collection .zg-section-aside p{padding-left:18px;border-left:2px solid #fdf153}
+
+/* Álbuns da seção entram em cascata e reagem ao mouse, como no catálogo */
+.zg-reveal.is-in .zg-product-card{animation:zg-card-in .65s cubic-bezier(.22,.8,.24,1) both;animation-delay:calc(.2s + var(--i,0) * 70ms)}
+.zg-home .zg-collection .zg-product-card{transition:box-shadow .35s ease,transform .35s cubic-bezier(.34,1.4,.64,1),border-color .25s}
+.zg-home .zg-collection .zg-product-card:hover{transform:translateY(-6px);border-color:#d9d2bf;box-shadow:0 22px 46px #2823101a}
+.zg-home .zg-collection .zg-product-picture{overflow:hidden}
+.zg-home .zg-collection .zg-product-picture>:first-child{transition:transform .7s cubic-bezier(.22,.8,.24,1)}
+.zg-home .zg-collection .zg-product-card:hover .zg-product-picture>:first-child{transform:scale(1.05)}
+.zg-home .zg-collection .zg-product-arrow{transition:transform .35s cubic-bezier(.34,1.6,.64,1),background .25s}
+.zg-home .zg-collection .zg-product-card:hover .zg-product-arrow{transform:rotate(45deg);background:#fdf153}
+
+html[data-theme=dark] .zg-home .zg-category-strip>a{background:var(--zg-surface)}
+html[data-theme=dark] .zg-home .zg-category-strip>a:before{color:#2f2e28}
+html[data-theme=dark] .zg-home .zg-category-strip svg{background:var(--zg-elevated);border-color:var(--line)}
+html[data-theme=dark] .zg-home .zg-collection .zg-eyebrow{background:var(--zg-surface)}
+html[data-theme=dark] .zg-home .zg-collection h2 em{color:#c4bc9f}
+@media(max-width:760px){.zg-home .zg-category-strip>a{min-height:96px}.zg-home .zg-category-strip>a:before{font-size:76px;bottom:-18px}.zg-home .zg-category-strip svg{top:50%;margin-top:-20px}}
+@media(prefers-reduced-motion:reduce){.zg-reveal:not(.is-in) *,.zg-reveal.zg-category-strip>a{opacity:1!important;transform:none!important}.zg-home .zg-category-strip *,.zg-home .zg-category-strip>a,.zg-home .zg-collection *{animation:none!important;transition:none!important}}
+/* Cartões das coleções sem os números 01, 02, 03 */
+.zg-home .zg-category-strip>a:before{content:none}
+
+/* Ícone ilustrado de cada coleção e luz amarela ao passar o mouse */
+.zg-home .zg-category-strip>a{min-height:150px}
+.zg-home .zg-category-strip>a>.zg-cat-icon{position:absolute;top:20px;left:23px;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#f3eee2;color:#5a5c38;transition:transform .5s cubic-bezier(.34,1.6,.64,1),background .3s ease,color .3s ease}
+.zg-home .zg-category-strip>a>.zg-cat-icon svg{position:static;width:22px;height:22px;padding:0;border:0;border-radius:0;background:none;transform:none}
+.zg-home .zg-category-strip>a:hover>.zg-cat-icon{transform:translateY(-4px) rotate(-8deg) scale(1.06);background:#fdf153;color:#2f2d12}
+.zg-home .zg-category-strip>a:hover>.zg-cat-icon svg{transform:none;background:none}
+.zg-home .zg-category-strip>a:before{content:'';position:absolute;z-index:-1;inset:0;border-radius:inherit;background:radial-gradient(circle at 15% 15%,#fdf15340,transparent 55%);opacity:0;transform:none;transition:opacity .45s ease}
+.zg-home .zg-category-strip>a:hover:before{opacity:1;transform:none}
+html[data-theme=dark] .zg-home .zg-category-strip>a>.zg-cat-icon{background:var(--zg-elevated);color:#c4bc9f}
+@media(max-width:760px){.zg-home .zg-category-strip>a{min-height:0;padding-left:84px!important;align-items:center}.zg-home .zg-category-strip>a>.zg-cat-icon{top:50%;left:18px;margin-top:-23px}}
+@media(prefers-reduced-motion:reduce){.zg-home .zg-category-strip>a>.zg-cat-icon,.zg-home .zg-category-strip>a:before{transition:none}}
+/* Ícone sempre no centro do quadradinho (a seta usa margin-left:auto, que empurrava o ícone para a direita) */
+.zg-home .zg-category-strip>a>.zg-cat-icon{line-height:0}
+.zg-home .zg-category-strip>a>.zg-cat-icon svg{display:block;margin:0;width:22px;height:22px}
+/* Ícone ao lado, antes do nome da coleção */
+.zg-home .zg-category-strip>a{min-height:0;align-items:center;gap:16px;padding-right:76px!important}
+.zg-home .zg-category-strip>a>.zg-cat-icon{position:static;flex-shrink:0;margin:0}
+.zg-home .zg-category-strip svg:not(.zg-cat-icon svg){top:50%;margin-top:-20px}
+@media(max-width:760px){.zg-home .zg-category-strip>a{padding-left:18px!important}.zg-home .zg-category-strip>a>.zg-cat-icon{margin-top:0}}
+
+/* ===================== Página do produto: animações ===================== */
+/* Entrada: foto pela esquerda, configurador pela direita */
+.zg-detail .zg-breadcrumbs{animation:zg-rise .6s cubic-bezier(.22,.8,.24,1) both}
+.zg-detail .zg-detail-visual{animation:zg-slide-left .85s cubic-bezier(.22,.8,.24,1) .05s both}
+.zg-detail .zg-configurator{animation:zg-slide-right .85s cubic-bezier(.22,.8,.24,1) .12s both}
+.zg-detail .zg-configurator>:is(.zg-eyebrow,h1,.zg-detail-description){animation:zg-rise .7s cubic-bezier(.22,.8,.24,1) both}
+.zg-detail .zg-configurator>h1{animation-delay:.22s}
+.zg-detail .zg-configurator>.zg-detail-description{animation-delay:.3s}
+@keyframes zg-slide-left{from{opacity:0;transform:translateX(-28px)}}
+@keyframes zg-slide-right{from{opacity:0;transform:translateX(28px)}}
+.zg-detail .zg-configurator{transition:box-shadow .4s ease}
+.zg-detail .zg-configurator:hover{box-shadow:0 24px 60px #2823100f}
+
+/* Galeria: a foto troca com um zoom suave e se aproxima ao passar o mouse */
+.zg-detail .zg-gallery-main{overflow:hidden}
+.zg-detail .zg-gallery-photo{animation:zg-photo-in .6s cubic-bezier(.22,.8,.24,1) both;transition:transform 1.2s cubic-bezier(.22,.8,.24,1)}
+.zg-detail .zg-gallery-main:hover .zg-gallery-photo{transform:scale(1.04)}
+@keyframes zg-photo-in{from{opacity:0;transform:scale(1.06)}}
+.zg-detail .zg-gallery-expand{transition:transform .35s cubic-bezier(.34,1.6,.64,1),background .25s}
+.zg-detail .zg-gallery-main:hover .zg-gallery-expand{transform:translateY(-3px);background:#fdf153}
+.zg-detail .zg-gallery-thumbnails>button{transition:transform .35s cubic-bezier(.34,1.6,.64,1),box-shadow .3s,opacity .3s}
+.zg-detail .zg-gallery-thumbnails>button:not(.selected){opacity:.72}
+.zg-detail .zg-gallery-thumbnails>button:hover{opacity:1;transform:translateY(-4px)}
+.zg-detail .zg-gallery-thumbnails>button.selected{box-shadow:0 0 0 2px #fdf153,0 8px 18px #2823101f}
+
+/* Preço: aparece de novo, com um destaque, sempre que muda */
+.zg-detail .zg-detail-price{background:linear-gradient(transparent 62%,#fdf15366 62%) no-repeat 0 0/0% 100%;animation:zg-price-in .7s cubic-bezier(.22,.8,.24,1) both;width:max-content;max-width:100%}
+@keyframes zg-price-in{0%{opacity:0;transform:translateY(8px);background-size:0% 100%}55%{opacity:1;transform:none}100%{background-size:100% 100%}}
+
+/* Barra de etapas: o trecho atual se preenche e "respira" */
+.zg-detail .zg-config-progress li{position:relative;overflow:hidden;transition:background .4s ease}
+.zg-detail .zg-config-progress li.active{animation:zg-fill .6s cubic-bezier(.22,.8,.24,1) both;transform-origin:left}
+.zg-detail .zg-config-progress li[aria-current=step]{animation:zg-fill .6s cubic-bezier(.22,.8,.24,1) both,zg-breathe 2.4s ease-in-out .6s infinite}
+@keyframes zg-fill{from{transform:scaleX(.15)}}
+@keyframes zg-breathe{50%{opacity:.6}}
+
+/* Cada etapa entra deslizando, com as opções em cascata */
+.zg-detail .zg-config-step>h2{animation:zg-rise .55s cubic-bezier(.22,.8,.24,1) both}
+.zg-detail .zg-config-options>button{animation:zg-rise .5s cubic-bezier(.22,.8,.24,1) both;animation-delay:calc(.08s + var(--i,0) * 45ms);transition:transform .35s cubic-bezier(.34,1.5,.64,1),box-shadow .3s,border-color .25s,background .25s}
+.zg-detail .zg-config-options>button:hover{transform:translateY(-3px);box-shadow:0 12px 26px #2823101a}
+.zg-detail .zg-config-options>button:active{transform:scale(.97)}
+.zg-detail .zg-config-options>button.selected{box-shadow:0 10px 26px #d9c90033}
+.zg-detail .zg-config-options>button.selected>svg{animation:zg-check .45s cubic-bezier(.34,1.8,.64,1) both}
+@keyframes zg-check{from{opacity:0;transform:scale(.3) rotate(-30deg)}}
+.zg-detail .zg-config-options .zg-format-outline{transition:transform .4s cubic-bezier(.34,1.6,.64,1)}
+.zg-detail .zg-config-options>button:hover .zg-format-outline{transform:rotate(-6deg) scale(1.08)}
+.zg-detail .zg-config-help{animation:zg-rise .55s cubic-bezier(.22,.8,.24,1) .2s both}
+.zg-detail .zg-config-review>div{animation:zg-rise .5s cubic-bezier(.22,.8,.24,1) both}
+.zg-detail .zg-config-review>div:nth-child(2){animation-delay:.05s}.zg-detail .zg-config-review>div:nth-child(3){animation-delay:.1s}.zg-detail .zg-config-review>div:nth-child(4){animation-delay:.15s}.zg-detail .zg-config-review>div:nth-child(5){animation-delay:.2s}
+
+/* Resumo: a linha da escolha atualiza com um leve brilho */
+.zg-detail .zg-selection-summary{position:relative;overflow:hidden}
+.zg-detail .zg-selection-summary>p{animation:zg-summary .6s cubic-bezier(.22,.8,.24,1) both}
+@keyframes zg-summary{from{opacity:0;transform:translateX(-8px)}}
+.zg-detail .zg-selection-summary:after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(100deg,transparent,#ffffff70,transparent);transform:skewX(-18deg);animation:zg-sweep 6s ease-in-out 1.5s infinite;pointer-events:none}
+@keyframes zg-sweep{0%,80%{left:-40%}100%{left:130%}}
+
+/* Botões de avançar e voltar */
+.zg-detail .zg-config-actions .zg-button svg,.zg-detail .zg-config-actions .back svg{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.zg-detail .zg-config-actions .zg-button:hover:not(:disabled) svg{transform:translateX(4px)}
+.zg-detail .zg-config-actions .back:hover svg{transform:translateX(-4px)}
+.zg-detail .zg-config-saved{animation:zg-rise .6s cubic-bezier(.22,.8,.24,1) both}
+.zg-detail .zg-config-saved>svg{animation:zg-check .6s cubic-bezier(.34,1.8,.64,1) .15s both}
+@media(prefers-reduced-motion:reduce){.zg-detail *,.zg-detail{animation:none!important;transition:none!important}}
+
+/* ===================== Câmera instantânea animada ao lado das miniaturas ===================== */
+.zg-gallery-row{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.zg-gallery-row>.zg-gallery-thumbnails{flex:1;min-width:0}
+.zg-camera{flex-shrink:0;width:170px;margin:-18px 8px -24px auto;cursor:default}
+.zg-camera svg{display:block;width:100%;height:auto;overflow:visible}
+.zg-camera :is(.zg-camera-body,.zg-camera-print,.zg-camera-shutter,.zg-camera-flash,.zg-camera-ring,.zg-camera-iris,.zg-camera-shadow,.zg-camera-sparkles path){transform-box:fill-box;transform-origin:center}
+/* Corpo flutua; dá um "tranco" no momento da foto (ciclo de 6 s) */
+.zg-camera-body{animation:zg-cam-float 6s ease-in-out infinite}
+@keyframes zg-cam-float{0%,100%{transform:translateY(0) rotate(-4deg)}6%{transform:translateY(2px) rotate(-6deg)}10%{transform:translateY(-1px) rotate(-3deg)}50%{transform:translateY(-8px) rotate(-1deg)}}
+.zg-camera-shadow{fill:#2823101f;animation:zg-cam-shadow 6s ease-in-out infinite}
+@keyframes zg-cam-shadow{50%{transform:scaleX(.82);opacity:.6}}
+/* Botão é apertado */
+.zg-camera-shutter{animation:zg-cam-shutter 6s ease-in-out infinite}
+@keyframes zg-cam-shutter{0%,2%,8%,100%{transform:none}4%,6%{transform:translateY(4px)}}
+/* Flash estoura */
+.zg-camera-flash{opacity:0;animation:zg-cam-flash 6s ease-out infinite}
+@keyframes zg-cam-flash{0%,5%{opacity:0;transform:scale(1)}7%{opacity:1;transform:scale(5)}14%{opacity:0;transform:scale(9)}100%{opacity:0}}
+/* Lente: anel gira devagar e a íris fecha no clique */
+.zg-camera-ring{animation:zg-cam-spin 14s linear infinite}
+@keyframes zg-cam-spin{to{transform:rotate(360deg)}}
+.zg-camera-iris{animation:zg-cam-iris 6s ease-in-out infinite}
+@keyframes zg-cam-iris{0%,4%,12%,100%{transform:scale(1)}7%{transform:scale(2.2)}}
+/* A foto sai por baixo e se revela aos poucos */
+.zg-camera-print{animation:zg-cam-print 6s cubic-bezier(.3,.7,.3,1) infinite}
+@keyframes zg-cam-print{0%,12%{transform:translateY(-22px);opacity:1}40%,82%{transform:translateY(32px) rotate(2deg);opacity:1}92%{transform:translateY(40px) rotate(4deg);opacity:0}100%{transform:translateY(-22px);opacity:0}}
+.zg-camera-photo{animation:zg-cam-develop 6s ease-in-out infinite}
+@keyframes zg-cam-develop{0%,30%{filter:grayscale(1) brightness(.35);opacity:.6}70%,100%{filter:none;opacity:1}}
+/* Brilhinhos piscando */
+.zg-camera-sparkles path{animation:zg-cam-twinkle 2.6s ease-in-out infinite}
+.zg-camera-sparkles path:nth-child(2){animation-delay:-.9s}
+.zg-camera-sparkles path:nth-child(3){animation-delay:-1.7s}
+@keyframes zg-cam-twinkle{0%,100%{opacity:.25;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.1) rotate(45deg)}}
+.zg-camera:hover .zg-camera-body{animation-duration:3s}
+@media(max-width:900px){.zg-camera{width:130px}}
+@media(max-width:600px){.zg-camera{display:none}}
+@media(prefers-reduced-motion:reduce){.zg-camera *{animation:none!important}.zg-camera-print{transform:translateY(32px)}}
+
+/* Câmera ao lado do texto "O seu olhar começa aqui." */
+.zg-detail-story{position:relative;padding-right:190px}
+.zg-detail-story>.zg-camera{position:absolute;right:-10px;bottom:-40px;width:180px;margin:0}
+.zg-gallery-row{display:block}
+@media(max-width:1100px){.zg-detail-story{padding-right:150px}.zg-detail-story>.zg-camera{width:140px;right:0}}
+@media(max-width:600px){.zg-detail-story{padding-right:0}}

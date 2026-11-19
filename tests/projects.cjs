@@ -8,3 +8,16 @@ test('Duplicar projeto gera novos IDs e não herda vínculo do carrinho',()=>{co
 test('Remover foto limpa todas as referências sem alterar original',()=>{const p=sample();const next=projects.removePhoto(p,'foto');assert.equal(next.photos.length,0);assert.ok(next.spreads[0].slots.every(s=>s.photoId===null));assert.equal(p.photos.length,1);assert.equal(p.spreads[0].slots[0].photoId,'foto');});
 test('Duplicar lâmina mantém enquadramento e permite edição independente',()=>{const p=sample();const next=projects.duplicateSpread(p,0);assert.equal(next.spreads.length,2);assert.equal(next.spreads[1].slots[0].y,75);next.spreads[1].slots[0].x=100;assert.equal(next.spreads[0].slots[0].x,25);assert.equal(p.spreads.length,1);});
 test('Não permite remover a última lâmina e respeita limite de duplicação',()=>{const p=sample();assert.throws(()=>projects.removeSpread(p,0));const expanded=projects.duplicateSpread(p,0);assert.equal(projects.removeSpread(expanded,0).spreads.length,1);assert.throws(()=>projects.duplicateSpread({...p,spreads:Array.from({length:60},()=>p.spreads[0])},0));});
+
+test('Projeto é excluído 5 dias depois de criado e mostra quantos dias faltam',()=>{
+ const {projectExpiresAt,projectDaysLeft,PROJECT_LIFETIME_DAYS,createProject}=require('./load-ts.cjs')('src/lib/layout-projects.ts');
+ const day=864e5,created=Date.parse('2026-11-10T12:00:00Z');
+ const p={createdAt:new Date(created).toISOString()};
+ assert.equal(PROJECT_LIFETIME_DAYS,5);
+ assert.equal(projectExpiresAt(p),created+5*day);
+ assert.equal(projectDaysLeft(p,created),4);
+ assert.equal(projectDaysLeft(p,created+4.5*day),0);
+ assert.equal(projectDaysLeft(p,created+6*day),0);
+ assert.equal(projectExpiresAt({}),undefined);
+ assert.ok(createProject().createdAt,'projeto novo já nasce com data de criação');
+});

@@ -54,3 +54,18 @@ test('Níveis de alerta de resolução',()=>{
  assert.equal(resolutionLevel(149,300),'low');
  assert.equal(resolutionLevel(undefined,300),'ok');
 });
+
+test('Álbum vertical não recebe layouts com tiras estreitas demais',()=>{
+ const vertical=2*24/34;
+ for(let n=2;n<=10;n++)for(const layout of photoLayouts(n,vertical))for(const f of layout.frames){
+  const a=f.w*vertical/f.h;assert.ok(a>=.33&&a<=3.1,`${layout.id}: quadro ${a.toFixed(2)}`);
+ }
+});
+
+test('Foto pequena não é recomendada para o quadro grande',()=>{
+ // Uma foto grande (6000 px) e uma pequena (800 px): a pequena deve ir para o quadro menor.
+ const layouts=photoLayouts(2,2).filter(l=>l.id.startsWith('hero-detail'));
+ const [best]=rankLayoutsForPhotos(layouts,[1.5,1.5],2,{sizes:[{width:6000,height:4000},{width:800,height:533}],areaMm:{width:600,height:300},dpi:300});
+ const big=best.layout.frames[0].w*best.layout.frames[0].h>=best.layout.frames[1].w*best.layout.frames[1].h?0:1;
+ assert.equal(best.order[big],0,'a foto grande fica no quadro grande');
+});

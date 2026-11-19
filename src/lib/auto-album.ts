@@ -137,7 +137,7 @@ export function planAlbum(photos:AlbumPhoto[],spreadCount:number):AlbumPlan{
  * evita repetir a composição da lâmina anterior quando há outra quase tão boa.
  */
 export function pickLayout(aspects:number[],spreadAspect:number,previousName?:string){
- const ranked=rankLayoutsForPhotos(photoLayouts(aspects.length),aspects,spreadAspect);
+ const ranked=rankLayoutsForPhotos(photoLayouts(aspects.length,spreadAspect),aspects,spreadAspect);
  const best=ranked[0];if(!best)return undefined;
  if(best.layout.name!==previousName)return best;
  return ranked.find(fit=>fit.layout.name!==previousName&&fit.score<=best.score+.08)||best;

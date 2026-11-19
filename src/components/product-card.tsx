@@ -18,11 +18,11 @@ export function ProductVisual({product}: {product: Product}) {
  </div>;
 }
 
-export function ProductCard({product}: {product: Product}) {
+export function ProductCard({product, index = 0}: {product: Product; index?: number}) {
  const kind = product.kind ?? 'album';
  const href = (kind === 'album' ? '/albuns/' : '/produtos/') + product.id;
  const price=minimumProductPrice(product);const hasPrice=price!==null;
- return <article className="zg-product-card">
+ return <article className="zg-product-card" style={{'--i': Math.min(index, 12)} as CSSProperties}>
   <Link href={href} className="zg-product-picture" aria-label={'Conhecer ' + product.name}><ProductVisual product={product}/><span className="zg-product-arrow"><ArrowUpRight size={19}/></span></Link>
   <div className="zg-product-info"><div className="zg-product-kicker"><span>{product.category}</span>{product.isDemo && <span>Modelo conceitual</span>}</div><h3><Link href={href}>{product.name}</Link></h3><p>{product.description}</p><div className="zg-product-bottom"><span>{hasPrice ? (product.albumPricing?.length?'A partir de ':'')+money.format(price! / 100) : 'Sob consulta'}</span><Link href={href}>Conhecer <ArrowUpRight size={15} strokeWidth={1.5}/></Link></div></div>
  </article>;

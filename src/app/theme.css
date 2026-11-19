@@ -47,3 +47,7 @@ html[data-theme=dark] .google-sign-in:hover:not(:disabled){background:var(--zg-e
 @media(max-width:760px){.zg-header-actions{gap:12px}.zg-header .zg-theme-toggle{width:36px;height:40px}.zg-account-link span{display:none}}
 @media(max-width:370px){.zg-header-actions{gap:7px}.zg-header{gap:10px}}
 @media(prefers-reduced-motion:reduce){html::view-transition-group(*),html::view-transition-new(*),html::view-transition-old(*){animation:none!important}}
+/* Sem faixa clara abaixo do rodapé: o fundo da página termina escuro como o rodapé
+   e a rolagem não "estica" além do fim (efeito elástico do navegador). */
+html{background:#10100f;overscroll-behavior-y:none}
+body{overscroll-behavior-y:none;min-height:100dvh}

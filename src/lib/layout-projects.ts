@@ -1,6 +1,7 @@
+import type {PhotoAdjust} from './photo-adjust';
 import {MAX_ALBUM_PHOTOS} from './album-capacity';
 import {ALBUM_FONTS,type AlbumFont} from './album-fonts';
-import {ALBUM_ICONS,TEXTURES,type AlbumIcon,type TextureName} from './album-decorations';
+import {ALBUM_ICONS,TEXTURES,type AlbumIcon,type TextureName,isSurface,type SurfaceName} from './album-decorations';
 import {coverRegions} from './album-layouts';
 import {coverPageIndices,type CoverMode,type CoverMargins} from './cover-production';
 import type { Configuration } from './products';
@@ -9,15 +10,15 @@ import {configuredSheetCount,physicalPrintDimensions,validatePhysicalPrintSpec,M
 export type LayoutName = 'inteira' | 'dupla' | 'quatro' | 'editorial' | 'seis' | 'respiro' | 'livre';
 /** `takenAt`: quando a foto foi tirada (EXIF), em ms; ausente se o arquivo não tiver essa informação. */
 export type Photo = { id: string; name: string; blob: Blob; preview?: Blob; thumbnail?: Blob; width?: number; height?: number; takenAt?: number };
-export type Slot = { photoId: string | null; x: number; y: number; zoom?: number; flipX?: boolean; flipY?: boolean };
+export type Slot = { photoId: string | null; x: number; y: number; zoom?: number; flipX?: boolean; flipY?: boolean; adjust?: PhotoAdjust };
 export type FrameRect = {x:number;y:number;w:number;h:number};
-export type AlbumText = {id:string;text:string;x:number;y:number;width:number;fontSize:number;fontFamily:AlbumFont;color:string;bold:boolean;italic:boolean;align:'left'|'center'|'right';rotation?:0|90};
+export type AlbumText = {id:string;text:string;x:number;y:number;width:number;fontSize:number;fontFamily:AlbumFont;color:string;bold:boolean;italic:boolean;align:'left'|'center'|'right';rotation?:0|90;/** Altura mínima da caixa, em % da altura da área; o texto fica centralizado nela. */height?:number};
 export type LayoutSpacing={marginMm:number;gapMm:number};
-export type Spread = { id: string; layout: LayoutName; slots: Slot[]; frames?:FrameRect[]; spacing?:LayoutSpacing; texture?:TextureName; icons?:AlbumIcon[]; background?:string; rightBackground?:string; texts?:AlbumText[] };
-export type Cover = { title: string; subtitle: string; color: string; textColor: string; photo: Slot; texts?:AlbumText[]; customText?:boolean; texture?:TextureName; icons?:AlbumIcon[]; composition?:Spread };
+export type Spread = { id: string; layout: LayoutName; slots: Slot[]; frames?:FrameRect[]; spacing?:LayoutSpacing; texture?:TextureName; /** Textura fotográfica de fundo (mármore, linho…). */ surface?:SurfaceName; icons?:AlbumIcon[]; background?:string; rightBackground?:string; texts?:AlbumText[] };
+export type Cover = { title: string; subtitle: string; color: string; textColor: string; photo: Slot; texts?:AlbumText[]; customText?:boolean; texture?:TextureName; surface?:SurfaceName; icons?:AlbumIcon[]; composition?:Spread };
 export type PrintSpec = { widthMm: number; heightMm: number; bleedMm: number; dpi: number; exportMode: 'page' };
 export type LayoutProject = {
- id: string; name: string; updatedAt: string; photos: Photo[]; spreads: Spread[];
+ id: string; name: string; updatedAt: string; /** Quando o projeto foi criado; ele é excluído automaticamente PROJECT_LIFETIME_DAYS depois. */ createdAt?: string; photos: Photo[]; spreads: Spread[];
  cover?: Cover; backCover?: Cover; printSpec?: PrintSpec; productId?: string; configuration?: Configuration; cartItemId?: string;
  revision?: number; recoveryOf?: string;
  productionModel?: {id:string;variantId:string;version:string;name:string;sheets:number;stock?:string;coverMode?:CoverMode;coverMargins?:CoverMargins;insideMode?:'page'|'spread';front:PrintSpec;back:PrintSpec;page:PrintSpec};
@@ -48,7 +49,8 @@ export function createSpread(layout: LayoutName = 'dupla'): Spread {
  return { id: crypto.randomUUID(), layout, slots: rectangles(layout).map(emptySlot) };
 }
 export function createProject(): LayoutProject {
- return {id:crypto.randomUUID(),name:'Meu primeiro álbum',updatedAt:new Date().toISOString(),photos:[],cover:{...defaultCover(),customText:true,texts:[]},backCover:{...defaultBackCover(),customText:true,texts:[]},printSpec:defaultPrintSpec(),spreads:Array.from({length:15},()=>createSpread())};
+ const now=new Date().toISOString();
+ return {id:crypto.randomUUID(),name:'Meu primeiro álbum',createdAt:now,updatedAt:now,photos:[],cover:{...defaultCover(),customText:true,texts:[]},backCover:{...defaultBackCover(),customText:true,texts:[]},printSpec:defaultPrintSpec(),spreads:Array.from({length:15},()=>createSpread())};
 }
 export function changeLayout(spread: Spread, layout: LayoutName): Spread {
  return {...spread,layout,frames:undefined,spacing:undefined,slots:rectangles(layout).map((_,i)=>spread.slots[i] ? {...spread.slots[i]} : emptySlot())};
@@ -61,8 +63,9 @@ export function isReusableSpread(value:unknown):value is Spread {
  if([s.background,s.rightBackground].some(c=>c!==undefined&&!/^#[0-9a-f]{6}$/i.test(c)))return false;
  if(s.spacing&&[s.spacing.marginMm,s.spacing.gapMm].some(n=>!Number.isFinite(n)||n<0||n>50))return false;
  if(s.texture!==undefined&&!TEXTURES.some(t=>t.id===s.texture))return false;
+ if(s.surface!==undefined&&!isSurface(s.surface))return false;
  if(s.icons!==undefined&&(!Array.isArray(s.icons)||s.icons.length>30||!s.icons.every(i=>i&&typeof i.id==='string'&&ALBUM_ICONS.some(d=>d.id===i.kind)&&[i.x,i.y,i.sizeMm,i.rotation].every(Number.isFinite)&&i.x>=0&&i.x<=100&&i.y>=0&&i.y<=100&&i.sizeMm>=1&&i.sizeMm<=200&&Math.abs(i.rotation)<=360&&/^#[0-9a-f]{6}$/i.test(i.color))))return false;
- if(s.texts!==undefined&&(!Array.isArray(s.texts)||s.texts.length>20||!s.texts.every(t=>t&&typeof t.id==='string'&&typeof t.text==='string'&&t.text.length<=600&&[t.x,t.y,t.width,t.fontSize].every(Number.isFinite)&&t.x>=0&&t.x<=100&&t.y>=0&&t.y<=100&&t.width>=1&&t.width<=100&&t.fontSize>=8&&t.fontSize<=144&&ALBUM_FONTS.some(f=>f.family===t.fontFamily)&&['left','center','right'].includes(t.align)&&/^#[0-9a-f]{6}$/i.test(t.color))))return false;
+ if(s.texts!==undefined&&(!Array.isArray(s.texts)||s.texts.length>20||!s.texts.every(t=>t&&typeof t.id==='string'&&typeof t.text==='string'&&t.text.length<=600&&[t.x,t.y,t.width,t.fontSize].every(Number.isFinite)&&(t.height===undefined||(Number.isFinite(t.height)&&t.height>=0&&t.height<=100))&&t.x>=0&&t.x<=100&&t.y>=0&&t.y<=100&&t.width>=1&&t.width<=100&&t.fontSize>=8&&t.fontSize<=144&&ALBUM_FONTS.some(f=>f.family===t.fontFamily)&&['left','center','right'].includes(t.align)&&/^#[0-9a-f]{6}$/i.test(t.color))))return false;
  return true;
 }
 export function projectPageIndices(project:LayoutProject){const covers=coverPageIndices(project.productionModel?.coverMode);return [...covers.filter(i=>i===-1),...project.spreads.map((_,i)=>i),...covers.filter(i=>i===-2)];}
@@ -114,6 +117,29 @@ export async function saveProjectRevision(project:LayoutProject):Promise<{projec
 }
 export async function saveProject(project:LayoutProject){const result=await saveProjectRevision(project);return result.project.id;}
 export function loadProject(id:string){return operation<LayoutProject|undefined>('readonly',store=>store.get(id));}
+/** Projetos ficam no navegador por este número de dias, contados da criação. */
+export const PROJECT_LIFETIME_DAYS=5;
+const DAY_MS=24*60*60*1000;
+/** Momento em que o projeto será excluído automaticamente (ms), ou undefined sem data de criação. */
+export function projectExpiresAt(project:Pick<LayoutProject,'createdAt'>){const created=Date.parse(project.createdAt||'');return Number.isFinite(created)?created+PROJECT_LIFETIME_DAYS*DAY_MS:undefined;}
+/** Dias inteiros que ainda faltam (0 = é excluído hoje). */
+export function projectDaysLeft(project:Pick<LayoutProject,'createdAt'>,now=Date.now()){const expires=projectExpiresAt(project);return expires===undefined?PROJECT_LIFETIME_DAYS:Math.max(0,Math.ceil((expires-now)/DAY_MS)-1);}
+export async function deleteProject(id:string){await operation('readwrite',store=>store.delete(id));}
+/**
+ * Exclui os projetos criados há mais de PROJECT_LIFETIME_DAYS dias e devolve os ids removidos.
+ * Projetos antigos, salvos antes de existir a data de criação, recebem a data de hoje:
+ * assim ninguém perde um álbum sem antes ver o aviso de exclusão.
+ */
+export async function purgeExpiredProjects(now=Date.now()):Promise<string[]>{
+ const projects=await operation<LayoutProject[]>('readonly',store=>store.getAll());
+ const removed:string[]=[];
+ for(const project of projects){
+  const expires=projectExpiresAt(project);
+  if(expires===undefined)await operation('readwrite',store=>store.put({...project,createdAt:new Date(now).toISOString()}));
+  else if(expires<=now){await deleteProject(project.id);removed.push(project.id);}
+ }
+ return removed;
+}
 export async function listProjects(){const projects=await operation<LayoutProject[]>('readonly',store=>store.getAll());return projects.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));}
 
 export function removePhoto(project: LayoutProject, photoId: string): LayoutProject {
@@ -162,7 +188,7 @@ export function fillEmptyFrames(project: LayoutProject): {project:LayoutProject;
 }
 export function copyProject(project:LayoutProject):LayoutProject {
  const {cartItemId: _cart, ...original}=project;
- return {...original,id:crypto.randomUUID(),revision:0,recoveryOf:undefined,name:(project.name||'Meu álbum')+' — cópia',updatedAt:new Date().toISOString(),
+ return {...original,id:crypto.randomUUID(),revision:0,recoveryOf:undefined,name:(project.name||'Meu álbum')+' — cópia',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
   cover:project.cover?{...project.cover,photo:{...project.cover.photo}}:undefined,
   backCover:project.backCover?{...project.backCover,photo:{...project.backCover.photo}}:undefined,
   printSpec:project.printSpec?{...project.printSpec}:undefined,

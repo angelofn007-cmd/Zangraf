@@ -16,10 +16,10 @@ export function ProductGallery({product}:{product:Product}){
   if(!photos.length)return <div className="zg-detail-art"><ProductVisual product={product}/></div>;
   return <div className="zg-gallery">
     <button className="zg-gallery-main zg-detail-art" onClick={()=>setExpanded(true)} aria-label={`Ampliar foto ${index+1} de ${product.name}`}>
-      <Image src={selected} alt={`${product.name}, foto ${index+1}`} fill sizes="(max-width:760px) 90vw, 48vw" unoptimized={!selected.startsWith('/')} preload style={{objectFit:'contain'}}/>
+      <Image key={selected} className="zg-gallery-photo" src={selected} alt={`${product.name}, foto ${index+1}`} fill sizes="(max-width:760px) 90vw, 48vw" unoptimized={!selected.startsWith('/')} preload style={{objectFit:'contain'}}/>
       <span className="zg-gallery-expand"><Expand size={16}/> Ampliar</span>
     </button>
-    {photos.length>1&&<div className="zg-gallery-thumbnails" aria-label="Fotos do produto">{photos.map((src,i)=><button key={src} className={i===index?'selected':''} aria-label={`Ver foto ${i+1} de ${photos.length}`} aria-pressed={i===index} onClick={()=>setIndex(i)}><Image src={src} alt="" fill sizes="80px" unoptimized={!src.startsWith('/')} style={{objectFit:'cover'}}/></button>)}</div>}
+    <div className="zg-gallery-row">{photos.length>1&&<div className="zg-gallery-thumbnails" aria-label="Fotos do produto">{photos.map((src,i)=><button key={src} className={i===index?'selected':''} aria-label={`Ver foto ${i+1} de ${photos.length}`} aria-pressed={i===index} onClick={()=>setIndex(i)}><Image src={src} alt="" fill sizes="80px" unoptimized={!src.startsWith('/')} style={{objectFit:'cover'}}/></button>)}</div>}</div>
     <p className="zg-gallery-count" aria-live="polite">Foto {index+1} de {photos.length} · Produto Zangraf</p>
     <dialog ref={dialog} className="zg-gallery-dialog" onCancel={()=>setExpanded(false)} onClose={()=>setExpanded(false)} aria-label={`Galeria de ${product.name}`}>
       <div className="zg-gallery-dialog-header"><span>{product.name}</span><button onClick={()=>setExpanded(false)} aria-label="Fechar galeria"><X size={24}/></button></div>

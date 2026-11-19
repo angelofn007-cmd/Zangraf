@@ -12,7 +12,7 @@ export function coverLabel(mode:CoverMode = 'separate'){
 export function coverMarginDescription(margins?:CoverMargins){
  if(!margins||!Object.values(margins).some(Boolean))return 'Imagem inteira, sem margem de dobra.';
  const cm=(mm:number)=>(mm/10).toLocaleString('pt-BR',{maximumFractionDigits:2});
- if(margins.leftMm&&!margins.topMm&&!margins.rightMm&&!margins.bottomMm)return `Dobra de ${cm(margins.leftMm)} cm à esquerda. Essa faixa ficará escondida.`;
- if(new Set(Object.values(margins)).size===1)return `Margem de ${cm(margins.topMm)} cm em todos os lados. Mantenha rostos e textos dentro do pontilhado.`;
- return 'As áreas sombreadas indicam as margens de acabamento. Mantenha rostos e textos dentro do pontilhado.';
+ if(margins.leftMm&&!margins.topMm&&!margins.rightMm&&!margins.bottomMm)return `A dobra de ${cm(margins.leftMm)} cm à esquerda fica escondida na impressão. Mantenha rostos e elementos importantes fora dela.`;
+ if(new Set(Object.values(margins)).size===1)return `Essa margem de ${cm(margins.topMm)} cm nas bordas não aparece na impressão. Mantenha rostos e elementos importantes fora dela.`;
+ return 'As áreas sombreadas nas bordas não aparecem na impressão. Mantenha rostos e elementos importantes fora delas.';
 }

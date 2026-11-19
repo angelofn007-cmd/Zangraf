@@ -78,3 +78,10 @@ test('Texto centralizado numa caixa larga é medido pelo que ocupa de verdade',(
  const box=textBox({text:'Oi',x:0,y:0,width:100,fontSize:20,align:'center'},600,300);
  assert.ok(box.left>280&&box.right<320);
 });
+
+test('Caixa de texto mais alta centraliza o texto na vertical',()=>{
+ const base={id:'t',text:'Oi',x:10,y:10,width:50,fontSize:20,fontFamily:'Arial',color:'#000',bold:false,italic:false,align:'left'};
+ const short=textBox(base,300,300),tall=textBox({...base,height:40},300,300);
+ assert.ok(tall.top>short.top,'o texto desce para o meio da caixa');
+ assert.ok(Math.abs((tall.top-30)-(30+120-tall.bottom))<1e-6,'mesma folga em cima e embaixo');
+});

@@ -38,5 +38,140 @@
     "family": "Josefin Sans",
     "url": "/fonts/josefin-sans.ttf",
     "bytes": 57844
+  },
+  {
+    "family": "Alex Brush",
+    "url": "/fonts/alex-brush.ttf",
+    "bytes": 116244
+  },
+  {
+    "family": "Allura",
+    "url": "/fonts/allura.ttf",
+    "bytes": 246632
+  },
+  {
+    "family": "Parisienne",
+    "url": "/fonts/parisienne.ttf",
+    "bytes": 61248
+  },
+  {
+    "family": "Pinyon Script",
+    "url": "/fonts/pinyon-script.ttf",
+    "bytes": 151412
+  },
+  {
+    "family": "Dancing Script",
+    "url": "/fonts/dancing-script.ttf",
+    "bytes": 133636
+  },
+  {
+    "family": "Sacramento",
+    "url": "/fonts/sacramento.ttf",
+    "bytes": 79696
+  },
+  {
+    "family": "Tangerine",
+    "url": "/fonts/tangerine.ttf",
+    "bytes": 60648
+  },
+  {
+    "family": "Italianno",
+    "url": "/fonts/italianno.ttf",
+    "bytes": 223708
+  },
+  {
+    "family": "Mrs Saint Delafield",
+    "url": "/fonts/mrs-saint-delafield.ttf",
+    "bytes": 49140
+  },
+  {
+    "family": "Petit Formal Script",
+    "url": "/fonts/petit-formal-script.ttf",
+    "bytes": 175068
+  },
+  {
+    "family": "Libre Baskerville",
+    "url": "/fonts/libre-baskerville.ttf",
+    "bytes": 171900
+  },
+  {
+    "family": "EB Garamond",
+    "url": "/fonts/eb-garamond.ttf",
+    "bytes": 851176
+  },
+  {
+    "family": "Bodoni Moda",
+    "url": "/fonts/bodoni-moda.ttf",
+    "bytes": 162104
+  },
+  {
+    "family": "DM Serif Display",
+    "url": "/fonts/dm-serif-display.ttf",
+    "bytes": 76580
+  },
+  {
+    "family": "Marcellus",
+    "url": "/fonts/marcellus.ttf",
+    "bytes": 46004
+  },
+  {
+    "family": "Cinzel Decorative",
+    "url": "/fonts/cinzel-decorative.ttf",
+    "bytes": 60408
+  },
+  {
+    "family": "Prata",
+    "url": "/fonts/prata.ttf",
+    "bytes": 101284
+  },
+  {
+    "family": "Abril Fatface",
+    "url": "/fonts/abril-fatface.ttf",
+    "bytes": 67364
+  },
+  {
+    "family": "Poppins",
+    "url": "/fonts/poppins.ttf",
+    "bytes": 160316
+  },
+  {
+    "family": "Raleway",
+    "url": "/fonts/raleway.ttf",
+    "bytes": 312352
+  },
+  {
+    "family": "Lato",
+    "url": "/fonts/lato.ttf",
+    "bytes": 656568
+  },
+  {
+    "family": "Open Sans",
+    "url": "/fonts/open-sans.ttf",
+    "bytes": 532636
+  },
+  {
+    "family": "Quicksand",
+    "url": "/fonts/quicksand.ttf",
+    "bytes": 124824
+  },
+  {
+    "family": "Nunito",
+    "url": "/fonts/nunito.ttf",
+    "bytes": 276932
+  },
+  {
+    "family": "Kaushan Script",
+    "url": "/fonts/kaushan-script.ttf",
+    "bytes": 210672
+  },
+  {
+    "family": "Caveat",
+    "url": "/fonts/caveat.ttf",
+    "bytes": 403648
+  },
+  {
+    "family": "Amatic SC",
+    "url": "/fonts/amatic-sc.ttf",
+    "bytes": 151624
   }
 ]

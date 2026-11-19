@@ -70,6 +70,7 @@ export function Footer({content}: {content: SiteContent}) {
         <nav aria-label="Produtos"><h2>Explore a Zangraf</h2><Link href="/albuns">Álbuns</Link><Link href="/acessorios">Acessórios</Link><Link href="/estojos">Estojos</Link><Link href="/kits-layflat">Kits Layflat</Link><Link href="/#sobre">Sobre a Zangraf</Link></nav>
         <nav aria-label="Seu espaço de criação"><h2>Seu espaço de criação</h2><Link href="/diagramador">Diagramador</Link><Link href="/minha-conta/projetos">Meus projetos</Link><Link href="/minha-conta/pedidos">Meus pedidos</Link><Link href="/minha-conta">Minha conta</Link></nav>
         <div><h2>Vamos conversar</h2>{content.contactEmail && <a href={'mailto:' + content.contactEmail}>{content.contactEmail}</a>}{content.whatsapp && <a href={'https://wa.me/' + content.whatsapp} target="_blank" rel="noopener noreferrer">Fale pelo WhatsApp <ArrowUpRight size={14}/></a>}{content.instagramUrl && <a href={content.instagramUrl} target="_blank" rel="noopener noreferrer"><Instagram size={15}/> Instagram</a>}{!hasContact && <p>Em breve, mais formas<br/>de falar com a Zangraf.</p>}</div>
+        <Image className="zg-foot-hp" src="/brand/hp-logo.png" alt="Impresso em equipamentos HP" title="Impresso em equipamentos HP" width={88} height={88}/>
       </div>
       <div className="zg-foot-bottom"><span>© {new Date().getFullYear()} Zangraf · Histórias para guardar</span><Link href="/privacidade">Política de privacidade</Link></div>
     </div>

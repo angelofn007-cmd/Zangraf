@@ -47,7 +47,11 @@ export function drawAlbumTexts(ctx:CanvasRenderingContext2D,texts:AlbumText[],wi
   ctx.fillStyle=text.color;ctx.textAlign=text.align;ctx.textBaseline='top';
   const localX=text.align==='center'?boxWidth/2:text.align==='right'?boxWidth:0;
   if(text.rotation===90){ctx.translate(left+lines.length*lineHeight,top);ctx.rotate(Math.PI/2);lines.forEach((line,i)=>ctx.fillText(line,localX,i*lineHeight));}
-  else lines.forEach((line,i)=>ctx.fillText(line,left+localX,top+i*lineHeight));
+  else{
+   // Caixa mais alta que o texto: o texto fica centralizado na vertical.
+   const offset=Math.max(0,height*(text.height||0)/100-lines.length*lineHeight)/2;
+   lines.forEach((line,i)=>ctx.fillText(line,left+localX,top+offset+i*lineHeight));
+  }
   ctx.restore();
  }
 }

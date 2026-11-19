@@ -17,7 +17,7 @@ export function applyAlbumTheme(project:LayoutProject,id:string):LayoutProject{
  const spreads=project.spreads.map((spread,index):Spread=>{
   const occupied=spread.slots.filter(s=>s.photoId);const count=Math.max(1,Math.min(10,occupied.length||[2,3,1,4][index%4]));
   if(occupied.length>10)return {...spread,background:theme.color,rightBackground:undefined,texture:theme.texture};
-  const layout=photoLayouts(count)[[3,5,1,6][index%4]];
+  const options=photoLayouts(count);const layout=options[[3,5,1,6][index%4]%options.length];
   return {...spread,layout:'livre',frames:layout.frames,slots:layout.frames.map((_,i)=>occupied[i]||emptySlot()),spacing:{marginMm:5,gapMm:3},background:theme.color,rightBackground:undefined,texture:theme.texture};
  });
  const cover=project.cover;

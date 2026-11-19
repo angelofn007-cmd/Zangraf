@@ -52,3 +52,11 @@ export function addToCart(productOrId: string | Product, configuration: Configur
  writeCart(cart);
  return id;
 }
+
+/** Tira do carrinho o vínculo com projetos que foram excluídos; o item continua, sem a personalização. */
+export function unlinkProjects(ids: string[]) {
+  if (!ids.length) return;
+  const cart = readCart();
+  if (!cart.some(item => item.layoutProjectId && ids.includes(item.layoutProjectId))) return;
+  writeCart(cart.map(item => item.layoutProjectId && ids.includes(item.layoutProjectId) ? {...item, layoutProjectId: undefined} : item));
+}

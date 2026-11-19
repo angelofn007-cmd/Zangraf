@@ -40,7 +40,7 @@ export function textBox(text:AlbumText,widthMm:number,heightMm:number){
  const paragraphs=text.text.split('\n');
  const lines=paragraphs.reduce((sum,p)=>sum+Math.max(1,Math.ceil(p.length/perLine)),0);
  const used=Math.min(boxWidth,Math.max(...paragraphs.map(p=>p.length))*char);
- const boxLeft=widthMm*text.x/100,top=heightMm*text.y/100;
+ const boxLeft=widthMm*text.x/100,top=heightMm*text.y/100+(text.rotation===90?0:Math.max(0,heightMm*(text.height||0)/100-lines*line)/2);
  const left=text.align==='center'?boxLeft+(boxWidth-used)/2:text.align==='right'?boxLeft+boxWidth-used:boxLeft;
  return {left,right:left+used,top,bottom:top+lines*line};
 }

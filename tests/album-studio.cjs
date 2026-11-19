@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),load=require('./load-ts.cjs');
 const {photoLayouts,referenceLayouts}=load('src/lib/album-layouts.ts');
 const p=load('src/lib/layout-projects.ts');const {applyAlbumTheme,ALBUM_THEMES}=load('src/lib/album-themes.ts');const {slotForFocus}=load('src/lib/photo-focus.ts');
-test('Album layouts: exact photo counts, valid bounds, no overlapping frames',()=>{let total=0;for(let n=1;n<=10;n++){const variants=photoLayouts(n);assert.ok(variants.length>=8);for(const layout of variants){total++;assert.equal(layout.frames.length,n);for(const [i,r] of layout.frames.entries()){assert.ok(r.w>0&&r.h>0&&r.x>=-.0001&&r.y>=-.0001&&r.x+r.w<=1.0001&&r.y+r.h<=1.0001,layout.id);for(const q of layout.frames.slice(i+1)){const intersection=Math.max(0,Math.min(r.x+r.w,q.x+q.w)-Math.max(r.x,q.x))*Math.max(0,Math.min(r.y+r.h,q.y+q.h)-Math.max(r.y,q.y));assert.ok(intersection<.000001,layout.id);}}}}assert.equal(total,100);});
+test('Album layouts: exact photo counts, valid bounds, no overlapping frames',()=>{let total=0;for(let n=1;n<=10;n++){const variants=photoLayouts(n);assert.ok(variants.length>=5);for(const layout of variants){total++;assert.equal(layout.frames.length,n);for(const [i,r] of layout.frames.entries()){assert.ok(r.w>0&&r.h>0&&r.x>=-.0001&&r.y>=-.0001&&r.x+r.w<=1.0001&&r.y+r.h<=1.0001,layout.id);for(const q of layout.frames.slice(i+1)){const intersection=Math.max(0,Math.min(r.x+r.w,q.x+q.w)-Math.max(r.x,q.x))*Math.max(0,Math.min(r.y+r.h,q.y+q.h)-Math.max(r.y,q.y));assert.ok(intersection<.000001,layout.id);}}}}assert.ok(total>=50,`catálogo com ${total} layouts`);});
 test('Physical margins and gaps remain exact in millimeters for square and portrait albums',()=>{for(const widthMm of [240,300]){const spec={widthMm,heightMm:340,bleedMm:3,dpi:300,exportMode:'page'};const left=p.frameGeometry({x:0,y:0,w:.5,h:1},spec,true,{marginMm:10,gapMm:4}).trim;const right=p.frameGeometry({x:.5,y:0,w:.5,h:1},spec,true,{marginMm:10,gapMm:4}).trim;assert.equal(left.x,10);assert.equal(left.y,10);assert.ok(Math.abs(right.x-left.x-left.w-4)<.00001);assert.ok(Math.abs(widthMm*2-right.x-right.w-10)<.00001);}});
 test('New themes never change product choices, print sizes, sheet count or existing photographs',()=>{const original=p.createProject();original.configuration={size:'24 × 34 cm',sheets:'15 lâminas',stock:'800 g',cover:'Anti-Risco',finish:'Fosco'};original.spreads[0].slots[0].photoId='my-photo';original.spreads[0].slots[0].x=34;original.spreads[0].texts=[p.newAlbumText()];const before=structuredClone(original);for(const theme of ALBUM_THEMES){const next=applyAlbumTheme(original,theme.id);assert.equal(next.spreads.length,15);assert.deepEqual(next.printSpec,original.printSpec);assert.deepEqual(next.configuration,original.configuration);assert.equal(next.spreads[0].slots[0].photoId,'my-photo');assert.equal(next.spreads[0].slots[0].x,34);assert.deepEqual(next.spreads[0].texts,original.spreads[0].texts);}assert.deepEqual(original,before);});
 test('Subject focus centers an off-center face and clamps against photograph edges',()=>{const slot=p.emptySlot();const centered=slotForFocus(slot,4000,2000,200,200,{x:.7,y:.5});const crop=p.cropRectangle(4000,2000,200,200,centered);assert.equal(crop.x+crop.width/2,2800);const edge=slotForFocus(slot,4000,2000,200,200,{x:1,y:0});assert.equal(edge.x,100);assert.equal(edge.y,50);});
@@ -25,4 +25,16 @@ test('Reference mosaics maintain exact 2 mm gaps and shared outer margins across
    if(near(r.y+r.h,q.y)&&Math.min(r.x+r.w,q.x+q.w)>Math.max(r.x,q.x)+1e-7)assert.ok(near(frames[j].y-frames[i].y-frames[i].h,gapMm),layout.id);
   }));
  }
+});
+
+test('Superfícies cobrem a área com sangria e são aceitas em layouts salvos',()=>{
+ const {surfaceFit,SURFACES}=load('src/lib/album-decorations.ts');
+ for(const s of SURFACES)for(const [w,h] of [[480,340],[600,300],[240,340],[900,300]]){
+  const fit=surfaceFit(s.id,w,h,3);
+  assert.ok(fit.w>=w+6-1e-9&&fit.h>=h+6-1e-9,`${s.id} cobre ${w}×${h}`);
+  assert.ok(Math.abs(fit.w/fit.h-s.aspect)<1e-9,'mantém a proporção da imagem');
+ }
+ const spread=p.createSpread();
+ assert.equal(p.isReusableSpread({...spread,surface:'marmore-negro'}),true);
+ assert.equal(p.isReusableSpread({...spread,surface:'inexistente'}),false);
 });

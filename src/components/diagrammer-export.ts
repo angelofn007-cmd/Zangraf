@@ -1,18 +1,49 @@
 import {ensureProjectFonts} from '@/lib/album-fonts';
-import {drawIcons,drawTexture} from '@/lib/album-decorations';
+import {drawIcons,drawTexture,surfaceFit,surfaceUrl} from '@/lib/album-decorations';
 import {coverPageIndices} from '@/lib/cover-production';
 import { cropRectangle, defaultCover, defaultBackCover, defaultPrintSpec, spreadRectangles, projectSpec, frameGeometry, printDimensions, validateProjectForPrint, type LayoutProject, type Slot, projectPageIndices } from '@/lib/layout-projects';
 import {drawCoverText,drawAlbumTexts} from './diagrammer-text';
+import {applyPhotoAdjust,isNeutralAdjust,photoWarmthLayer} from '@/lib/photo-adjust';
 
 export function downloadBlob(blob:Blob,filename:string){
  const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=filename;
  document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 function escapeHtml(value:string){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));}
+/** Recorte da foto já com a tonalidade aplicada, no tamanho em pixels em que ele será impresso. */
+function adjustedPhoto(ctx:CanvasRenderingContext2D,bitmap:ImageBitmap,crop:{x:number;y:number;width:number;height:number},width:number,height:number,slot:Slot):HTMLCanvasElement|undefined{
+ const t=ctx.getTransform(),scale=Math.hypot(t.a,t.b)||1;
+ let w=Math.max(1,Math.round(width*scale)),h=Math.max(1,Math.round(height*scale));
+ const limit=Math.sqrt(60000000/(w*h));if(limit<1){w=Math.max(1,Math.floor(w*limit));h=Math.max(1,Math.floor(h*limit));}
+ const piece=document.createElement('canvas');piece.width=w;piece.height=h;
+ const p=piece.getContext('2d');if(!p)return undefined;
+ p.drawImage(bitmap,crop.x,crop.y,crop.width,crop.height,0,0,w,h);
+ const pixels=p.getImageData(0,0,w,h);applyPhotoAdjust(pixels.data,slot.adjust);p.putImageData(pixels,0,0);
+ const warmth=photoWarmthLayer(slot.adjust);
+ if(warmth){p.globalCompositeOperation='soft-light';p.globalAlpha=warmth.opacity;p.fillStyle=warmth.color;p.fillRect(0,0,w,h);}
+
+ return piece;
+}
 async function drawPhoto(ctx:CanvasRenderingContext2D,project:LayoutProject,slot:Slot,x:number,y:number,width:number,height:number){
  const photo=project.photos.find(p=>p.id===slot.photoId);if(!photo)return;
  const bitmap=await createImageBitmap(photo.blob);
- try{const crop=cropRectangle(bitmap.width,bitmap.height,width,height,slot);ctx.save();ctx.translate(x+(slot.flipX?width:0),y+(slot.flipY?height:0));ctx.scale(slot.flipX?-1:1,slot.flipY?-1:1);ctx.drawImage(bitmap,crop.x,crop.y,crop.width,crop.height,0,0,width,height);ctx.restore();}finally{bitmap.close();}
+ try{const crop=cropRectangle(bitmap.width,bitmap.height,width,height,slot);ctx.save();ctx.translate(x+(slot.flipX?width:0),y+(slot.flipY?height:0));ctx.scale(slot.flipX?-1:1,slot.flipY?-1:1);const piece=isNeutralAdjust(slot.adjust)?undefined:adjustedPhoto(ctx,bitmap,crop,width,height,slot);if(piece){ctx.drawImage(piece,0,0,width,height);piece.width=1;piece.height=1;}else ctx.drawImage(bitmap,crop.x,crop.y,crop.width,crop.height,0,0,width,height);ctx.restore();}finally{bitmap.close();}
+}
+const surfaces=new Map<string,Promise<ImageBitmap>>();
+/** Carrega a textura fotográfica em resolução de impressão (uma vez por sessão). */
+function loadSurface(id:string){
+ let task=surfaces.get(id);
+ if(!task){
+  task=fetch(surfaceUrl(id)).then(response=>{if(!response.ok)throw new Error('Não foi possível carregar a textura de fundo. Confira a conexão e tente de novo.');return response.blob();}).then(blob=>createImageBitmap(blob));
+  surfaces.set(id,task);task.catch(()=>surfaces.delete(id));
+ }
+ return task;
+}
+/** Desenha a textura cobrindo a área com sangria, centralizada, igual à pré-visualização. */
+async function drawSurface(ctx:CanvasRenderingContext2D,id:string|undefined,width:number,height:number,bleed:number){
+ if(!id)return;
+ const image=await loadSurface(id);const fit=surfaceFit(id,width,height,bleed);
+ ctx.drawImage(image,(width-fit.w)/2,(height-fit.h)/2,fit.w,fit.h);
 }
 async function drawComposition(ctx:CanvasRenderingContext2D,project:LayoutProject,index:number){
  await ensureProjectFonts(project);
@@ -21,6 +52,7 @@ async function drawComposition(ctx:CanvasRenderingContext2D,project:LayoutProjec
   const cover=index===-2?(project.backCover||defaultBackCover()):(project.cover||defaultCover());
   const bleed=spec.bleedMm;
   ctx.fillStyle=cover.color;ctx.fillRect(-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2);
+  await drawSurface(ctx,cover.surface,spec.widthMm,spec.heightMm,bleed);
   drawTexture(ctx,cover.texture,spec.widthMm,spec.heightMm,bleed);
   await drawPhoto(ctx,project,cover.photo,-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2);
   if(cover.photo.photoId&&!cover.customText){ctx.fillStyle='rgba(0,0,0,.16)';ctx.fillRect(-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2)}
@@ -34,6 +66,7 @@ async function drawComposition(ctx:CanvasRenderingContext2D,project:LayoutProjec
  }else{
   const spread=project.spreads[index];if(!spread)throw new Error('A lâmina solicitada não existe.');
   ctx.fillStyle=spread.background||'#fffdf8';ctx.fillRect(-spec.bleedMm,-spec.bleedMm,spec.widthMm*2+spec.bleedMm*2,spec.heightMm+spec.bleedMm*2);
+  await drawSurface(ctx,spread.surface,spec.widthMm*2,spec.heightMm,spec.bleedMm);
   if(spread.rightBackground){ctx.fillStyle=spread.rightBackground;ctx.fillRect(spec.widthMm,-spec.bleedMm,spec.widthMm+spec.bleedMm,spec.heightMm+spec.bleedMm*2);}
   drawTexture(ctx,spread.texture,spec.widthMm*2,spec.heightMm,spec.bleedMm);
   for(const [frameIndex,rect] of spreadRectangles(spread).entries()){

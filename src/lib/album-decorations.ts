@@ -3,13 +3,46 @@ import data from './album-icon-data.json';
 export type AlbumIcon={id:string;kind:string;x:number;y:number;sizeMm:number;rotation:number;color:string};
 export type TextureName='none'|'linen'|'paper'|'dots'|'diagonal'|'grain'|'waves';
 export const TEXTURES:{id:TextureName;name:string}[]=[{id:'none',name:'Liso'},{id:'linen',name:'Linho'},{id:'paper',name:'Papel artesanal'},{id:'dots',name:'Poá delicado'},{id:'diagonal',name:'Traços'},{id:'grain',name:'Granulado'},{id:'waves',name:'Ondas'}];
+/** Texturas fotográficas de fundo (mármore, linho, metal, papel). Ficam em /public/textures. */
+export const SURFACES=[
+ {id:'marmore-branco',name:'Mármore branco',group:'Mármore',aspect:2912/1440},
+ {id:'marmore-negro',name:'Mármore negro',group:'Mármore',aspect:2},
+ {id:'marmore-rosa',name:'Mármore rosa',group:'Mármore',aspect:2912/1440},
+ {id:'marmore-verde',name:'Mármore verde',group:'Mármore',aspect:2},
+ {id:'marmore-cinza',name:'Mármore cinza',group:'Mármore',aspect:2912/1440},
+ {id:'linho-natural',name:'Linho natural',group:'Linho',aspect:2912/1440},
+ {id:'linho-areia',name:'Linho areia',group:'Linho',aspect:2912/1440},
+ {id:'linho-cinza',name:'Linho cinza',group:'Linho',aspect:2912/1440},
+ {id:'linho-azul',name:'Linho azul',group:'Linho',aspect:2912/1440},
+ {id:'metal-escovado',name:'Metal escovado',group:'Metal',aspect:2912/1440},
+ {id:'metal-dourado',name:'Metal dourado',group:'Metal',aspect:2912/1440},
+ {id:'metal-rose',name:'Metal rosé',group:'Metal',aspect:2912/1440},
+ {id:'metal-grafite',name:'Metal grafite',group:'Metal',aspect:2912/1440},
+ {id:'papel-algodao',name:'Papel algodão',group:'Papel',aspect:2},
+ {id:'papel-kraft',name:'Papel kraft',group:'Papel',aspect:2},
+ {id:'concreto',name:'Concreto',group:'Papel',aspect:2},
+] as const;
+export type SurfaceName=typeof SURFACES[number]['id'];
+export const SURFACE_GROUPS=['Mármore','Linho','Metal','Papel'] as const;
+export const isSurface=(value:unknown):value is SurfaceName=>SURFACES.some(s=>s.id===value);
+export const surfaceUrl=(id:string,preview=false)=>`/textures/${id}${preview?'-preview':''}.jpg`;
+/**
+ * Tamanho (mm) da imagem da textura cobrindo a área com sangria, centralizada.
+ * A tela e o arquivo de impressão usam a mesma conta, então o recorte é idêntico.
+ */
+export function surfaceFit(id:string,widthMm:number,heightMm:number,bleedMm:number){
+ const aspect=SURFACES.find(s=>s.id===id)?.aspect||2;
+ const w=widthMm+bleedMm*2,h=heightMm+bleedMm*2;
+ return w/h>aspect?{w,h:w/aspect}:{w:h*aspect,h};
+}
 export type IconNode=[string,Record<string,string|number>];
 export const ALBUM_ICONS=data as {id:string;label:string;category:string;nodes:IconNode[]}[];
 export function drawIcons(ctx:CanvasRenderingContext2D,icons:AlbumIcon[],width:number,height:number){
  for(const icon of icons){const definition=ALBUM_ICONS.find(i=>i.id===icon.kind);if(!definition)continue;
   ctx.save();ctx.translate(width*icon.x/100+icon.sizeMm/2,height*icon.y/100+icon.sizeMm/2);ctx.rotate(icon.rotation*Math.PI/180);ctx.scale(icon.sizeMm/24,icon.sizeMm/24);ctx.translate(-12,-12);ctx.strokeStyle=icon.color;ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
   for(const [tag,a] of definition.nodes){const n=(key:string)=>Number(a[key]||0);ctx.beginPath();
-   if(tag==='path'){ctx.stroke(new Path2D(String(a.d)));continue;}
+   // fill:'solid' preenche a forma com a cor do ícone; stroke:'none' desliga o contorno.
+   if(tag==='path'){const shape=new Path2D(String(a.d));if(a.fill==='solid'){ctx.fillStyle=icon.color;ctx.fill(shape,a.fillRule==='evenodd'?'evenodd':'nonzero');}if(a.stroke!=='none'){ctx.save();if(a.strokeWidth)ctx.lineWidth=Number(a.strokeWidth);if(a.strokeLinejoin)ctx.lineJoin=String(a.strokeLinejoin) as CanvasLineJoin;ctx.stroke(shape);ctx.restore();}continue;}
    if(tag==='circle')ctx.arc(n('cx'),n('cy'),n('r'),0,Math.PI*2);
    else if(tag==='ellipse')ctx.ellipse(n('cx'),n('cy'),n('rx'),n('ry'),0,0,Math.PI*2);
    else if(tag==='line'){ctx.moveTo(n('x1'),n('y1'));ctx.lineTo(n('x2'),n('y2'));}
