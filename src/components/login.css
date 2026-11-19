@@ -56,3 +56,52 @@ html[data-theme=dark] .auth-error{background:#3a211b;border-color:#7a4034;color:
   .auth-shell .auth-panel{padding:26px 16px 22px}
 }
 @media(prefers-reduced-motion:reduce){.auth-shell{animation:none}}
+
+/* ===================== Entrar / criar conta: animações de abertura ===================== */
+/* O cartão inteiro sobe e aparece */
+.auth-shell{animation:auth-rise .8s cubic-bezier(.22,.8,.24,1) both}
+@keyframes auth-rise{from{opacity:0;transform:translateY(26px) scale(.985)}}
+/* A foto se revela de baixo para cima e vai se aproximando devagar */
+.auth-visual{animation:auth-reveal 1s cubic-bezier(.76,0,.24,1) .15s both}
+@keyframes auth-reveal{from{clip-path:inset(100% 0 0 0 round 22px)}to{clip-path:inset(0 0 0 0 round 22px)}}
+.auth-visual img{animation:auth-zoom 14s ease-out .15s both}
+@keyframes auth-zoom{from{transform:scale(1.14)}to{transform:scale(1.02)}}
+/* Etiqueta desliza da esquerda, com o pontinho pulsando */
+.auth-visual-tag{animation:auth-slide .7s cubic-bezier(.34,1.4,.64,1) .9s both}
+@keyframes auth-slide{from{opacity:0;transform:translateX(-20px)}}
+.auth-visual-tag>span{animation:auth-dot 2.4s ease-in-out 1.6s infinite}
+@keyframes auth-dot{50%{box-shadow:0 0 0 5px #8074102e}}
+/* Frase da foto: uma linha depois da outra, a amarela com um brilho */
+.auth-visual-copy p{animation:auth-line .8s cubic-bezier(.22,.8,.24,1) both}
+.auth-visual-copy p:nth-child(1){animation-delay:1s}
+.auth-visual-copy p:nth-child(2){animation-delay:1.18s}
+@keyframes auth-line{from{opacity:0;transform:translateY(18px);filter:blur(4px)}}
+.auth-visual-copy em{background:linear-gradient(100deg,#fdf153 40%,#fffbd0 50%,#fdf153 60%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:auth-shimmer 5s ease-in-out 2.2s infinite}
+@keyframes auth-shimmer{0%,70%{background-position:100% 0}100%{background-position:-50% 0}}
+/* Formulário em cascata */
+.auth-panel>*{animation:auth-line .6s cubic-bezier(.22,.8,.24,1) both}
+.auth-panel>:nth-child(1){animation-delay:.35s}
+.auth-panel>:nth-child(2){animation-delay:.43s}
+.auth-panel>:nth-child(3){animation-delay:.51s}
+.auth-panel>:nth-child(4){animation-delay:.59s}
+.auth-panel>:nth-child(5){animation-delay:.67s}
+.auth-panel>:nth-child(6){animation-delay:.75s}
+.auth-panel>:nth-child(n+7){animation-delay:.83s}
+.auth-panel form>*{animation:auth-line .55s cubic-bezier(.22,.8,.24,1) both}
+.auth-panel form>:nth-child(1){animation-delay:.8s}
+.auth-panel form>:nth-child(2){animation-delay:.88s}
+.auth-panel form>:nth-child(3){animation-delay:.96s}
+.auth-panel form>:nth-child(n+4){animation-delay:1.04s}
+/* Campos ganham um contorno amarelo ao focar */
+.auth-panel input{transition:border-color .2s,box-shadow .25s}
+.auth-panel input:focus{border-color:#c9bc2a;box-shadow:0 0 0 4px #fdf15340;outline:none}
+/* Botões: Google sobe de leve; "Entrar" com brilho e seta que anda */
+.google-sign-in{transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.google-sign-in:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 24px #2823100f}
+.auth-submit{position:relative;overflow:hidden;transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.auth-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 14px 30px #e4d30040}
+.auth-submit svg{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.auth-submit:hover:not(:disabled) svg{transform:translate(3px,-3px)}
+.auth-submit:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,#ffffffa8,transparent);transform:skewX(-18deg);animation:auth-shine 5.5s ease-in-out 2s infinite;pointer-events:none}
+@keyframes auth-shine{0%,72%{left:-60%}100%{left:130%}}
+@media(prefers-reduced-motion:reduce){.auth-shell,.auth-shell *,.auth-shell :after{animation:none!important;transition:none!important}}
