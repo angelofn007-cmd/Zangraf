@@ -51,3 +51,37 @@ html[data-theme=dark] .google-sign-in:hover:not(:disabled){background:var(--zg-e
    e a rolagem não "estica" além do fim (efeito elástico do navegador). */
 html{background:#10100f;overscroll-behavior-y:none}
 body{overscroll-behavior-y:none;min-height:100dvh}
+/* ===================== Abertura do site ===================== */
+.zg-intro{display:none}
+html.zg-intro-play{overflow:hidden}
+html.zg-intro-play .zg-intro{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:var(--beige,#f5f0e6);cursor:pointer;animation:zg-intro-curtain .65s cubic-bezier(.76,0,.24,1) 1.7s forwards}
+html[data-theme=dark].zg-intro-play .zg-intro{background:#191918}
+.zg-intro-center{display:flex;flex-direction:column;align-items:center;gap:18px}
+.zg-intro-logo{width:min(220px,52vw);height:auto;animation:zg-intro-logo .8s cubic-bezier(.34,1.5,.64,1) .1s both}
+.zg-intro-rays,.zg-intro-edge{display:grid;grid-template-columns:repeat(5,1fr)}
+.zg-intro-rays{width:min(240px,56vw);height:5px;border-radius:5px;overflow:hidden}
+.zg-intro-rays i,.zg-intro-edge i{display:block;transform-origin:left;animation:zg-intro-ray .35s cubic-bezier(.22,.8,.24,1) both}
+.zg-intro-rays i:nth-child(1),.zg-intro-edge i:nth-child(1){background:#e8221e;animation-delay:.55s}
+.zg-intro-rays i:nth-child(2),.zg-intro-edge i:nth-child(2){background:#19b33a;animation-delay:.67s}
+.zg-intro-rays i:nth-child(3),.zg-intro-edge i:nth-child(3){background:#f5e21a;animation-delay:.79s}
+.zg-intro-rays i:nth-child(4),.zg-intro-edge i:nth-child(4){background:#1aa8e8;animation-delay:.91s}
+.zg-intro-rays i:nth-child(5),.zg-intro-edge i:nth-child(5){background:#e81aa5;animation-delay:1.03s}
+.zg-intro-tagline{font:italic 400 clamp(18px,2.4vw,24px)/1 Georgia,'Times New Roman',serif;letter-spacing:-.01em;color:#5a5c38;animation:zg-intro-text .7s cubic-bezier(.22,.8,.24,1) 1.05s both}
+html[data-theme=dark] .zg-intro-tagline{color:#c4bc9f}
+/* Faixa na borda de baixo da cortina: aparece quando ela sobe */
+.zg-intro-edge{position:absolute;left:0;right:0;bottom:0;height:6px}
+@keyframes zg-intro-logo{0%{opacity:0;transform:scale(.6) translateY(12px)}100%{opacity:1;transform:none}}
+@keyframes zg-intro-ray{from{transform:scaleX(0)}}
+@keyframes zg-intro-text{from{opacity:0;transform:translateY(10px);letter-spacing:.12em}}
+@keyframes zg-intro-curtain{to{transform:translateY(-100%)}}
+/* O conteúdo da página sobe junto quando a cortina abre */
+html.zg-intro-play main{animation:zg-intro-page .8s cubic-bezier(.22,.8,.24,1) 1.85s both}
+@keyframes zg-intro-page{from{opacity:.4;transform:translateY(24px)}}
+@media(prefers-reduced-motion:reduce){html.zg-intro-play .zg-intro{display:none}}
+/* Volta ao Home: faixa colorida fina passando pelo topo e página surgindo suave */
+.zg-home-sweep{display:none}
+html.zg-home-soft .zg-home-sweep{position:fixed;top:0;left:0;z-index:1000;display:block;width:100%;height:3px;background:linear-gradient(90deg,#e8221e 0 20%,#19b33a 20% 40%,#f5e21a 40% 60%,#1aa8e8 60% 80%,#e81aa5 80%);transform-origin:left;pointer-events:none;animation:zg-home-sweep 1.2s cubic-bezier(.22,.8,.24,1) both}
+@keyframes zg-home-sweep{0%{transform:scaleX(0);opacity:1}60%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+html.zg-home-soft main{animation:zg-home-in .9s cubic-bezier(.22,.8,.24,1) .1s both}
+@keyframes zg-home-in{from{opacity:0;transform:translateY(14px)}}
+@media(prefers-reduced-motion:reduce){html.zg-home-soft .zg-home-sweep,html.zg-home-soft main{animation:none}}

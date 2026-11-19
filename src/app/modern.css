@@ -257,3 +257,130 @@ html[data-theme=dark] .zg-home .zg-category-strip>a>.zg-cat-icon{background:var(
 .zg-gallery-row{display:block}
 @media(max-width:1100px){.zg-detail-story{padding-right:150px}.zg-detail-story>.zg-camera{width:140px;right:0}}
 @media(max-width:600px){.zg-detail-story{padding-right:0}}
+
+/* ===================== Carrinho: visual moderno e animações ===================== */
+.zg-cart-page{position:relative;isolation:isolate;max-width:1280px}
+.zg-cart-page:before{content:'';position:absolute;z-index:-1;top:-30px;right:0;width:44%;height:380px;background:radial-gradient(ellipse at 75% 25%,#fdf15330,transparent 66%);pointer-events:none}
+/* Cabeçalho no tema do site */
+.zg-cart-head{animation:zg-rise .7s cubic-bezier(.22,.8,.24,1) both}
+.zg-cart-head>*{animation:zg-rise .7s cubic-bezier(.22,.8,.24,1) both}
+.zg-cart-head>h1{animation-delay:.08s}.zg-cart-head>p{animation-delay:.15s}
+.zg-cart-head .zg-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;border:1px solid var(--line);border-radius:30px;background:#ffffffa6}
+.zg-cart-head .zg-eyebrow>i{width:7px;height:7px;border-radius:50%;background:#5a5c38;box-shadow:0 0 0 4px #5a5c381f}
+.zg-cart-head h1{margin:18px 0 14px;font-size:clamp(34px,4.4vw,56px);line-height:1.03;letter-spacing:-.04em}
+.zg-cart-page .zg-cart-head h1 em{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;letter-spacing:-.02em;color:#5a5c38}
+.zg-cart-head p{max-width:460px;font-size:15px;color:var(--muted);padding-left:16px;border-left:2px solid #fdf153}
+
+/* Itens do carrinho em cartões */
+.zg-cart-page .zg-cart-layout{margin-top:40px}
+.zg-cart-page .zg-cart-items{display:flex;flex-direction:column;gap:16px}
+.zg-cart-page .zg-cart-item{grid-template-columns:130px minmax(0,1fr);gap:22px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:20px;background:#ffffffb3;backdrop-filter:blur(6px);animation:zg-card-in .6s cubic-bezier(.22,.8,.24,1) both;animation-delay:calc(.2s + var(--i,0)*80ms);transition:transform .35s cubic-bezier(.34,1.4,.64,1),box-shadow .35s,border-color .25s}
+.zg-cart-page .zg-cart-item:hover{transform:translateY(-3px);border-color:#d9d2bf;box-shadow:0 18px 40px #28231014}
+.zg-cart-page .zg-cart-picture{border-radius:14px;overflow:hidden;aspect-ratio:1}
+.zg-cart-page .zg-cart-picture>*{transition:transform .7s cubic-bezier(.22,.8,.24,1)}
+.zg-cart-page .zg-cart-item:hover .zg-cart-picture>*{transform:scale(1.06)}
+.zg-cart-page .zg-cart-item h2{font-size:21px;letter-spacing:-.02em}
+.zg-cart-page .zg-cart-diagram{border-bottom-color:#c9bc6a;color:#6a6a4a;transition:gap .25s,color .2s}
+.zg-cart-page .zg-cart-diagram:hover{gap:13px;color:#4a4a2c}
+/* Quantidade e remover */
+.zg-cart-page .zg-cart-quantity{gap:4px;padding:3px;border:1px solid var(--line);border-radius:30px;background:#fff}
+.zg-cart-page .zg-cart-quantity button{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:var(--ink);transition:background .2s,transform .2s}
+.zg-cart-page .zg-cart-quantity button:hover:not(:disabled){background:#fdf153;transform:scale(1.08)}
+.zg-cart-page .zg-cart-quantity button:disabled{opacity:.3}
+.zg-cart-page .zg-cart-quantity>span{min-width:22px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
+.zg-cart-page .zg-cart-remove{border-radius:20px;padding:7px 12px;transition:background .2s,color .2s}
+.zg-cart-page .zg-cart-remove:hover{background:#fbe7e3;color:#c7372f}
+.zg-cart-page .zg-cart-line-price{font-size:17px;font-weight:600;letter-spacing:-.02em}
+
+/* Resumo: cartão claro, fixo ao rolar, com a câmera e botão amarelo com brilho */
+.zg-cart-page .zg-order-summary{position:sticky;top:96px;overflow:hidden;padding:30px;border:1px solid var(--line);border-radius:24px;background:#fffdf7;box-shadow:0 20px 50px #2823100d;animation:zg-slide-right .8s cubic-bezier(.22,.8,.24,1) .15s both}
+.zg-cart-page .zg-order-summary .zg-eyebrow{color:#5a5c38}
+.zg-cart-page .zg-order-summary h2{margin:12px 0 22px;font-size:30px;letter-spacing:-.03em}
+.zg-cart-page .zg-order-summary dl{display:flex;flex-direction:column;gap:2px}
+.zg-cart-page .zg-order-summary dl>div{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px}
+.zg-cart-page .zg-order-summary dt{color:var(--muted)}
+.zg-cart-page .zg-order-summary dd{margin:0;font-weight:500}
+.zg-cart-page .zg-cart-total{align-items:baseline;padding:20px 0 6px;border:0}
+.zg-cart-page .zg-cart-total>span{font-size:14px;color:var(--muted)}
+.zg-cart-page .zg-cart-total>strong{font-size:28px;letter-spacing:-.03em}
+.zg-cart-page .zg-order-summary>p{font-size:12px;line-height:1.6;color:var(--muted);margin:4px 0 18px}
+.zg-cart-page .zg-order-summary .zg-button{position:relative;overflow:hidden;width:100%;justify-content:center;min-height:54px;border-radius:16px;font-size:14px;box-shadow:0 10px 26px #e4d30033;transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.zg-cart-page .zg-order-summary .zg-button:hover{transform:translateY(-2px);box-shadow:0 16px 34px #e4d30044}
+.zg-cart-page .zg-order-summary .zg-button svg{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.zg-cart-page .zg-order-summary .zg-button:hover svg{transform:translateX(5px)}
+.zg-cart-page .zg-order-summary .zg-button:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,#ffffffb0,transparent);transform:skewX(-18deg);animation:ss-shine 5.5s ease-in-out 1.2s infinite;pointer-events:none}
+.zg-cart-page .zg-quiet-link{display:inline-flex;align-items:center;gap:8px;justify-content:center;width:100%;margin-top:14px;font-size:13px;color:var(--muted);transition:color .2s,gap .2s}
+.zg-cart-page .zg-quiet-link:hover{color:var(--ink);gap:11px}
+/* Câmera decorativa no rodapé do resumo */
+.zg-cart-page .zg-order-summary>.zg-camera{display:block;width:120px;margin:22px auto -6px;opacity:.95}
+
+html[data-theme=dark] .zg-cart-page :is(.zg-cart-item,.zg-order-summary,.zg-cart-head .zg-eyebrow){background:var(--zg-surface);border-color:var(--line)}
+html[data-theme=dark] .zg-cart-page .zg-cart-head h1 em,html[data-theme=dark] .zg-cart-page .zg-order-summary .zg-eyebrow{color:#c4bc9f}
+html[data-theme=dark] .zg-cart-page .zg-cart-quantity{background:var(--zg-elevated)}
+@media(max-width:900px){.zg-cart-page .zg-order-summary{position:static}.zg-cart-page:before{width:100%}}
+@media(max-width:600px){.zg-cart-page .zg-cart-item{grid-template-columns:88px minmax(0,1fr);gap:14px;padding:12px}.zg-cart-page .zg-cart-item h2{font-size:18px}.zg-cart-page .zg-camera{display:none}}
+@media(prefers-reduced-motion:reduce){.zg-cart-page *{animation:none!important}}
+
+/* ===================== Pagamento ===================== */
+.zg-pay-page .zg-cart-head h1{margin-bottom:12px}
+.zg-pay-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:36px;align-items:start;margin-top:36px}
+/* Etapas */
+.zg-pay-steps{display:flex;gap:10px;margin:0 0 18px;padding:0;list-style:none}
+.zg-pay-steps li{display:flex;align-items:center;gap:9px;padding:8px 16px 8px 8px;border:1px solid var(--line);border-radius:30px;background:#ffffffa6;font-size:13px;font-weight:600;color:var(--muted);transition:background .3s,color .3s,border-color .3s}
+.zg-pay-steps li>span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--beige);font-size:11.5px;transition:background .3s,color .3s}
+.zg-pay-steps li.is-done{color:var(--ink)}
+.zg-pay-steps li.is-done>span{background:#252720;color:#fdf153}
+.zg-pay-steps li[aria-current=step]{border-color:#e6d634;background:#fffbe0}
+/* Cartão da etapa */
+.zg-pay-card{padding:28px;border:1px solid var(--line);border-radius:24px;background:#ffffffc4;backdrop-filter:blur(6px);animation:zg-card-in .55s cubic-bezier(.22,.8,.24,1) both}
+.zg-pay-card h2{display:flex;align-items:center;gap:10px;margin:0 0 20px;font-size:22px;letter-spacing:-.02em}
+.zg-pay-card h2 svg{color:#5a5c38}
+.zg-pay-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.zg-pay-fields label{display:flex;flex-direction:column;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink);animation:zg-rise .5s cubic-bezier(.22,.8,.24,1) both}
+.zg-pay-fields label.wide{grid-column:1/-1}
+.zg-pay-fields label small{font-weight:400;color:var(--muted)}
+.zg-pay-fields :is(input,textarea){width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:14px;font-weight:400;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.zg-pay-fields :is(input,textarea):focus{outline:none;border-color:#c9bc2a;box-shadow:0 0 0 4px #fdf15340}
+.zg-pay-fields textarea{resize:vertical}
+/* Formas de pagamento */
+.zg-pay-methods{display:flex;flex-direction:column;gap:10px}
+.zg-pay-method{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;text-align:left;color:var(--ink);animation:zg-rise .5s cubic-bezier(.22,.8,.24,1) both;animation-delay:calc(var(--i,0)*70ms);transition:border-color .25s,background .25s,box-shadow .3s,transform .3s cubic-bezier(.34,1.4,.64,1)}
+.zg-pay-method:hover{transform:translateY(-2px);box-shadow:0 10px 24px #2823100f}
+.zg-pay-method.is-active{border-color:#d9c900;background:#fffbe0;box-shadow:0 0 0 3px #fdf15340}
+.zg-pay-method-icon{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:13px;background:var(--beige);color:#5a5c38;transition:background .3s,color .3s,transform .4s cubic-bezier(.34,1.6,.64,1)}
+.zg-pay-method.is-active .zg-pay-method-icon{background:#252720;color:#fdf153;transform:rotate(-6deg)}
+.zg-pay-method-copy{flex:1;display:flex;flex-direction:column;gap:2px}
+.zg-pay-method-copy strong{font-size:15px}
+.zg-pay-method-copy small{font-size:12.5px;color:var(--muted)}
+.zg-pay-radio{flex-shrink:0;width:20px;height:20px;border:2px solid #cfc8b2;border-radius:50%;transition:border-color .25s,box-shadow .3s}
+.zg-pay-method.is-active .zg-pay-radio{border-color:#252720;box-shadow:inset 0 0 0 4px #fff,inset 0 0 0 10px #252720}
+.zg-pay-note{display:flex;align-items:flex-start;gap:8px;margin:16px 0 0;padding:12px 14px;border-radius:12px;background:var(--beige);font-size:12.5px;line-height:1.55;color:var(--muted)}
+.zg-pay-note svg{flex-shrink:0;margin-top:2px;color:#4f8a4b}
+.zg-pay-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:24px}
+.zg-pay-actions .back{display:inline-flex;align-items:center;gap:8px;border:0;background:none;font-size:13px;color:var(--muted);cursor:pointer}
+.zg-pay-actions .back:hover{color:var(--ink)}
+.zg-pay-actions .zg-button{min-height:52px;padding:0 26px;border-radius:16px;font-size:14px;box-shadow:0 10px 26px #e4d30033}
+.zg-pay-actions .zg-button:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
+.zg-pay-actions .zg-button svg{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.zg-pay-actions .zg-button:hover:not(:disabled) svg{transform:translateX(5px)}
+/* Resumo com miniaturas */
+.zg-pay-items{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;padding:0;list-style:none}
+.zg-pay-items li{display:flex;align-items:center;gap:12px;animation:zg-rise .5s cubic-bezier(.22,.8,.24,1) both;animation-delay:calc(.3s + var(--i,0)*70ms)}
+.zg-pay-thumb{position:relative;flex-shrink:0;width:52px;height:52px;overflow:hidden;border-radius:12px;background:#ebe5d9}
+.zg-pay-item-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.zg-pay-item-copy strong{overflow:hidden;font-size:13.5px;white-space:nowrap;text-overflow:ellipsis}
+.zg-pay-item-copy small{font-size:12px;color:var(--muted)}
+/* Confirmação */
+.zg-pay-done{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:520px;margin:44px auto 0;padding:40px 32px;border:1px solid var(--line);border-radius:28px;background:#fffdf7;text-align:center;box-shadow:0 24px 60px #2823100f;animation:zg-card-in .7s cubic-bezier(.22,.8,.24,1) both}
+.zg-pay-done-icon{display:grid;place-items:center;width:78px;height:78px;border-radius:50%;background:#fffbe0;color:#4f8a4b;box-shadow:0 0 0 8px #fdf15333;animation:zg-check .7s cubic-bezier(.34,1.8,.64,1) .2s both}
+@keyframes zg-check{from{opacity:0;transform:scale(.3) rotate(-30deg)}}
+.zg-pay-done h2{margin:6px 0 0;font-size:30px;letter-spacing:-.03em}
+.zg-pay-done p{max-width:400px;font-size:14px;line-height:1.7;color:var(--muted)}
+.zg-pay-done-total{display:flex;align-items:baseline;justify-content:space-between;width:100%;padding:16px 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:6px 0 10px}
+.zg-pay-done-total span{font-size:13px;color:var(--muted)}
+.zg-pay-done-total strong{font-size:24px;letter-spacing:-.03em}
+.zg-pay-done .zg-button{min-height:52px;padding:0 26px;border-radius:16px}
+html[data-theme=dark] .zg-pay-page :is(.zg-pay-card,.zg-pay-method,.zg-pay-steps li,.zg-pay-done){background:var(--zg-surface);border-color:var(--line)}
+html[data-theme=dark] .zg-pay-fields :is(input,textarea){background:var(--zg-elevated);color:var(--ink)}
+@media(max-width:900px){.zg-pay-layout{grid-template-columns:1fr}.zg-pay-summary{position:static!important}}
+@media(max-width:600px){.zg-pay-fields{grid-template-columns:1fr}.zg-pay-card{padding:20px}.zg-pay-actions{flex-direction:column-reverse;align-items:stretch}.zg-pay-actions .zg-button{justify-content:center}}

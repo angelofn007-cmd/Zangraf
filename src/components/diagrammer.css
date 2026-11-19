@@ -921,3 +921,65 @@ html[data-theme] .dm-studio .zg-logo-day{display:block!important}
 .dm-strip-wrap.is-collapsed>.dm-filmstrip>button:hover{transform:translateY(-2px)}
 @media(max-width:600px){.dm-strip-toggle>span{display:none}.dm-strip-toggle{padding:0 8px}}
 @media(prefers-reduced-motion:reduce){.dm-filmstrip>button,.dm-filmstrip .dm-thumb,.dm-strip-toggle svg{transition:none}}
+
+/* ===================== Revisar álbum: mais simples, com animações ===================== */
+.dm-export-popover{animation:dm-notice-pop .4s cubic-bezier(.34,1.45,.64,1) both}
+.dm-export-popover>*{animation:dm-tab-content .45s cubic-bezier(.22,.8,.24,1) both}
+.dm-export-popover>:nth-child(2){animation-delay:.05s}
+.dm-export-popover>:nth-child(3){animation-delay:.1s}
+.dm-export-popover>:nth-child(n+4){animation-delay:.15s}
+.dm-check-summary{transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.dm-check-summary>svg{animation:dm-check .5s cubic-bezier(.34,1.8,.64,1) .2s both}
+.dm-check-summary.warning>svg,.dm-check-summary.error>svg{animation:dm-check .5s cubic-bezier(.34,1.8,.64,1) .2s both,dm-notice-blink 2s ease-in-out 1s infinite}
+.dm-check-group{animation:dm-tab-content .45s cubic-bezier(.22,.8,.24,1) both;transition:border-color .2s,box-shadow .3s}
+.dm-check-group:hover{border-color:var(--dm-line-strong);box-shadow:var(--dm-shadow-sm)}
+.dm-check-group summary i{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.dm-check-group[open] summary i{transform:scale(1.3)}
+.dm-check-group li button svg{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.dm-check-group li button:hover svg{transform:translateX(3px)}
+.dm-preview-link{display:inline-flex;align-items:center;gap:7px;justify-content:center;width:100%;margin-top:4px;color:var(--dm-muted)}
+.dm-preview-link:hover{color:var(--dm-ink)}
+.dm-export-popover .dm-button.primary svg{transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.dm-export-popover .dm-button.primary:hover:not(:disabled) svg{transform:translateX(4px)}
+@media(prefers-reduced-motion:reduce){.dm-export-popover,.dm-export-popover *{animation:none!important}}
+
+/* ===================== Revisar álbum: visual no estilo do site ===================== */
+.dm-export-popover{border-radius:18px;padding:22px 22px 24px}
+.dm-export-popover .dm-panel-title h2{font:500 22px/1.2 Georgia,'Times New Roman',serif;color:var(--dm-ink)}
+/* Cartão de resumo da checagem, com a cor do estado */
+.dm-check-summary{gap:13px;align-items:center;padding:15px 16px;border-radius:14px;border:1px solid var(--dm-line)}
+.dm-check-summary.ok{background:#eef4ea;border-color:#cfe0c6}
+.dm-check-summary.warning{background:#fffbe2;border-color:#f0e39a}
+.dm-check-summary.error{background:#fdeee9;border-color:#f0c3b9}
+/* Ícone vira um selo redondo (corrige o quadrado vermelho) */
+.dm-check-summary>svg{flex-shrink:0;box-sizing:content-box;width:20px;height:20px;padding:9px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #25272018;animation:dm-check .5s cubic-bezier(.34,1.8,.64,1) .2s both!important}
+.dm-check-summary.ok>svg{color:#4f8a4b}
+.dm-check-summary.warning>svg{color:#b8920a}
+.dm-check-summary.error>svg{color:#c7372f}
+.dm-check-summary.warning>svg,.dm-check-summary.error>svg{animation:dm-check .5s cubic-bezier(.34,1.8,.64,1) .2s both,dm-summary-pulse 2.2s ease-in-out 1s infinite!important}
+@keyframes dm-summary-pulse{0%,100%{box-shadow:0 1px 3px #25272018,0 0 0 0 currentColor}45%{box-shadow:0 1px 3px #25272018,0 0 0 6px color-mix(in srgb,currentColor 22%,transparent)}70%{box-shadow:0 1px 3px #25272018,0 0 0 10px transparent}}
+.dm-check-summary strong{font-size:14px}
+/* Grupos de alerta como cartões com a bolinha do estado */
+.dm-check-group{border-radius:12px}
+.dm-check-group summary{padding:13px 14px;font-size:13px}
+.dm-check-group summary i{width:9px;height:9px;box-shadow:0 0 0 3px color-mix(in srgb,#f2c230 30%,transparent)}
+.dm-check-group.error summary i{box-shadow:0 0 0 3px color-mix(in srgb,#c7372f 28%,transparent)}
+.dm-check-group summary em{background:var(--dm-soft);color:var(--dm-muted)}
+.dm-check-group[open]{border-color:var(--dm-line-strong)}
+/* Botão principal com um leve brilho amarelo, como no site */
+.dm-export-popover .dm-button.primary{position:relative;overflow:hidden;min-height:50px;border-radius:14px;font-size:14px!important;box-shadow:0 8px 22px #e4d30030}
+.dm-export-popover .dm-button.primary:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,#ffffff9c,transparent);transform:skewX(-18deg);animation:ss-shine 6s ease-in-out 1.5s infinite;pointer-events:none}
+.dm-export-popover .dm-button.primary:disabled:after{display:none}
+.dm-preview-link{margin-top:10px;font-size:12.5px}
+/* Aprovação do cliente: faixa com fundo suave e selo */
+.dm-approval{margin-top:20px;padding:16px;border-top:0;border-radius:14px;background:var(--dm-soft)}
+.dm-approval-head h3{font:500 15px Georgia,serif}
+.dm-approval>p{font-size:12px;line-height:1.6;color:var(--dm-muted)}
+.dm-approval a.dm-button,.dm-approval>button.dm-button{border-radius:12px}
+html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check-summary.ok{background:#27321f;border-color:#3f5133}
+
+/* Título "Revisar" com acabamento no estilo do site */
+.dm-review-title{align-items:flex-start;margin-bottom:16px}
+.dm-review-title h2{position:relative;font:400 30px/1 'Playfair Display',Georgia,serif!important;letter-spacing:-.01em;color:var(--dm-ink);padding-bottom:12px}
+.dm-review-title h2:before{content:'FINALIZAR';display:block;margin-bottom:9px;font:600 10px/1 Arial,Helvetica,sans-serif;letter-spacing:.22em;color:var(--dm-accent)}
+.dm-review-title h2:after{content:'';position:absolute;left:0;bottom:0;width:46px;height:3px;border-radius:3px;background:var(--dm-yellow)}

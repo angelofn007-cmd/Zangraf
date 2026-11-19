@@ -46,10 +46,10 @@ test('Mesma foto usada duas vezes (ou o mesmo arquivo importado de novo) é apon
  assert.match(dup[0].detail,/Lâmina 1/);
 });
 
-test('Foto atravessando a dobra: aviso para conferir quando não se sabe dos rostos',()=>{
+test('Foto atravessando a dobra não gera aviso quando não se sabe dos rostos',()=>{
  const project=album();
  project.spreads=[{...createSpread('inteira'),slots:[slot('a')]}];
- assert.deepEqual(kinds(checkAlbum(project)),['fold-photo']);
+ assert.deepEqual(kinds(checkAlbum(project)),[]);
 });
 
 test('Rosto no meio da foto que atravessa a dobra é erro; rosto do lado não é',()=>{

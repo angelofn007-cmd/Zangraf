@@ -81,7 +81,7 @@ export function checkAlbum(project:LayoutProject,faces?:FaceLookup):AlbumIssue[]
     const yTop=crop.y/photo.height,yBottom=(crop.y+crop.height)/photo.height;
     if(known.some(face=>face.x>=band[0]&&face.x<=band[1]&&face.y>=yTop&&face.y<=yBottom))
      issues.push({kind:'fold-face',level:'error',page,frame,detail:photo.name});
-   }else issues.push({kind:'fold-photo',level:'warning',page,frame,detail:photo.name});
+   }
   });
   for(const text of spread.texts||[]){
    if(!text.text.trim()||text.rotation===90)continue;

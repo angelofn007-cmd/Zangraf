@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zangraf</title>
+<style>body{margin:0;background:#f5f0e7;color:#28241f;font:16px/1.6 system-ui}p{display:none;padding:40px;text-align:center}</style>
+<p id="aviso">O site local ainda não iniciou. Rode a tarefa <strong>Zangraf: iniciar site local</strong> no VS Code.</p>
+<script>
+// "Go Live" abre esta página só para levar direto ao site Next.js.
+const SITE = 'http://127.0.0.1:3000/';
+let tentativas = 0;
+async function abrir() {
+  try {
+    await fetch(SITE, { mode: 'no-cors', cache: 'no-store' });
+    location.replace(SITE);
+  } catch {
+    if (++tentativas === 20) document.getElementById('aviso').style.display = 'block';
+    setTimeout(abrir, 1000);
+  }
+}
+abrir();
+</script>
+</html>
