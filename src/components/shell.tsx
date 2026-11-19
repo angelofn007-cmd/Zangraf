@@ -27,7 +27,8 @@ export function Header({adminAuthorized = false}: {adminAuthorized?: boolean}) {
       frame = 0;
       const header = headerRef.current, footer = document.querySelector('.zg-foot');
       if (!header) return;
-      const push = footer ? Math.max(0, header.offsetHeight - footer.getBoundingClientRect().top) : 0;
+      // Rodapé escondido (ex.: login) não empurra o cabeçalho.
+      const push = footer && (footer as HTMLElement).offsetParent !== null ? Math.max(0, header.offsetHeight - footer.getBoundingClientRect().top) : 0;
       header.style.transform = push ? `translateY(${-Math.min(push, header.offsetHeight)}px)` : '';
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };

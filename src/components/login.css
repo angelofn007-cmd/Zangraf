@@ -119,3 +119,8 @@ html[data-theme=dark] .auth-error{background:#3a211b;border-color:#7a4034;color:
  .auth-panel{min-height:0;overflow-y:auto;scrollbar-width:none}
  .auth-panel::-webkit-scrollbar{display:none}
 }
+/* Cartão um pouco mais estreito, com respiro em volta e sempre no centro */
+@media (min-width:861px) and (min-height:560px){
+ body:has(.auth-shell) main>.section{max-width:1040px}
+ .auth-shell{height:min(640px,100%);margin:auto}
+}
