@@ -36,7 +36,7 @@ export function Login({register=false,enabled=true,googleEnabled=false,googleErr
       router.push(destination);router.refresh();
     }catch{setError('Não foi possível conectar. Confira sua conexão e tente novamente.')}finally{setPending(false)}
   }
-  return <div className="auth-shell">
+  return <><Link href="/" className="auth-home" aria-label="Voltar para a página inicial da Zangraf"><Image className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={120} height={65}/><Image className="zg-logo-night" src="/brand/zangraf-noturno.png" alt="Zangraf" width={120} height={65}/></Link><div className="auth-shell">
     <aside className="auth-visual">
       <Image src="/images/zangraf-editorial.png" alt="" fill sizes="(max-width:860px) 100vw, 50vw" preload/>
       <span className="auth-visual-tag"><span/> DO PRIMEIRO CLIQUE À ÚLTIMA PÁGINA</span>
@@ -70,7 +70,7 @@ export function Login({register=false,enabled=true,googleEnabled=false,googleErr
         <p className="form-switch">{register?'Já tem uma conta?':'Primeira vez aqui?'} <Link className="text-link" href={(register?'/entrar':'/criar-conta')+'?destino='+encodeURIComponent(destination)}>{register?'Entrar':'Criar uma conta'}</Link></p>
       </>}
     </div>
-  </div>;
+  </div></>;
 }
 export function SignOut(){const router=useRouter();const [pending,setPending]=useState(false);const [error,setError]=useState('');return <><button className="back" disabled={pending} onClick={async()=>{setPending(true);try{const result=await authClient.signOut();if(result.error)throw new Error();router.push('/entrar');router.refresh()}catch{setError('Não foi possível sair. Tente novamente.')}finally{setPending(false)}}}>{pending?'Saindo…':'Sair da conta'}</button>{error&&<p role="alert">{error}</p>}</>}
 

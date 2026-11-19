@@ -124,3 +124,17 @@ html[data-theme=dark] .auth-error{background:#3a211b;border-color:#7a4034;color:
  body:has(.auth-shell) main>.section{max-width:1040px}
  .auth-shell{height:min(640px,100%);margin:auto}
 }
+
+/* ===================== Login sem o cabeçalho do site ===================== */
+body:has(.auth-shell) .zg-header{display:none}
+/* Logo pequeno no canto, para voltar ao site (entra com animação, como o resto da tela) */
+.auth-home{position:fixed;top:clamp(14px,2.4vh,24px);left:clamp(16px,2.4vw,32px);z-index:20;display:block;animation:auth-slide .7s cubic-bezier(.34,1.4,.64,1) .2s both;transition:transform .3s cubic-bezier(.34,1.6,.64,1),opacity .2s}
+.auth-home img{display:block;width:clamp(92px,8vw,118px);height:auto}
+.auth-home:hover{transform:translateY(-2px) scale(1.03)}
+/* O cartão cresce até caber todo o conteúdo (nada cortado) e continua no centro */
+@media (min-width:861px) and (min-height:560px){
+ body:has(.auth-shell) main{padding-top:clamp(56px,8vh,84px)!important;padding-bottom:clamp(16px,3vh,32px)!important}
+ .auth-shell{height:auto;max-height:100%}
+}
+@media(max-width:860px){.auth-home{position:static;margin:14px auto 0;width:max-content}}
+@media(prefers-reduced-motion:reduce){.auth-home{animation:none}}
