@@ -1,5 +1,6 @@
 import {getDatabase} from '@/lib/server/db';
 import {AdminError, adminError, adminResponse, readAdminBody, requireAdmin} from '@/lib/server/admin-access';
+import {isOwnerEmail} from '@/lib/admin-owner';
 export async function GET(request: Request) {
   try {
     await requireAdmin();
@@ -21,6 +22,14 @@ export async function PATCH(request: Request) {
       // Recheck after the membership lock, so a revoked session cannot race a grant.
       const acting = await client.query('SELECT user_id FROM zangraf_admins WHERE user_id=$1', [session.user.id]);
       if (!acting.rowCount) throw new AdminError('Seu acesso administrativo foi removido.',403);
+      // Remover o acesso de um administrador é exclusivo do administrador principal.
+      if (!body.admin) {
+        const me = await client.query('SELECT email FROM "user" WHERE id=$1', [session.user.id]);
+        if (!isOwnerEmail(me.rows[0]?.email)) throw new AdminError('Somente o administrador principal pode remover acessos.', 403);
+        // O administrador principal nunca perde o acesso, nem por ele mesmo.
+        const target = await client.query('SELECT email FROM "user" WHERE id=$1', [body.userId]);
+        if (isOwnerEmail(target.rows[0]?.email)) throw new AdminError('O administrador principal não pode ser removido.', 403);
+      }
       const user = await client.query('SELECT id FROM "user" WHERE id=$1', [body.userId]);
       if (!user.rowCount) throw new AdminError('Conta não encontrada. O novo perfil precisa se cadastrar primeiro.',404);
       if (body.admin) await client.query('INSERT INTO zangraf_admins(user_id,granted_by) VALUES($1,$2) ON CONFLICT(user_id) DO NOTHING',[body.userId,session.user.id]);
