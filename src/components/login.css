@@ -105,3 +105,17 @@ html[data-theme=dark] .auth-error{background:#3a211b;border-color:#7a4034;color:
 .auth-submit:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,#ffffffa8,transparent);transform:skewX(-18deg);animation:auth-shine 5.5s ease-in-out 2s infinite;pointer-events:none}
 @keyframes auth-shine{0%,72%{left:-60%}100%{left:130%}}
 @media(prefers-reduced-motion:reduce){.auth-shell,.auth-shell *,.auth-shell :after{animation:none!important;transition:none!important}}
+
+/* ===================== Login travado e centralizado (computador) ===================== */
+@media (min-width:861px) and (min-height:560px){
+ html:has(.auth-shell),body:has(.auth-shell){height:100dvh;overflow:hidden;overscroll-behavior:none}
+ body:has(.auth-shell){display:flex;flex-direction:column}
+ body:has(.auth-shell) main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:clamp(12px,2.5vh,28px) 5%!important;border-radius:0;overflow:hidden}
+ body:has(.auth-shell) main>.section{width:100%;height:100%;max-width:1120px;margin:0 auto;padding:0;display:flex;align-items:center}
+ /* O cartão cabe sempre na altura da tela */
+ .auth-shell{width:100%;min-height:0;height:min(700px,100%);max-height:100%}
+ .auth-visual{min-height:0}
+ /* Se a tela for baixa, só o formulário rola por dentro, sem mexer a página */
+ .auth-panel{min-height:0;overflow-y:auto;scrollbar-width:none}
+ .auth-panel::-webkit-scrollbar{display:none}
+}
