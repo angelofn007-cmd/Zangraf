@@ -1032,3 +1032,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(max-width:1300px){.dm-studio .dm-toast{top:auto;bottom:178px}.dm-studio:has(.dm-side-notice:not(.is-leaving)) .dm-toast{bottom:330px;top:auto}}
 @media(max-width:600px){.dm-studio .dm-toast{right:8px;width:calc(100% - 16px);bottom:150px}}
 @media(prefers-reduced-motion:reduce){.dm-toast-timer{animation:dm-notice-countdown 8s linear both!important}.dm-studio .dm-toast{animation:none}}
+/* O tempo da contagem vem do tamanho do texto (definido no próprio aviso) */
+@media(prefers-reduced-motion:reduce){.dm-toast-timer{animation-name:dm-notice-countdown!important;animation-timing-function:linear!important}}
