@@ -1091,3 +1091,12 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-select-toggle[aria-pressed=true]{border-color:var(--dm-ink);background:var(--dm-ink);color:#fff}
 .dm-studio .dm-photos{margin-top:6px}
 @media(max-width:800px){.dm-photo-actions{grid-template-columns:1fr}}
+/* Modo "Substituir foto": aviso no painel e quadro escolhido destacado */
+.dm-replace-banner{display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px 8px 12px 14px;border:1px solid #e6d634;border-radius:12px;background:#fffbe0;animation:dm-notice-rise .45s cubic-bezier(.34,1.45,.64,1) both}
+.dm-replace-banner>svg{flex-shrink:0;margin-top:2px;color:#8f7f00;animation:dm-sparkle 2s ease-in-out infinite}
+.dm-replace-banner>span{flex:1;display:flex;flex-direction:column;gap:2px;font-size:12px;line-height:1.45;color:var(--dm-muted)}
+.dm-replace-banner strong{font-size:13px;color:var(--dm-ink)}
+.dm-replace-banner .dm-icon{width:28px;height:28px}
+.dm-studio:has(.dm-replace-banner) .zg-frame.is-selected{outline:3px solid #fdf153;outline-offset:-3px;animation:dm-replace-pulse 1.4s ease-in-out infinite}
+@keyframes dm-replace-pulse{50%{outline-color:#e4d300}}
+.dm-studio:has(.dm-replace-banner) .dm-photo>button:first-child{cursor:copy}
