@@ -1142,3 +1142,10 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photos-masonry>.dm-photo>button[aria-pressed=true]{outline:3px solid #e4d300;outline-offset:2px}
 .dm-photos-empty{margin:4px 0 0;font-size:13px;color:var(--dm-muted);text-align:center}
 .dm-studio .dm-panel-title>span:empty{display:none}
+
+/* Iluminação em volta dos botões do topo (Finalizar continua o principal) */
+.dm-topbar .dm-button:not(.primary):not(.dm-save-button){background:#fff;border:1px solid var(--dm-line-strong);box-shadow:0 0 0 0 #fdf15300,0 0 14px #fdf1532e;animation:dm-preview-halo 3.4s ease-in-out 2s infinite}
+@keyframes dm-preview-halo{0%,100%{box-shadow:0 0 0 0 #fdf15300,0 0 12px #fdf15326}50%{box-shadow:0 0 0 3px #fdf15333,0 0 20px #fdf15347}}
+.dm-topbar .dm-button:not(.primary):not(.dm-save-button):hover:not(:disabled){border-color:#d9c900;box-shadow:0 0 0 3px #fdf15340,0 8px 22px #e4d30033}
+.dm-topbar .dm-button.primary{animation:dm-final-halo 2.6s ease-in-out 1s infinite}
+@keyframes dm-final-halo{0%,100%{box-shadow:0 2px 0 #d9c900,0 0 18px #fdf15370,0 0 0 0 #fdf15300}50%{box-shadow:0 2px 0 #d9c900,0 0 34px #fdf153b3,0 0 0 6px #fdf15355}}
