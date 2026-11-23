@@ -1000,3 +1000,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-multi-actions .dm-button.full{margin:6px 0 0}
 .dm-studio .dm-danger-button{border-color:#f0c3b9;background:#fff;color:#c7372f;animation:dm-tab-content .3s ease both}
 .dm-studio .dm-danger-button:hover:not(:disabled){border-color:#c7372f;background:#fdeee9}
+/* Botão de layout e lixeira lado a lado */
+.dm-multi-row{display:flex;gap:8px;margin-top:6px}
+.dm-multi-row>.dm-button.full{flex:1;margin:0}
+.dm-studio .dm-danger-icon{flex-shrink:0;width:44px;height:auto;min-height:38px;border:1px solid #f0c3b9;border-radius:var(--dm-r-sm);background:#fff;color:#c7372f;animation:dm-check .35s cubic-bezier(.34,1.8,.64,1) both;transition:background .2s,border-color .2s,transform .2s}
+.dm-studio .dm-danger-icon:hover:not(:disabled){border-color:#c7372f;background:#fdeee9;color:#c7372f;transform:scale(1.05)}
