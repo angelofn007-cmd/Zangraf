@@ -1232,3 +1232,12 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photo.is-checked .dm-photo-image{box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--dm-gold)}
 .dm-studio .dm-photo.is-checked .dm-photo-image img{opacity:1}
 .dm-studio .dm-photos-rows{gap:10px;padding:3px}
+/* Sem reflexo nos botões de fotos: só os ícones têm animação */
+.dm-studio .dm-upload-main:after,.dm-studio .dm-upload-more:after{display:none}
+.dm-studio .dm-upload-main:hover:not(:disabled),.dm-studio .dm-upload-more:hover,.dm-studio .dm-upload-main:active:not(:disabled){transform:none}
+.dm-studio .dm-upload-main svg{animation:dm-upload-bob 2.6s ease-in-out 1s infinite}
+@keyframes dm-upload-bob{0%,60%,100%{transform:translateY(0)}75%{transform:translateY(-3px)}88%{transform:translateY(1px)}}
+.dm-studio .dm-upload-main:hover:not(:disabled) svg{animation-duration:1s}
+.dm-studio .dm-upload-more svg{transition:transform .35s cubic-bezier(.34,1.6,.64,1)}
+.dm-studio .dm-upload-more:hover svg{transform:rotate(90deg)}
+@media(prefers-reduced-motion:reduce){.dm-studio .dm-upload-main svg,.dm-studio .dm-upload-more svg{animation:none;transition:none}}
