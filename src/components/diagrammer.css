@@ -1057,3 +1057,16 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-topbar .dm-check-badge{animation:dm-badge-pulse 2s ease-in-out infinite}
 @keyframes dm-badge-pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 #c7372f00}50%{transform:scale(1.12);box-shadow:0 0 0 4px #c7372f33}}
 @media(prefers-reduced-motion:reduce){.dm-topbar .dm-button,.dm-topbar .dm-button *,.dm-topbar .dm-button:after{animation:none!important;transition:none!important}}
+
+/* Selos dos layouts ("Melhor para suas fotos", "Em uso"): centralizados e animados */
+.dm-studio .dm-layout-grid .dm-layout-flag{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:5px;align-self:center;width:auto;max-width:100%;margin:2px auto 0!important;padding:4px 10px;line-height:1.25;text-align:center;animation:dm-check .45s cubic-bezier(.34,1.8,.64,1) .15s both}
+.dm-studio .dm-layout-grid .dm-layout-flag svg{flex-shrink:0}
+.dm-studio .dm-layout-grid .dm-layout-flag.best{padding:5px 12px;box-shadow:0 4px 12px #e4d30040}
+/* Brilho que passa pelo selo e estrelinha que cintila */
+.dm-studio .dm-layout-grid .dm-layout-flag.best:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(100deg,transparent,#ffffffd0,transparent);transform:skewX(-18deg);animation:ss-shine 3.8s ease-in-out 1s infinite;pointer-events:none}
+.dm-studio .dm-layout-grid .dm-layout-flag.best svg{animation:dm-sparkle 2.4s ease-in-out infinite}
+@keyframes dm-sparkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.25) rotate(18deg)}}
+/* O cartão recomendado respira de leve */
+.dm-studio .dm-layout-grid>.dm-layout-card.is-best{animation:dm-best-breathe 3s ease-in-out 1s infinite}
+@keyframes dm-best-breathe{0%,100%{box-shadow:0 0 0 2px #fdf15355}50%{box-shadow:0 0 0 5px #fdf15340,0 10px 24px #e4d30026}}
+@media(prefers-reduced-motion:reduce){.dm-studio .dm-layout-grid .dm-layout-flag,.dm-studio .dm-layout-grid .dm-layout-flag *,.dm-studio .dm-layout-grid .dm-layout-flag:after,.dm-studio .dm-layout-grid>.dm-layout-card.is-best{animation:none!important}}
