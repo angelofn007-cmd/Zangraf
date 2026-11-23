@@ -1202,3 +1202,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photos-rows .dm-delete-photo{top:7px;right:7px}
 /* No celular os controles ficam sempre visíveis */
 @media(hover:none){.dm-studio .dm-photo-check{opacity:1}}
+/* Bolinhas sempre à vista (mostra que dá para marcar várias) e botões da seleção */
+.dm-studio .dm-photo-check{opacity:.9}
+.dm-studio .dm-multi-icon{flex-shrink:0;width:44px;height:auto;min-height:38px;border:1px solid var(--dm-line-strong);border-radius:var(--dm-r-sm);background:#fff;color:var(--dm-ink)}
+.dm-studio .dm-multi-icon:hover:not(:disabled){border-color:var(--dm-ink);background:var(--dm-soft)}

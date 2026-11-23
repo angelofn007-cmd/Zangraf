@@ -463,6 +463,22 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   setLayoutCount(slots.length);setSlotIndex(Math.max(0,slots.findIndex(s=>s.photoId===id)));setPhotoMode('crop');setTextId(undefined);setIconId(undefined);
   setNotice(`${slots.length} foto(s) na lâmina, no layout ${layout.name}, escolhido pelo formato das fotos. Veja outras composições em Layouts.`);
  }
+ /** Coloca várias fotos de uma vez na área aberta: primeiro nos quadros vazios, o resto ganha um layout que caiba tudo. */
+ function addPhotosToAlbum(ids:string[]){
+  const list=ids.filter(id=>project!.photos.some(p=>p.id===id));if(!list.length)return;
+  if(!spread){assignPhoto(list[0]);return;}
+  const slots=[...spread.slots];const queue=[...list];
+  for(let i=0;i<slots.length&&queue.length;i++)if(!slots[i].photoId)slots[i]={...emptySlot(),photoId:queue.shift()!};
+  let next:Spread={...spread,slots};let left=0;
+  if(queue.length){
+   const all=[...slots.filter(s=>s.photoId),...queue.map(id=>({...emptySlot(),photoId:id} as Slot))];
+   const fit=all.slice(0,10);left=all.length-fit.length;
+   const best=rankLayoutsForPhotos(photoLayouts(fit.length,currentRatio),fit.map(s=>aspectOf(s.photoId)),currentRatio,rankOptions(fit.map(s=>s.photoId)))[0];
+   if(best)next={...spread,layout:'livre',frames:best.layout.frames,slots:best.order.map(i=>fit[i]),spacing:spread.spacing||{...DEFAULT_SPACING}};
+  }
+  replaceSpread(next);setPickedPhotos([]);setSelectPhotos(false);setPhotoMode('crop');
+  setNotice(left?`${list.length-left} fotos na lâmina. ${left} não couberam (até 10 por lâmina) e continuam nas suas fotos.`:`${list.length} ${list.length===1?'foto colocada':'fotos colocadas'} na lâmina.`);
+ }
  /** Tira a foto de todos os quadros do álbum; ela continua na biblioteca para usar depois. */
  function unusePhoto(id:string){
   const clear=(slot:Slot)=>slot.photoId===id?{...emptySlot()}:slot;
@@ -700,7 +716,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        <button type="button" role="tab" aria-selected={filterUnused} onClick={()=>setFilterUnused(true)}>Não usadas{!!unusedCount&&<span>{unusedCount}</span>}</button>
        {selectPhotos&&<button type="button" className="dm-photo-tabs-done" onClick={()=>{setSelectPhotos(false);setPickedPhotos([])}}><Check size={14}/>Pronto</button>}
       </div>
-      {selectPhotos&&<div className="dm-multi-actions"><div className="dm-multi-head"><span>{pickedPhotos.length} {pickedPhotos.length===1?'selecionada':'selecionadas'}</span><button type="button" className="dm-link" onClick={()=>setPickedPhotos(pickedPhotos.length===project.photos.length?[]:project.photos.map(p=>p.id))}>{pickedPhotos.length===project.photos.length?'Limpar seleção':'Selecionar todas'}</button></div><div className="dm-multi-row"><button className="dm-button primary full" disabled={!pickedPhotos.length||pickedPhotos.length>10} onClick={()=>{setLayoutCount(pickedPhotos.length);setPanel('layouts')}}><LayoutTemplate size={16}/>{pickedPhotos.length>10?'Até 10 para layout':'Escolher layout'}</button>{!!pickedPhotos.length&&<button type="button" className="dm-icon dm-danger-icon" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} selecionadas`}`} onClick={()=>removePickedPhotos()}><Trash2 size={18}/></button>}</div></div>}<div className="dm-photos dm-photos-rows">{visiblePhotos.map(photo=>{
+      {selectPhotos&&<div className="dm-multi-actions"><div className="dm-multi-head"><span>{pickedPhotos.length} {pickedPhotos.length===1?'selecionada':'selecionadas'}</span><button type="button" className="dm-link" onClick={()=>setPickedPhotos(pickedPhotos.length===project.photos.length?[]:project.photos.map(p=>p.id))}>{pickedPhotos.length===project.photos.length?'Limpar seleção':'Selecionar todas'}</button></div><div className="dm-multi-row"><button className="dm-button primary full" disabled={busy||!pickedPhotos.length} onClick={()=>addPhotosToAlbum(pickedPhotos)}><Plus size={16}/>Adicionar ao álbum</button><button type="button" className="dm-icon dm-multi-icon" disabled={!pickedPhotos.length||pickedPhotos.length>10} aria-label="Escolher um layout para as fotos marcadas" title={pickedPhotos.length>10?"Para escolher layout, marque até 10":"Escolher layout para estas fotos"} onClick={()=>{setLayoutCount(pickedPhotos.length);setPanel('layouts')}}><LayoutTemplate size={18}/></button>{!!pickedPhotos.length&&<button type="button" className="dm-icon dm-danger-icon" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} selecionadas`}`} onClick={()=>removePickedPhotos()}><Trash2 size={18}/></button>}</div></div>}<div className="dm-photos dm-photos-rows">{visiblePhotos.map(photo=>{
        // Fileiras justificadas: largura proporcional ao formato, mesma altura na fileira, sem recorte.
        const ratio=photo.width&&photo.height?Math.max(.4,Math.min(3,photo.width/photo.height)):1.33;
        const used=usedIds.has(photo.id);const picked=pickedPhotos.includes(photo.id);
