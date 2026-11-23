@@ -404,3 +404,5 @@ html[data-theme=dark] .zg-pay-page :is(.zg-pay-approve){background:var(--zg-surf
  radial-gradient(ellipse 55% 65% at 10% 15%,rgba(234,221,198,.95),rgba(234,221,198,0) 72%),
  radial-gradient(ellipse 48% 58% at 90% 52%,rgba(253,236,90,.34),rgba(253,236,90,0) 72%),
  radial-gradient(ellipse 45% 40% at 58% 105%,rgba(253,236,90,.16),rgba(253,236,90,0) 70%)}
+/* Brilho que passa nos botões principais (usado no carrinho, revisão e diagramador) */
+@keyframes ss-shine{0%,70%{left:-60%}100%{left:130%}}

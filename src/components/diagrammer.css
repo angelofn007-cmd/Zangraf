@@ -1036,3 +1036,24 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(prefers-reduced-motion:reduce){.dm-toast-timer{animation-name:dm-notice-countdown!important;animation-timing-function:linear!important}}
 .dm-toast-timer{animation-duration:.6s,var(--toast-time,8s)}
 @media(prefers-reduced-motion:reduce){.dm-toast-timer{animation:dm-notice-countdown var(--toast-time,8s) linear both!important}}
+
+/* ===================== Prévia 3D e Finalizar álbum com brilho e animação ===================== */
+.dm-topbar .dm-button{position:relative;overflow:hidden;isolation:isolate;transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s,background .25s}
+/* Prévia 3D: secundário, com um brilho suave ao passar o mouse e o olho que pisca de vez em quando */
+.dm-topbar .dm-button:not(.primary):not(.dm-save-button)>svg{animation:dm-eye-blink 5s ease-in-out 2s infinite;transform-origin:center}
+@keyframes dm-eye-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.15)}}
+.dm-topbar .dm-button:not(.primary):after{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffffb8 50%,transparent 70%) -150% 0/250% 100% no-repeat;transition:background-position .7s ease}
+.dm-topbar .dm-button:not(.primary):hover:not(:disabled):after{background-position:150% 0}
+.dm-topbar .dm-button:not(.primary):hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 18px #2527201a}
+/* Finalizar álbum: o principal — brilho que passa sozinho, aura amarela pulsando e seta que anda */
+.dm-topbar .dm-button.primary{box-shadow:0 2px 0 #d9c900,0 0 0 0 #fdf15300;animation:dm-final-glow 3s ease-in-out 1.5s infinite}
+@keyframes dm-final-glow{0%,100%{box-shadow:0 2px 0 #d9c900,0 0 0 0 #fdf15300}50%{box-shadow:0 2px 0 #d9c900,0 0 0 6px #fdf15355,0 10px 24px #e4d30040}}
+.dm-topbar .dm-button.primary:after{content:'';position:absolute;z-index:-1;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(100deg,transparent,#ffffffc9,transparent);transform:skewX(-18deg);animation:ss-shine 4.5s ease-in-out 1s infinite;pointer-events:none}
+.dm-topbar .dm-button.primary:hover:not(:disabled){transform:translateY(-2px);animation-play-state:paused;box-shadow:0 2px 0 #d9c900,0 12px 28px #e4d30059}
+.dm-topbar .dm-button.primary>svg{transition:transform .35s cubic-bezier(.34,1.6,.64,1)}
+.dm-topbar .dm-button.primary:hover:not(:disabled)>svg{transform:translateX(4px)}
+.dm-topbar .dm-button:active:not(:disabled){transform:translateY(0) scale(.97)}
+/* Contador de pontos para corrigir pulsando */
+.dm-topbar .dm-check-badge{animation:dm-badge-pulse 2s ease-in-out infinite}
+@keyframes dm-badge-pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 #c7372f00}50%{transform:scale(1.12);box-shadow:0 0 0 4px #c7372f33}}
+@media(prefers-reduced-motion:reduce){.dm-topbar .dm-button,.dm-topbar .dm-button *,.dm-topbar .dm-button:after{animation:none!important;transition:none!important}}
