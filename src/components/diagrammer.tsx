@@ -716,7 +716,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        </div>}
       </div>}
      </div>
-     {project.photos.length>1&&<button type="button" className="dm-build-button" disabled={busy} onClick={()=>void autoBuildAlbum()}><WandSparkles size={17}/>{busy?'Montando…':'Montar álbum automático'}</button>}
+     {project.photos.length>1&&<button type="button" className="dm-build-button" disabled={busy} onClick={()=>void autoBuildAlbum()}>{busy?'Montando…':'Montar álbum automático'}</button>}
      
       
      {!project.photos.length?<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>:<>
