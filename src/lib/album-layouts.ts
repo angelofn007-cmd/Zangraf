@@ -114,6 +114,8 @@ const CATALOG:Record<number,Entry[]>={
  * Nome curto pela quantidade de fotos: "1x2" = 1 foto na página da esquerda e 2 na direita.
  * Se alguma foto atravessa a dobra, conta por colunas (ex.: "1x1x1"); sem colunas, só o total.
  */
+/** Quando a contagem por página ou coluna não se aplica, o layout ganha um nome simples. */
+const SIMPLE_NAMES:Record<number,string>={1:'Simples',2:'Dupla',3:'Trio',4:'Quarteto',5:'Quinteto',6:'Sexteto',7:'Septeto',8:'Octeto',9:'Noneto',10:'Deceto'};
 export function layoutCountName(frames:FrameRect[]){
  const eps=1e-6;
  const crosses=(x:number)=>frames.some(f=>f.x<x-eps&&f.x+f.w>x+eps);
@@ -127,7 +129,7 @@ export function layoutCountName(frames:FrameRect[]){
  const edges=[0,...cuts,1];
  // Colunas vazias (margens em volta de uma foto) não entram no nome.
  const counts=edges.slice(1).map((end,i)=>frames.filter(f=>f.x>=edges[i]-1e-4&&f.x+f.w<=end+1e-4).length).filter(Boolean);
- return counts.length>1?counts.join('x'):String(frames.length);
+ return counts.length>1?counts.join('x'):SIMPLE_NAMES[frames.length]||String(frames.length);
 }
 /** Formatos de quadro aceitos: fora disso a foto fica uma tira estreita demais e perde muito no recorte. */
 const MIN_FRAME_ASPECT=.33,MAX_FRAME_ASPECT=3.1;
