@@ -1241,3 +1241,29 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-upload-more svg{transition:transform .35s cubic-bezier(.34,1.6,.64,1)}
 .dm-studio .dm-upload-more:hover svg{transform:rotate(90deg)}
 @media(prefers-reduced-motion:reduce){.dm-studio .dm-upload-main svg,.dm-studio .dm-upload-more svg{animation:none;transition:none}}
+
+/* ===================== Fotos em fileiras justificadas (2–3 por fileira, como no Canva) ===================== */
+.dm-studio .dm-photo-viewport{overflow:hidden;margin:0 -3px 18px;padding:3px}
+.dm-studio .dm-photos.dm-photos-rows{display:flex;flex-direction:column;flex-wrap:nowrap;gap:8px;margin:0;padding:0}
+.dm-studio .dm-photos-rows:after{display:none}
+.dm-studio .dm-photo-row{display:flex;gap:8px;min-width:0}
+.dm-studio .dm-photo-row>.dm-photo{flex:0 1 auto;min-width:0;animation:dm-photo-in .5s cubic-bezier(.34,1.25,.64,1) var(--d,0ms) both}
+.dm-studio .dm-photos-rows .dm-photo-image{width:100%;height:100%;border-radius:10px;overflow:hidden}
+.dm-studio .dm-photos-rows .dm-photo-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .25s}
+.dm-studio .dm-photos-rows .dm-photo-image:hover:not(:disabled){transform:none;box-shadow:0 6px 16px #25272026}
+.dm-studio .dm-photos-rows .dm-photo-image:hover:not(:disabled) img{transform:scale(1.05)}
+@keyframes dm-photo-in{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+/* Troca de aba: as fotos deslizam para o lado */
+.dm-studio .dm-photos-rows.is-from-right{animation:dm-tab-from-right .42s cubic-bezier(.22,.8,.24,1) both}
+.dm-studio .dm-photos-rows.is-from-left{animation:dm-tab-from-left .42s cubic-bezier(.22,.8,.24,1) both}
+.dm-studio .dm-photos-rows.is-from-right .dm-photo,.dm-studio .dm-photos-rows.is-from-left .dm-photo{animation:none}
+@keyframes dm-tab-from-right{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes dm-tab-from-left{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+/* Sublinhado das abas desliza de uma aba para a outra */
+.dm-studio .dm-photo-tabs{position:relative}
+.dm-studio .dm-photo-tabs>button[role=tab]:after{display:none}
+.dm-studio .dm-tab-ink{position:absolute;left:0;bottom:0;height:3px;border-radius:3px;background:var(--dm-gold);transition:transform .4s cubic-bezier(.34,1.3,.64,1),width .4s cubic-bezier(.34,1.3,.64,1)}
+/* Caixinha marca com um pulinho */
+.dm-studio .dm-photo.is-checked .dm-photo-check svg{animation:dm-check-pop .35s cubic-bezier(.34,1.8,.64,1)}
+@keyframes dm-check-pop{from{transform:scale(0) rotate(-20deg)}to{transform:none}}
+@media(prefers-reduced-motion:reduce){.dm-studio .dm-photo-row>.dm-photo,.dm-studio .dm-photos-rows.is-from-right,.dm-studio .dm-photos-rows.is-from-left,.dm-studio .dm-photo.is-checked .dm-photo-check svg{animation:none}.dm-studio .dm-tab-ink,.dm-studio .dm-photos-rows .dm-photo-image img{transition:none}}
