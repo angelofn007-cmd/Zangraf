@@ -7,13 +7,35 @@ import {getDatabase} from '@/lib/server/db';
 import {requireCustomer,RequestError,requestError,jsonPrivate,readBody} from '@/lib/server/customer-access';
 import {parseProduct} from '@/lib/product-validation';
 import {canonicalSelection,expectedPrintFiles} from '@/lib/order-rules';
+const PAYMENT_LABELS:Record<string,string>={pix:'Pix',card:'Cartão de crédito',boleto:'Boleto'};
+type Delivery={name:string;cep:string;address:string;number:string;city:string;notes:string};
+/** Endereço de entrega informado na página de pagamento (opcional para pedidos antigos). */
+function parseDelivery(value:unknown):Delivery|undefined{
+ if(value===undefined)return undefined;
+ if(!value||typeof value!=='object')throw new RequestError('Confira os dados de entrega.',400);
+ const d=value as Record<string,unknown>;
+ const text=(v:unknown,min:number,max:number)=>typeof v==='string'&&v.trim().length>=min&&v.trim().length<=max?v.trim():null;
+ const name=text(d.name,3,100),address=text(d.address,4,160),number=text(d.number,0,20),city=text(d.city,2,80),notes=text(d.notes??'',0,300);
+ const cep=typeof d.cep==='string'?d.cep.replace(/\D/g,''):'';
+ if(!name||!address||number===null||!city||notes===null||cep.length!==8)throw new RequestError('Confira os dados de entrega: nome, CEP, endereço e cidade.',400);
+ return {name,cep,address,number,city,notes};
+}
+function deliveryText(delivery:Delivery|undefined,payment:string|undefined){
+ if(!delivery)return 'Entrega e eventual frete a combinar com a equipe';
+ const cep=delivery.cep.replace(/^(\d{5})(\d{3})$/,'$1-$2');
+ return [delivery.name,`${delivery.address}${delivery.number?', '+delivery.number:''}`,delivery.city,`CEP ${cep}`,delivery.notes,payment?`Pagamento: ${PAYMENT_LABELS[payment]}`:''].filter(Boolean).join(' · ');
+}
 export async function POST(request:Request){
  try{
   const session=await requireCustomer(request);const body=await readBody(request);
   if(typeof body.requestKey!=='string'||!/^[-a-zA-Z0-9]{16,80}$/.test(body.requestKey)||!Array.isArray(body.items)||!body.items.length||body.items.length>10)throw new RequestError('Confira os itens do pedido.',400);
   if(typeof body.phone!=='string'||!/^\+?[\d ()-]{10,22}$/.test(body.phone))throw new RequestError('Informe um telefone válido para combinar a entrega.',400);
   if(typeof body.notes!=='string'||body.notes.length>1000)throw new RequestError('Observações inválidas.',400);
-  const fingerprint=createHash('sha256').update(JSON.stringify({items:body.items,phone:body.phone,notes:body.notes})).digest('hex');
+  const delivery=parseDelivery(body.delivery);
+  if(body.paymentMethod!==undefined&&!(typeof body.paymentMethod==='string'&&body.paymentMethod in PAYMENT_LABELS))throw new RequestError('Escolha uma forma de pagamento válida.',400);
+  const paymentMethod=body.paymentMethod as string|undefined;
+  // Pedidos sem entrega/pagamento mantêm a mesma assinatura de antes.
+  const fingerprint=createHash('sha256').update(JSON.stringify({items:body.items,phone:body.phone,notes:body.notes,...(delivery?{delivery}:{}),...(paymentMethod?{paymentMethod}:{})})).digest('hex');
   const client=await getDatabase().connect();
   try{
    await client.query('BEGIN');await client.query('SELECT pg_advisory_xact_lock(hashtext($1))',[session.user.id]);
@@ -52,7 +74,7 @@ export async function POST(request:Request){
    if(!Number.isSafeInteger(subtotal))throw new RequestError('O valor do pedido excede o limite.',400);
    if(files.length>150)throw new RequestError('Envie os álbuns em pedidos separados. Limite de 150 arquivos por pedido.',400);
    if(files.length&&!process.env.BLOB_READ_WRITE_TOKEN&&!process.env.BLOB_STORE_ID)throw new RequestError('O recebimento de arquivos está sendo preparado. Seu álbum continua salvo no navegador.',503);
-   const id=randomUUID();await client.query("INSERT INTO zangraf_orders(id,user_id,request_key,status,items,shipping_address,subtotal_cents,total_cents) VALUES($1,$2,$3,'draft',$4,$5,$6,$6)",[id,session.user.id,body.requestKey,JSON.stringify(items),JSON.stringify({phone:body.phone,notes:body.notes,requestFingerprint:fingerprint,delivery:'Entrega e eventual frete a combinar com a equipe'}),subtotal]);
+   const id=randomUUID();await client.query("INSERT INTO zangraf_orders(id,user_id,request_key,status,items,shipping_address,subtotal_cents,total_cents) VALUES($1,$2,$3,'draft',$4,$5,$6,$6)",[id,session.user.id,body.requestKey,JSON.stringify(items),JSON.stringify({phone:body.phone,notes:body.notes,requestFingerprint:fingerprint,delivery:deliveryText(delivery,paymentMethod),...(delivery?{address:delivery}:{}),...(paymentMethod?{paymentMethod}:{})}),subtotal]);
    for(const file of files){const fileId=randomUUID();await client.query('INSERT INTO zangraf_order_files(id,order_id,item_key,filename,pathname,width_px,height_px,dpi) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[fileId,id,file.itemKey,file.filename,`orders/${id}/${fileId}.jpg`,file.width,file.height,file.dpi]);}
    const savedFiles=await client.query('SELECT id,item_key,filename,pathname,verified,width_px,height_px,dpi FROM zangraf_order_files WHERE order_id=$1 ORDER BY item_key,filename',[id]);
    await client.query('COMMIT');return jsonPrivate({orderId:id,status:'draft',files:savedFiles.rows},201);

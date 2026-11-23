@@ -55,7 +55,7 @@ async function makePhotoPreview(bitmap:ImageBitmap,maxEdge:number):Promise<Blob>
  finally{canvas.width=1;canvas.height=1;}
 }
 
-export function Diagrammer({ projectId, cartItemId }: { projectId?: string; cartItemId?: string }) {
+export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }: { projectId?: string; cartItemId?: string; requireLoginToSave?: boolean }) {
  const [project, setProject] = useState<LayoutProject | null>(null);
  const [activePage, setActivePage] = useState(-1);
  const [slotIndex, setSlotIndex] = useState(0);
@@ -206,6 +206,17 @@ export function Diagrammer({ projectId, cartItemId }: { projectId?: string; cart
   return task;
  }, []);
 
+ /** Salvar: guarda no navegador e, se a pessoa ainda não entrou, leva ao login e volta para este álbum. */
+ async function saveAlbum(){
+  if(!await persist())return;
+  if(requireLoginToSave){
+   setNotice('Entre na sua conta para salvar o álbum. Você volta para cá em seguida.');
+   const destination=window.location.pathname+window.location.search;
+   window.setTimeout(()=>window.location.assign('/entrar?destino='+encodeURIComponent(destination)),900);
+   return;
+  }
+  setNotice('Álbum salvo.');
+ }
  useEffect(() => {
   alive.current = true;
   return () => { alive.current = false; if (dirtyRef.current) void persist(); };
@@ -259,7 +270,7 @@ export function Diagrammer({ projectId, cartItemId }: { projectId?: string; cart
  }, [projectId, cartItemId]);
 
  useEffect(()=>{
-  function key(event:KeyboardEvent){const target=event.target as HTMLElement;if(target.closest('input,textarea,select,[contenteditable="true"]')||document.querySelector('dialog[open]'))return;if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.shiftKey?redo():undo()}if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='s'){event.preventDefault();void persist();}if(project&&!busy)handleElementKey(event);}
+  function key(event:KeyboardEvent){const target=event.target as HTMLElement;if(target.closest('input,textarea,select,[contenteditable="true"]')||document.querySelector('dialog[open]'))return;if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.shiftKey?redo():undo()}if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='s'){event.preventDefault();void saveAlbum();}if(project&&!busy)handleElementKey(event);}
   window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
  });
  useEffect(()=>{try{const raw=JSON.parse(localStorage.getItem('zangraf-personal-layouts-v1')||'[]');if(Array.isArray(raw))setSavedLayouts(raw.filter(v=>v&&typeof v.id==='string'&&typeof v.name==='string'&&isReusableSpread(v.spread)).slice(0,20))}catch{/* Invalid local layouts are ignored. */}},[]);
@@ -490,7 +501,7 @@ export function Diagrammer({ projectId, cartItemId }: { projectId?: string; cart
  async function continueOrder(){
   if(!project!.cartItemId){setNotice('Este projeto não está vinculado ao carrinho. Configure seu álbum na loja para fazer o pedido.');return;}
   if(projectPrintError||formatError){setNotice(projectPrintError||formatError);return;}
-  if(await persist())window.location.assign('/revisar-pedido');
+  if(await persist())window.location.assign('/pagamento');
  }
  function autoFill() {
   const result = fillEmptyFrames(project!);
@@ -632,7 +643,7 @@ export function Diagrammer({ projectId, cartItemId }: { projectId?: string; cart
   setNotice(`${ISSUE_INFO[issue.kind].title} · ${pageLabel(project!,issue.page)}: ${ISSUE_INFO[issue.kind].hint}`);
  }
  return <div className="zg-studio dm-studio">
-  <header className="dm-topbar"><a href="/" className="dm-brand" aria-label="Voltar ao site Zangraf" onClick={async e=>{e.preventDefault();if(await persist())window.location.assign('/')}}><img className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={112} height={60}/><span>GRÁFICA</span></a><div className="dm-top-divider"/><div className="dm-name"><input aria-label="Nome do álbum" value={project.name} maxLength={100} disabled={busy} onChange={e=>edit({...project,name:e.target.value})}/><span className={'dm-save '+saveState}><span/>{saveState==='saved'?'Salvo neste navegador':saveState==='saving'?'Salvando…':saveState==='error'?'Falha ao salvar':'Salvamento automático'}</span></div><div className="dm-top-actions"><div className="dm-top-tools"><button className="dm-icon" title="Salvar e voltar ao carrinho" aria-label="Salvar e voltar ao carrinho" onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}><ShoppingBag size={18}/></button><button className="dm-icon" aria-label="Desfazer" title="Desfazer · Ctrl/⌘ Z" disabled={!past.length||busy} onClick={undo}><Undo2 size={19}/></button><button className="dm-icon" aria-label="Refazer" title="Refazer · Ctrl/⌘ Shift Z" disabled={!future.length||busy} onClick={redo}><Redo2 size={19}/></button></div><button className="dm-button dm-save-button" onClick={()=>void persist()} disabled={busy}><Save size={16}/><span>Salvar</span></button><button className="dm-button" disabled={busy} onClick={()=>{setPreviewPage(activePage);setShowPreview(true)}}><Eye size={17}/><span>Prévia 3D</span></button><button className="dm-button primary" disabled={busy} onClick={()=>setPrintOpen(v=>!v)}><ArrowRight size={17}/><span>Finalizar álbum</span>{!!issueErrors&&<b className="dm-check-badge" aria-label={`${issueErrors} pontos para corrigir`}>{issueErrors}</b>}</button></div></header>
+  <header className="dm-topbar"><a href="/" className="dm-brand" aria-label="Voltar ao site Zangraf" onClick={async e=>{e.preventDefault();if(await persist())window.location.assign('/')}}><img className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={112} height={60}/><span>GRÁFICA</span></a><div className="dm-top-divider"/><div className="dm-name"><input aria-label="Nome do álbum" value={project.name} maxLength={100} disabled={busy} onChange={e=>edit({...project,name:e.target.value})}/><span className={'dm-save '+saveState}><span/>{saveState==='saved'?'Salvo neste navegador':saveState==='saving'?'Salvando…':saveState==='error'?'Falha ao salvar':'Salvamento automático'}</span></div><div className="dm-top-actions"><div className="dm-top-tools"><button className="dm-icon" title="Salvar e voltar ao carrinho" aria-label="Salvar e voltar ao carrinho" onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}><ShoppingBag size={18}/></button><button className="dm-icon" aria-label="Desfazer" title="Desfazer · Ctrl/⌘ Z" disabled={!past.length||busy} onClick={undo}><Undo2 size={19}/></button><button className="dm-icon" aria-label="Refazer" title="Refazer · Ctrl/⌘ Shift Z" disabled={!future.length||busy} onClick={redo}><Redo2 size={19}/></button></div><button className="dm-button dm-save-button" onClick={()=>void saveAlbum()} disabled={busy}><Save size={16}/><span>Salvar</span></button><button className="dm-button" disabled={busy} onClick={()=>{setPreviewPage(activePage);setShowPreview(true)}}><Eye size={17}/><span>Prévia 3D</span></button><button className="dm-button primary" disabled={busy} onClick={()=>setPrintOpen(v=>!v)}><ArrowRight size={17}/><span>Finalizar álbum</span>{!!issueErrors&&<b className="dm-check-badge" aria-label={`${issueErrors} pontos para corrigir`}>{issueErrors}</b>}</button></div></header>
   {saveError&&<div className="dm-error" role="alert">{saveError}<button onClick={()=>void persist()}>Tentar novamente</button></div>}
   <div className={`dm-body ${panelOpen?'':'panel-collapsed'}`}>
    <nav className="dm-rail" aria-label="Ferramentas do diagramador">{tabs.map(tab=><button key={tab.id} data-tab={tab.id} aria-pressed={panel===tab.id&&panelOpen} className={panel===tab.id&&panelOpen?'active':''} onClick={()=>{setPanelOpen(panel===tab.id?!panelOpen:true);setPanel(tab.id)}}><tab.icon size={23}/><span>{tab.label}</span></button>)}</nav>

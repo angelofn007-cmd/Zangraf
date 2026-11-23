@@ -384,3 +384,17 @@ html[data-theme=dark] .zg-pay-page :is(.zg-pay-card,.zg-pay-method,.zg-pay-steps
 html[data-theme=dark] .zg-pay-fields :is(input,textarea){background:var(--zg-elevated);color:var(--ink)}
 @media(max-width:900px){.zg-pay-layout{grid-template-columns:1fr}.zg-pay-summary{position:static!important}}
 @media(max-width:600px){.zg-pay-fields{grid-template-columns:1fr}.zg-pay-card{padding:20px}.zg-pay-actions{flex-direction:column-reverse;align-items:stretch}.zg-pay-actions .zg-button{justify-content:center}}
+/* Pagamento: avisos, confirmação e progresso do envio */
+.zg-pay-methods{border:0;margin:0;padding:0;min-width:0}
+.zg-pay-alert{display:flex;align-items:flex-start;gap:9px;margin:0 0 16px;padding:13px 16px;border:1px solid #f0e39a;border-radius:14px;background:#fffbe2;font-size:13px;line-height:1.55;color:#6b5a00}
+.zg-pay-alert svg{flex-shrink:0;margin-top:2px}
+.zg-pay-warnings{margin-top:16px;padding:14px 16px;border:1px solid #f0c3b9;border-radius:14px;background:#fdeee9;font-size:13px;color:#8f2f22;animation:zg-rise .45s cubic-bezier(.22,.8,.24,1) both}
+.zg-pay-warnings strong{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.zg-pay-warnings ul{margin:0;padding-left:20px;line-height:1.6}
+.zg-pay-approve{display:flex;align-items:flex-start;gap:11px;margin-top:16px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:13px;line-height:1.55;color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s}
+.zg-pay-approve:has(input:checked){border-color:#d9c900;background:#fffbe0}
+.zg-pay-approve input{flex-shrink:0;width:18px;height:18px;margin-top:1px;accent-color:#252720}
+.zg-pay-progress{display:flex;align-items:center;gap:9px;margin:14px 0 0;font-size:13px;color:var(--ink)}
+.zg-pay-progress svg{animation:zg-spin 1s linear infinite;color:#5a5c38}
+@keyframes zg-spin{to{transform:rotate(360deg)}}
+html[data-theme=dark] .zg-pay-page :is(.zg-pay-approve){background:var(--zg-surface);border-color:var(--line)}
