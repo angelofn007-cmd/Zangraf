@@ -98,12 +98,13 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [photoMode,setPhotoMode]=useState<'crop'|'position'>('position');
  const [positionOpen,setPositionOpen]=useState(false);
  const [printOpen,setPrintOpen]=useState(false);
- // Avisos somem sozinhos depois de um tempo proporcional ao tamanho do texto (só com o álbum aberto).
- useEffect(()=>{
-  if(!notice||!projectRef.current)return;
-  const timer=window.setTimeout(()=>setNotice(''),Math.min(12000,Math.max(4500,notice.length*65)));
-  return()=>window.clearTimeout(timer);
- },[notice]);
+ // Avisos: cartão no canto direito que fecha sozinho quando a faixa colorida termina (8 s).
+ const [toastLeaving,setToastLeaving]=useState(false);
+ useEffect(()=>{setToastLeaving(false);},[notice]);
+ function closeToast(){
+  if(toastLeaving)return;setToastLeaving(true);
+  window.setTimeout(()=>{setNotice('');setToastLeaving(false);},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:300);
+ }
  // No celular o painel cobre a lâmina: se o álbum já tem fotos, ele abre fechado.
  const openedProject=project?.id;
  useEffect(()=>{
@@ -782,7 +783,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
    </section>
   </div>
   <div className="sr-only" role="status" aria-live="polite">{notice}</div>
-  {notice&&<div className="dm-toast" aria-hidden="true" key={notice}><span>{notice}</span><button type="button" tabIndex={-1} onClick={()=>setNotice('')}><X size={14}/></button></div>}
+  {notice&&project&&<div className={'dm-toast'+(toastLeaving?' is-leaving':'')} aria-hidden="true" key={notice}><Info size={16} aria-hidden="true"/><p>{notice}</p><button type="button" tabIndex={-1} className="dm-icon" aria-label="Fechar aviso" onClick={closeToast}><X size={14}/></button><span className="dm-toast-timer" onAnimationEnd={e=>{if(e.animationName==='dm-notice-countdown')closeToast()}}/></div>}
   {printOpen&&<section className="dm-export-popover" aria-label="Revisar álbum"><div className="dm-panel-title dm-review-title"><h2>Revisar</h2><button className="dm-icon" aria-label="Fechar revisão" onClick={()=>setPrintOpen(false)}><X size={20}/></button></div>{projectPrintError&&<p className="dm-error">{projectPrintError}</p>}<div className="dm-check" aria-label="Checagem antes da impressão">
    <div className={`dm-check-summary ${issueErrors?'error':issueWarnings?'warning':'ok'}`}>{issueErrors||issueWarnings?<CircleAlert size={20} aria-hidden="true"/>:<CircleCheck size={20} aria-hidden="true"/>}<div><strong>{issueErrors?`${issueErrors} ${issueErrors===1?'ponto para corrigir':'pontos para corrigir'}`:issueWarnings?'Nada grave, só alguns pontos para conferir':'Tudo certo para imprimir'}</strong><span>{issueErrors&&issueWarnings?`e ${issueWarnings} para conferir · `:''}{issues.length?'Clique num item para ir direto até ele.':'Conferimos resolução, dobra, margens, quadros e repetições.'}</span></div></div>
    {ISSUE_ORDER.map(kind=>{const list=issues.filter(i=>i.kind===kind);if(!list.length)return null;

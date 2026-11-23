@@ -1013,3 +1013,22 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Lixeira na barra de edição: tira a foto do quadro selecionado */
 .dm-studio .dm-context-actions>.dm-frame-remove{color:#c7372f;animation:dm-check .35s cubic-bezier(.34,1.8,.64,1) both}
 .dm-studio .dm-context-actions>.dm-frame-remove:hover:not(:disabled){background:#fdeee9;color:#c7372f}
+
+/* ===================== Avisos no canto direito, iguais ao aviso de margem (8 s) ===================== */
+.dm-studio .dm-toast{top:80px;left:auto;right:16px;z-index:40;display:flex;align-items:flex-start;gap:10px;width:min(300px,calc(100% - 32px));max-width:none;padding:14px 10px 18px 16px;overflow:hidden;border:1px solid var(--dm-line);border-radius:14px;background:var(--dm-surface);color:var(--dm-ink);font-size:12.5px;line-height:1.6;box-shadow:0 2px 4px #2527200d,0 12px 30px #2527201c;transform:none;transform-origin:bottom center;animation:dm-notice-rise .6s cubic-bezier(.34,1.45,.64,1) both;transition:transform .35s cubic-bezier(.34,1.4,.64,1),box-shadow .35s}
+.dm-studio .dm-toast:before{display:none}
+.dm-studio .dm-toast>svg{flex-shrink:0;margin-top:3px;color:var(--zg-blue);animation:dm-notice-icon .6s cubic-bezier(.34,1.8,.64,1) .15s both}
+.dm-studio .dm-toast>p{flex:1;min-width:0;margin:0;color:var(--dm-ink);animation:dm-notice-text .45s ease .15s both}
+.dm-studio .dm-toast>.dm-icon{flex-shrink:0;width:26px;height:26px;margin:-4px 0;border-radius:50%;background:transparent;color:var(--dm-muted);transition:transform .35s cubic-bezier(.34,1.6,.64,1),background .2s,color .2s}
+.dm-studio .dm-toast>.dm-icon:hover{transform:rotate(90deg) scale(1.1);background:#fbe7e3;color:#c7372f}
+.dm-studio .dm-toast:hover{transform:translateY(-3px);box-shadow:0 4px 8px #2527200f,0 18px 40px #25272024}
+/* Faixa colorida na base: se desenha e vai sumindo da esquerda para a direita em 8 s */
+.dm-toast-timer{position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--zg-rays);animation:dm-notice-rays .6s cubic-bezier(.22,.8,.24,1) .2s both,dm-notice-countdown 8s linear .8s both}
+.dm-toast:hover .dm-toast-timer,.dm-toast.is-leaving .dm-toast-timer{animation-play-state:paused}
+.dm-studio .dm-toast.is-leaving{animation:dm-notice-drop .3s cubic-bezier(.55,0,.75,.2) both;pointer-events:none}
+/* Se o aviso de margem estiver aberto, este fica logo abaixo dele */
+.dm-studio:has(.dm-side-notice:not(.is-leaving)) .dm-toast{top:210px}
+.dm-studio[data-night=true] .dm-toast{background:var(--dm-surface);color:var(--dm-ink)}
+@media(max-width:1300px){.dm-studio .dm-toast{top:auto;bottom:178px}.dm-studio:has(.dm-side-notice:not(.is-leaving)) .dm-toast{bottom:330px;top:auto}}
+@media(max-width:600px){.dm-studio .dm-toast{right:8px;width:calc(100% - 16px);bottom:150px}}
+@media(prefers-reduced-motion:reduce){.dm-toast-timer{animation:dm-notice-countdown 8s linear both!important}.dm-studio .dm-toast{animation:none}}
