@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState,type CSSProperties,type DragEvent,type PointerEvent} from 'react';
 import {ensureTextFonts} from '@/lib/album-fonts';
 import {TextureLayer,IconLayer,type IconInteractions} from './diagrammer-decoration';
-import {ArrowLeftRight,ImagePlus,TriangleAlert, Replace} from 'lucide-react';
+import {ArrowLeftRight,ImagePlus,TriangleAlert, Replace, RefreshCw} from 'lucide-react';
 import {spreadRectangles,frameGeometry,defaultPrintSpec,effectiveDpi,resolutionLevel,type Cover,type Slot,type Spread,type PrintSpec,type AlbumText,type FrameRect} from '@/lib/layout-projects';
 
 /** Tipo de arraste usado para trocar fotos entre quadros da mesma área. */
@@ -103,7 +103,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
       <ul><li>Diminua o zoom da foto</li><li>Use um quadro menor</li><li>Envie o arquivo original — fotos do WhatsApp perdem qualidade</li></ul>
      </span>
     </span>}
-    {slot?.photoId&&(onReplaceRequest||(onSlotSwap&&spread.slots.length>1))&&<button type="button" className="zg-swap-handle" draggable={!!onSlotSwap&&spread.slots.length>1} aria-label={`Substituir a foto do quadro ${index+1}`} title="Substituir foto: clique e escolha outra foto no painel. Arraste até outro quadro para trocar as duas de lugar." onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();if(onReplaceRequest)onReplaceRequest(index);else onSlotSwap?.(index,(index+1)%spread.slots.length)}} onDragStart={e=>{e.stopPropagation();e.dataTransfer.setData(SLOT_DRAG_TYPE,String(index));e.dataTransfer.effectAllowed='move'}} onDragEnd={()=>setSwapTarget(null)}><Replace size={13} aria-hidden="true"/></button>}
+    {slot?.photoId&&(onReplaceRequest||(onSlotSwap&&spread.slots.length>1))&&<button type="button" className="zg-swap-handle" draggable={!!onSlotSwap&&spread.slots.length>1} aria-label={`Trocar a foto do quadro ${index+1}`} title="Trocar foto" onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();if(onReplaceRequest)onReplaceRequest(index);else onSlotSwap?.(index,(index+1)%spread.slots.length)}} onDragStart={e=>{e.stopPropagation();e.dataTransfer.setData(SLOT_DRAG_TYPE,String(index));e.dataTransfer.effectAllowed='move'}} onDragEnd={()=>setSwapTarget(null)}><RefreshCw size={15} strokeWidth={2.2} aria-hidden="true"/></button>}
     {selected===index&&mode==='position'&&<button className="zg-resize-handle" aria-label="Redimensionar quadro" onPointerDown={e=>start(e,index,true)} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{drag.current=null;setDraft(null)}}/>}
    </div>;
   })}
