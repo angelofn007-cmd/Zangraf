@@ -1100,3 +1100,45 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio:has(.dm-replace-banner) .zg-frame.is-selected{outline:3px solid #fdf153;outline-offset:-3px;animation:dm-replace-pulse 1.4s ease-in-out infinite}
 @keyframes dm-replace-pulse{50%{outline-color:#e4d300}}
 .dm-studio:has(.dm-replace-banner) .dm-photo>button:first-child{cursor:copy}
+
+/* ===================== Fotos no estilo Canva: botão amarelo, abas e mosaico ===================== */
+.dm-upload-bar{display:flex;gap:8px;margin-top:14px}
+.dm-studio .dm-upload-main{position:relative;overflow:hidden;flex:1;display:flex;align-items:center;justify-content:center;gap:9px;min-height:50px;border:0;border-radius:14px;background:linear-gradient(180deg,#fff27a,#fdf153 55%,#f3e43b);color:#2f2d12;font-size:15px;font-weight:700;box-shadow:0 2px 0 #d9c900,0 8px 20px #e4d30038;transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.dm-studio .dm-upload-main:after,.dm-studio .dm-upload-more:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(100deg,transparent,#ffffffd6,transparent);transform:skewX(-18deg);animation:ss-shine 4.2s ease-in-out 1s infinite;pointer-events:none}
+.dm-studio .dm-upload-main:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 2px 0 #d9c900,0 14px 28px #e4d30052}
+.dm-studio .dm-upload-main:active:not(:disabled){transform:translateY(1px) scale(.98)}
+.dm-studio .dm-upload-main svg{transition:transform .35s cubic-bezier(.34,1.6,.64,1)}
+.dm-studio .dm-upload-main:hover:not(:disabled) svg{transform:translateY(-3px)}
+.dm-photo-more{position:relative}
+.dm-studio .dm-upload-more{position:relative;overflow:hidden;display:grid;place-items:center;width:50px;height:50px;border:0;border-radius:14px;background:linear-gradient(180deg,#fff27a,#fdf153 55%,#f3e43b);color:#2f2d12;box-shadow:0 2px 0 #d9c900;transition:transform .3s cubic-bezier(.34,1.4,.64,1)}
+.dm-studio .dm-upload-more:hover{transform:translateY(-2px)}
+.dm-photo-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:30;display:flex;flex-direction:column;gap:2px;width:230px;padding:6px;border:1px solid var(--dm-line);border-radius:12px;background:var(--dm-surface);box-shadow:var(--dm-shadow-lg);animation:dm-notice-rise .3s cubic-bezier(.34,1.45,.64,1) both}
+.dm-studio .dm-photo-menu>button{display:flex;align-items:center;gap:10px;min-height:38px;padding:8px 10px;border:0;border-radius:8px;background:transparent;color:var(--dm-ink);font-size:13px;text-align:left}
+.dm-studio .dm-photo-menu>button:hover:not(:disabled){background:var(--dm-soft)}
+.dm-studio .dm-photo-menu>button svg{color:var(--dm-muted)}
+/* Segundo botão, como o "Gravar agora" do Canva */
+.dm-studio .dm-build-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;margin-top:8px;border:1.5px solid var(--dm-line-strong);border-radius:14px;background:var(--dm-surface);color:var(--dm-ink);font-size:14px;font-weight:600;transition:border-color .2s,transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.dm-studio .dm-build-button:hover:not(:disabled){border-color:var(--dm-ink);transform:translateY(-2px);box-shadow:0 8px 18px #2527201a}
+.dm-studio .dm-build-button svg{color:#8f7f00}
+/* Área vazia para soltar as fotos */
+.dm-studio .dm-dropzone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:220px;margin-top:14px;border:2px dashed var(--dm-line-strong);border-radius:16px;background:var(--dm-soft);color:var(--dm-muted);font-size:13.5px;transition:border-color .2s,background .2s}
+.dm-studio .dm-dropzone:hover:not(:disabled){border-color:#d9c900;background:#fffbe0;color:var(--dm-ink)}
+.dm-studio .dm-dropzone svg{color:#b8aa3a;animation:dm-sparkle 3s ease-in-out infinite}
+/* Abas sublinhadas */
+.dm-photo-tabs{display:flex;align-items:center;gap:18px;margin:20px 0 12px;border-bottom:1px solid var(--dm-line)}
+.dm-studio .dm-photo-tabs>button[role=tab]{position:relative;display:inline-flex;align-items:center;gap:6px;padding:8px 0 10px;border:0;background:transparent;color:var(--dm-muted);font-size:14px;font-weight:600;transition:color .2s}
+.dm-studio .dm-photo-tabs>button[role=tab]:after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:#e4d300;transform:scaleX(0);transition:transform .35s cubic-bezier(.34,1.4,.64,1)}
+.dm-studio .dm-photo-tabs>button[aria-selected=true]{color:var(--dm-ink)}
+.dm-studio .dm-photo-tabs>button[aria-selected=true]:after{transform:scaleX(1)}
+.dm-photo-tabs>button>span{min-width:20px;padding:0 6px;border-radius:9px;background:#fdf153;color:#2f2d12;font-size:11px;text-align:center}
+.dm-studio .dm-photo-tabs-done{display:inline-flex;align-items:center;gap:5px;margin-left:auto;margin-bottom:6px;padding:6px 12px;border:0;border-radius:9px;background:var(--dm-ink);color:#fff;font-size:12.5px;font-weight:600}
+/* Mosaico: cada foto no formato original, com cantos arredondados */
+.dm-studio .dm-photos.dm-photos-masonry{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.dm-studio .dm-photos-masonry:after{content:'';flex-grow:999}
+.dm-studio .dm-photos-masonry>.dm-photo{min-width:0;animation:dm-icon-in .4s cubic-bezier(.34,1.3,.64,1) both}
+.dm-studio .dm-photos-masonry>.dm-photo>button:first-child{width:100%;height:auto;border-radius:12px;box-shadow:none;transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.dm-studio .dm-photos-masonry>.dm-photo>button:first-child:hover{transform:translateY(-2px);box-shadow:0 8px 18px #2527201f}
+.dm-studio .dm-photos-masonry>.dm-photo small{display:none}
+.dm-studio .dm-photos-masonry>.dm-photo>button[aria-pressed=true]{outline:3px solid #e4d300;outline-offset:2px}
+.dm-photos-empty{margin:4px 0 0;font-size:13px;color:var(--dm-muted);text-align:center}
+.dm-studio .dm-panel-title>span:empty{display:none}
