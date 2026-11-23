@@ -1207,31 +1207,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-multi-icon{flex-shrink:0;width:44px;height:auto;min-height:38px;border:1px solid var(--dm-line-strong);border-radius:var(--dm-r-sm);background:#fff;color:var(--dm-ink)}
 .dm-studio .dm-multi-icon:hover:not(:disabled){border-color:var(--dm-ink);background:var(--dm-soft)}
 
-/* ===================== Fotos mais próximas do Canva ===================== */
-.dm-studio{--dm-gold:#d9a800;--dm-gold-dark:#b88e00}
-/* Adicionar fotos: dourado com texto branco, plano, como "Fazer upload de arquivos" */
-.dm-studio .dm-upload-main,.dm-studio .dm-upload-more{min-height:46px;border-radius:10px;background:linear-gradient(180deg,#e7b900,var(--dm-gold));color:#fff;text-shadow:0 1px 1px #7a5d0055;box-shadow:0 1px 2px #7a5d0033}
-.dm-studio .dm-upload-main{font-size:15px;font-weight:700}
-.dm-studio .dm-upload-more{width:46px;height:46px}
-.dm-studio .dm-upload-main:hover:not(:disabled),.dm-studio .dm-upload-more:hover{background:linear-gradient(180deg,#dcae00,var(--dm-gold-dark));box-shadow:0 6px 16px #b88e0040}
-.dm-studio .dm-upload-main svg,.dm-studio .dm-upload-more svg{filter:drop-shadow(0 1px 1px #7a5d0055)}
-/* Montar álbum automático: contorno simples, como "Gravar agora" */
-.dm-studio .dm-build-button{min-height:44px;margin-top:8px;border:1.5px solid var(--dm-line-strong);border-radius:10px;font-size:14.5px;font-weight:700}
-.dm-studio .dm-build-button:hover:not(:disabled){transform:none;border-color:var(--dm-ink);box-shadow:none;background:var(--dm-soft)}
-/* Abas com sublinhado dourado */
-.dm-studio .dm-photo-tabs{margin:18px 0 12px;border-bottom:0}
-.dm-studio .dm-photo-tabs>button[role=tab]{font-size:15px}
-.dm-studio .dm-photo-tabs>button[role=tab]:after{height:3px;border-radius:3px;background:var(--dm-gold)}
-.dm-photo-tabs>button>span{background:var(--dm-gold);color:#fff}
-/* Caixinha quadrada de marcar, como no Canva */
-.dm-studio .dm-photo-check{top:8px;left:8px;width:24px;height:24px;border:1.5px solid #ffffffe6;border-radius:6px;background:#ffffff59;backdrop-filter:blur(2px);color:#fff;opacity:1;box-shadow:0 1px 3px #0000004d}
-.dm-studio .dm-photo.is-checked .dm-photo-check{border-color:var(--dm-gold);background:var(--dm-gold);color:#fff}
-.dm-studio .dm-photo.is-checked .dm-photo-check:hover{background:var(--dm-gold-dark);border-color:var(--dm-gold-dark)}
-.dm-studio .dm-photo-check:hover{transform:scale(1.08)}
-/* Foto marcada ganha contorno dourado com respiro branco */
-.dm-studio .dm-photo.is-checked .dm-photo-image{box-shadow:0 0 0 2px #fff,0 0 0 4.5px var(--dm-gold)}
-.dm-studio .dm-photo.is-checked .dm-photo-image img{opacity:1}
-.dm-studio .dm-photos-rows{gap:10px;padding:3px}
 /* Sem reflexo nos botões de fotos: só os ícones têm animação */
 .dm-studio .dm-upload-main:after,.dm-studio .dm-upload-more:after{display:none}
 .dm-studio .dm-upload-main:hover:not(:disabled),.dm-studio .dm-upload-more:hover,.dm-studio .dm-upload-main:active:not(:disabled){transform:none}
@@ -1262,7 +1237,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Sublinhado das abas desliza de uma aba para a outra */
 .dm-studio .dm-photo-tabs{position:relative}
 .dm-studio .dm-photo-tabs>button[role=tab]:after{display:none}
-.dm-studio .dm-tab-ink{position:absolute;left:0;bottom:0;height:3px;border-radius:3px;background:var(--dm-gold);transition:transform .4s cubic-bezier(.34,1.3,.64,1),width .4s cubic-bezier(.34,1.3,.64,1)}
+.dm-studio .dm-tab-ink{position:absolute;left:0;bottom:0;height:3px;border-radius:3px;background:#e4d300;transition:transform .4s cubic-bezier(.34,1.3,.64,1),width .4s cubic-bezier(.34,1.3,.64,1)}
 /* Caixinha marca com um pulinho */
 .dm-studio .dm-photo.is-checked .dm-photo-check svg{animation:dm-check-pop .35s cubic-bezier(.34,1.8,.64,1)}
 @keyframes dm-check-pop{from{transform:scale(0) rotate(-20deg)}to{transform:none}}

@@ -733,7 +733,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   <div className={`dm-body ${panelOpen?'':'panel-collapsed'}`}>
    <nav className="dm-rail" aria-label="Ferramentas do diagramador">{tabs.map(tab=><button key={tab.id} data-tab={tab.id} aria-pressed={panel===tab.id&&panelOpen} className={panel===tab.id&&panelOpen?'active':''} onClick={()=>{setPanelOpen(panel===tab.id?!panelOpen:true);setPanel(tab.id)}}><tab.icon size={23}/><span>{tab.label}</span></button>)}</nav>
    <aside className="dm-panel-slot" id="dm-tool-panel" aria-label={tabs.find(t=>t.id===panel)?.label} aria-hidden={!panelOpen} inert={!panelOpen}><div className="dm-panel" data-tab={panel} key={panel}>
-    {panel==='photos'&&<><div className="dm-panel-title"><h2>Suas fotografias</h2>{!!project.photos.length&&<span>{project.photos.length}</span>}</div>
+    {panel==='photos'&&<>
      <div className="dm-upload-bar">
       <button type="button" className="dm-upload-main" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><Upload size={18}/>{busy?'Carregando…':'Adicionar fotos'}</button>
       {!!project.photos.length&&<div className="dm-photo-more"><button type="button" className="dm-upload-more" aria-label="Mais opções de fotos" aria-haspopup="menu" aria-expanded={photoMenu} onClick={()=>setPhotoMenu(v=>!v)}><Ellipsis size={20}/></button>
@@ -744,7 +744,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        </div>}
       </div>}
      </div>
-     {project.photos.length>1&&<button type="button" className="dm-build-button" disabled={busy} onClick={()=>void autoBuildAlbum()}>{busy?'Montando…':'Montar álbum automático'}</button>}
+     {project.photos.length>1&&<button type="button" className="dm-build-button" disabled={busy} onClick={()=>void autoBuildAlbum()}><WandSparkles size={17}/>{busy?'Montando…':'Montar álbum automático'}</button>}
      
       
      {!project.photos.length?<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>:<>
