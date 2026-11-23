@@ -103,7 +103,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
       <ul><li>Diminua o zoom da foto</li><li>Use um quadro menor</li><li>Envie o arquivo original — fotos do WhatsApp perdem qualidade</li></ul>
      </span>
     </span>}
-    {onSlotSwap&&slot?.photoId&&spread.slots.length>1&&<button type="button" className="zg-swap-handle" draggable aria-label={`Trocar foto do quadro ${index+1} de lugar: arraste até outro quadro`} title="Arraste até outro quadro para trocar as fotos" onPointerDown={e=>e.stopPropagation()} onDragStart={e=>{e.stopPropagation();e.dataTransfer.setData(SLOT_DRAG_TYPE,String(index));e.dataTransfer.effectAllowed='move'}} onDragEnd={()=>setSwapTarget(null)}><ArrowLeftRight size={13} aria-hidden="true"/></button>}
+    {onSlotSwap&&slot?.photoId&&spread.slots.length>1&&<button type="button" className="zg-swap-handle" draggable aria-label={`Trocar foto do quadro ${index+1} de lugar`} title="Clique para trocar com o próximo quadro, ou arraste até o quadro que quiser" onPointerDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();onSlotSwap(index,(index+1)%spread.slots.length)}} onDragStart={e=>{e.stopPropagation();e.dataTransfer.setData(SLOT_DRAG_TYPE,String(index));e.dataTransfer.effectAllowed='move'}} onDragEnd={()=>setSwapTarget(null)}><ArrowLeftRight size={13} aria-hidden="true"/></button>}
     {selected===index&&mode==='position'&&<button className="zg-resize-handle" aria-label="Redimensionar quadro" onPointerDown={e=>start(e,index,true)} onPointerMove={move} onPointerUp={end} onPointerCancel={()=>{drag.current=null;setDraft(null)}}/>}
    </div>;
   })}

@@ -986,3 +986,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Contagem de 15 segundos até o aviso de margem fechar sozinho */
 .dm-notice-timer{animation-duration:.9s,15s}
 @media(prefers-reduced-motion:reduce){.dm-notice-timer{animation:dm-notice-countdown 15s linear both!important}}
+/* Fotos já usadas no álbum ficam apagadas; as que ainda não foram usadas ficam claras */
+.dm-photo>button:first-child img{transition:opacity .3s ease,filter .3s ease,transform .25s}
+.dm-photo.is-used>button:first-child img{opacity:.42;filter:saturate(.55)}
+.dm-photo.is-used>button:first-child:hover img{opacity:.85;filter:none}
+.dm-photo.is-used small{color:var(--dm-faint)}
