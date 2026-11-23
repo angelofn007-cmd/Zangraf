@@ -1010,3 +1010,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-multi-row{width:100%;min-width:0}
 .dm-multi-row>.dm-button.full{min-width:0;width:auto;white-space:normal;line-height:1.25;text-align:center}
 .dm-multi-row>.dm-button.full svg{flex-shrink:0}
+/* Lixeira na barra de edição: tira a foto do quadro selecionado */
+.dm-studio .dm-context-actions>.dm-frame-remove{color:#c7372f;animation:dm-check .35s cubic-bezier(.34,1.8,.64,1) both}
+.dm-studio .dm-context-actions>.dm-frame-remove:hover:not(:disabled){background:#fdeee9;color:#c7372f}
