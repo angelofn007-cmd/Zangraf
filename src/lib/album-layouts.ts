@@ -1,5 +1,5 @@
 import type {FrameRect,LayoutProject} from './layout-projects';
-export type PhotoLayout={id:string;name:string;frames:FrameRect[];marginRatio?:number};
+export type PhotoLayout={id:string;name:string;frames:FrameRect[];marginRatio?:number;/** Nome descritivo (ex.: "Página e trio"), mostrado como dica. */description?:string};
 /** Respiro padrão dos layouts: 0,4 cm de margem externa e 0,2 cm entre as fotos. */
 export const DEFAULT_SPACING={marginMm:4,gapMm:2} as const;
 /** Centered spine dimensions from the manufacturer's 500 g / 800 g table. */
@@ -110,6 +110,25 @@ const CATALOG:Record<number,Entry[]>={
  ],
 };
 
+/**
+ * Nome curto pela quantidade de fotos: "1x2" = 1 foto na página da esquerda e 2 na direita.
+ * Se alguma foto atravessa a dobra, conta por colunas (ex.: "1x1x1"); sem colunas, só o total.
+ */
+export function layoutCountName(frames:FrameRect[]){
+ const eps=1e-6;
+ const crosses=(x:number)=>frames.some(f=>f.x<x-eps&&f.x+f.w>x+eps);
+ if(!crosses(.5)){
+  const left=frames.filter(f=>f.x+f.w<=.5+eps).length;
+  return `${left}x${frames.length-left}`;
+ }
+ // Linhas verticais que nenhuma foto atravessa dividem a lâmina em colunas.
+ const cuts:number[]=[];
+ for(const x of frames.flatMap(f=>[f.x,f.x+f.w]).sort((a,b)=>a-b))if(x>eps&&x<1-eps&&!crosses(x)&&!cuts.some(c=>Math.abs(c-x)<1e-4))cuts.push(x);
+ const edges=[0,...cuts,1];
+ // Colunas vazias (margens em volta de uma foto) não entram no nome.
+ const counts=edges.slice(1).map((end,i)=>frames.filter(f=>f.x>=edges[i]-1e-4&&f.x+f.w<=end+1e-4).length).filter(Boolean);
+ return counts.length>1?counts.join('x'):String(frames.length);
+}
 /** Formatos de quadro aceitos: fora disso a foto fica uma tira estreita demais e perde muito no recorte. */
 const MIN_FRAME_ASPECT=.33,MAX_FRAME_ASPECT=3.1;
 const frameAspect=(rect:FrameRect,spreadAspect:number)=>rect.w*spreadAspect/rect.h;
@@ -131,7 +150,10 @@ export function photoLayouts(count:number,spreadAspect=2):PhotoLayout[]{
  for(const e of entries)all.push({id:`${e.id}-${n}`,name:e.name,frames:e.frames,marginRatio:e.marginRatio??.05});
  for(const e of entries)if(e.mirror)all.push({id:`${e.id}-mirror-${n}`,name:`${e.name} (espelhado)`,frames:mirrorFrames(e.frames),marginRatio:e.marginRatio??.05});
  const fitting=all.filter(layout=>layoutSuits(layout,spreadAspect));
- return fitting.length?fitting:all;
+ const list=fitting.length?fitting:all;
+ // Nome pela contagem de fotos; nomes repetidos ganham uma letra (1x3, 1x3 · B…).
+ const seen=new Map<string,number>();
+ return list.map(layout=>{const base=layoutCountName(layout.frames);const n=(seen.get(base)||0)+1;seen.set(base,n);return {...layout,description:layout.name,name:n>1?`${base} · ${String.fromCharCode(64+n)}`:base};});
 }
 
 export type LayoutFit={layout:PhotoLayout;order:number[];score:number;lowResolution:boolean};
