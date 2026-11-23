@@ -1005,3 +1005,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-multi-row>.dm-button.full{flex:1;margin:0}
 .dm-studio .dm-danger-icon{flex-shrink:0;width:44px;height:auto;min-height:38px;border:1px solid #f0c3b9;border-radius:var(--dm-r-sm);background:#fff;color:#c7372f;animation:dm-check .35s cubic-bezier(.34,1.8,.64,1) both;transition:background .2s,border-color .2s,transform .2s}
 .dm-studio .dm-danger-icon:hover:not(:disabled){border-color:#c7372f;background:#fdeee9;color:#c7372f;transform:scale(1.05)}
+/* A linha cabe sempre dentro do painel: o botão de layout encolhe e quebra o texto se precisar */
+.dm-multi-actions{min-width:0;overflow:hidden}
+.dm-multi-row{width:100%;min-width:0}
+.dm-multi-row>.dm-button.full{min-width:0;width:auto;white-space:normal;line-height:1.25;text-align:center}
+.dm-multi-row>.dm-button.full svg{flex-shrink:0}
