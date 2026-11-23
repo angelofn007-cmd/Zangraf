@@ -398,3 +398,9 @@ html[data-theme=dark] .zg-pay-fields :is(input,textarea){background:var(--zg-ele
 .zg-pay-progress svg{animation:zg-spin 1s linear infinite;color:#5a5c38}
 @keyframes zg-spin{to{transform:rotate(360deg)}}
 html[data-theme=dark] .zg-pay-page :is(.zg-pay-approve){background:var(--zg-surface);border-color:var(--line)}
+/* Fundo da página inicial: tons mais firmes para aparecer igual em Mac e Windows.
+   Cada mancha some na mesma cor (com transparência), sem depender de "transparent". */
+.zg-hero-modern{background-color:#f5f0e6;background-image:
+ radial-gradient(ellipse 55% 65% at 10% 15%,rgba(234,221,198,.95),rgba(234,221,198,0) 72%),
+ radial-gradient(ellipse 48% 58% at 90% 52%,rgba(253,236,90,.34),rgba(253,236,90,0) 72%),
+ radial-gradient(ellipse 45% 40% at 58% 105%,rgba(253,236,90,.16),rgba(253,236,90,0) 70%)}
