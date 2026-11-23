@@ -1183,3 +1183,22 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-replace-upload{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:0;border-radius:12px;background:#fdf153;color:#2f2d12;font-size:13.5px;font-weight:700;box-shadow:0 2px 0 #d9c900;transition:transform .25s cubic-bezier(.34,1.4,.64,1)}
 .dm-studio .dm-replace-upload:hover:not(:disabled){transform:translateY(-2px)}
 @media(max-width:600px){.dm-replace-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* ===================== Fotos em fileiras (estilo Canva) com ✓ para tirar/colocar no álbum ===================== */
+.dm-studio .dm-photos.dm-photos-rows{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;column-count:auto}
+.dm-studio .dm-photos-rows:after{content:'';flex-grow:999999}
+.dm-studio .dm-photos-rows>.dm-photo{position:relative;min-width:0;margin:0;animation:dm-icon-in .4s cubic-bezier(.34,1.3,.64,1) both}
+.dm-studio .dm-photos-rows .dm-photo-image{display:block;width:100%;height:auto;padding:0;overflow:hidden;border:0;border-radius:12px;background:var(--dm-soft);cursor:grab;transition:transform .3s cubic-bezier(.34,1.4,.64,1),box-shadow .3s}
+.dm-studio .dm-photos-rows .dm-photo-image img{display:block;width:100%;height:100%;object-fit:cover;transition:opacity .25s}
+.dm-studio .dm-photos-rows .dm-photo-image:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 18px #2527201f}
+/* Bolinha de seleção no canto de cima: amarela com ✓ quando a foto está no álbum */
+.dm-studio .dm-photo-check{position:absolute;top:7px;left:7px;z-index:2;display:grid;place-items:center;width:24px;height:24px;padding:0;border:2px solid #fff;border-radius:50%;background:#00000033;color:#2f2d12;box-shadow:0 1px 4px #0000004d;opacity:0;transition:opacity .2s,background .2s,transform .3s cubic-bezier(.34,1.8,.64,1)}
+.dm-studio .dm-photo-check:before{content:'';position:absolute;inset:-8px}
+.dm-studio .dm-photo:hover .dm-photo-check,.dm-studio .dm-photo-check:focus-visible{opacity:1}
+.dm-studio .dm-photo.is-checked .dm-photo-check{opacity:1;border-color:#fdf153;background:#fdf153}
+.dm-studio .dm-photo-check:hover{transform:scale(1.15)}
+.dm-studio .dm-photo.is-checked .dm-photo-check:hover{background:#fff;border-color:#fff}
+.dm-studio .dm-photo.is-checked .dm-photo-image img{opacity:.78}
+.dm-studio .dm-photos-rows .dm-delete-photo{top:7px;right:7px}
+/* No celular os controles ficam sempre visíveis */
+@media(hover:none){.dm-studio .dm-photo-check{opacity:1}}
