@@ -983,3 +983,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-review-title h2{position:relative;font:400 30px/1 'Playfair Display',Georgia,serif!important;letter-spacing:-.01em;color:var(--dm-ink);padding-bottom:12px}
 .dm-review-title h2:before{content:'FINALIZAR';display:block;margin-bottom:9px;font:600 10px/1 Arial,Helvetica,sans-serif;letter-spacing:.22em;color:var(--dm-accent)}
 .dm-review-title h2:after{content:'';position:absolute;left:0;bottom:0;width:46px;height:3px;border-radius:3px;background:var(--dm-yellow)}
+/* Contagem de 15 segundos até o aviso de margem fechar sozinho */
+.dm-notice-timer{animation-duration:.9s,15s}
+@media(prefers-reduced-motion:reduce){.dm-notice-timer{animation:dm-notice-countdown 15s linear both!important}}
