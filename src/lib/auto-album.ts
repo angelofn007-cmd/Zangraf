@@ -1,4 +1,4 @@
-import {photoLayouts,rankLayoutsForPhotos,type PhotoLayout} from './album-layouts';
+import {photoLayouts,rankLayoutsForPhotos,DEFAULT_SPACING,type PhotoLayout} from './album-layouts';
 import {emptySlot,type LayoutProject,type PrintSpec,type Slot,type Spread} from './layout-projects';
 
 /** Uma foto como o "Montar o álbum para mim" enxerga: formato (largura ÷ altura) e quando foi tirada. */
@@ -144,7 +144,7 @@ export function pickLayout(aspects:number[],spreadAspect:number,previousName?:st
 }
 
 export function layoutSpacing(layout:PhotoLayout,spec:PrintSpec){
- return {marginMm:Math.round(Math.min(spec.widthMm*2,spec.heightMm)*(layout.marginRatio??.05)),gapMm:2};
+ return {...DEFAULT_SPACING};
 }
 
 export type AutoAlbumResult={project:LayoutProject;placed:number;moments:number;leftover:number};

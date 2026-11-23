@@ -3,7 +3,7 @@ import {MAX_PHOTO_BYTES,checkAlbumCapacity} from '@/lib/album-capacity';
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import {coverSpineMm,coverRegions,photoLayouts,rankLayoutsForPhotos,type PhotoLayout} from '@/lib/album-layouts';
+import {coverSpineMm,coverRegions,photoLayouts,rankLayoutsForPhotos,DEFAULT_SPACING,type PhotoLayout} from '@/lib/album-layouts';
 import { Sparkles, Focus, ShoppingBag, ArrowLeft, ArrowRight, Plus, Save, ImagePlus, Undo2, Redo2, Copy, Trash2, WandSparkles, Eye, X, Check, BookOpen, RotateCcw, Upload, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Type, Palette, LayoutTemplate, Settings2, Minus, Maximize, Search, Info, SunMoon, RotateCw, Images, MousePointer2, Crop, AlignLeft, AlignCenter, AlignRight, Bold, Italic, FlipHorizontal2, FlipVertical2, Layers3, CircleCheck, CircleAlert, Ellipsis, ImageOff, ZoomIn } from 'lucide-react';
 import {checkAlbum,ISSUE_INFO,ISSUE_ORDER,pageLabel,type AlbumIssue} from '@/lib/album-check';
 import {ALBUM_FONTS,FONT_GROUPS,MAIN_FONT_COUNT,ensureFont,fontsInGroup,type AlbumFont} from '@/lib/album-fonts';
@@ -437,7 +437,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const fit=filled.length===layout.frames.length?rankLayoutsForPhotos([layout],filled.map(s=>aspectOf(s.photoId)),currentRatio,rankOptions(filled.map(s=>s.photoId)))[0]:undefined;
   // Com a mesma quantidade de fotos e quadros, cada foto vai para o quadro de formato mais parecido.
   const slots=fit?fit.order.map(i=>filled[i]):layout.frames.map((_,i)=>source.length?{...emptySlot(),photoId:source[i]||null}:old[i]||emptySlot());
-  replaceSpread({...spread,id:spread?.id||crypto.randomUUID(),layout:'livre',frames:layout.frames,spacing:spread?.spacing||{marginMm:Math.round(Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*(layout.marginRatio??.05)),gapMm:2},slots});
+  replaceSpread({...spread,id:spread?.id||crypto.randomUUID(),layout:'livre',frames:layout.frames,spacing:spread?.spacing||{...DEFAULT_SPACING},slots});
   setPickedPhotos([]);setSelectPhotos(false);setSlotIndex(0);setPhotoMode('crop');setTextId(undefined);
   setNotice('');
  }
@@ -450,7 +450,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,rankOptions(added.map(s=>s.photoId)))[0];
   const layout=best?.layout||photoLayouts(added.length,currentRatio)[0];
   const slots=best?best.order.map(i=>added[i]):added;
-  replaceSpread({...spread,layout:'livre',frames:layout.frames,slots,spacing:spread.spacing||{marginMm:Math.round(currentSpec.heightMm*.08),gapMm:2}});
+  replaceSpread({...spread,layout:'livre',frames:layout.frames,slots,spacing:spread.spacing||{...DEFAULT_SPACING}});
   setLayoutCount(slots.length);setSlotIndex(Math.max(0,slots.findIndex(s=>s.photoId===id)));setPhotoMode('crop');setTextId(undefined);setIconId(undefined);
   setNotice(`${slots.length} foto(s) na lâmina, no layout ${layout.name}, escolhido pelo formato das fotos. Veja outras composições em Layouts.`);
  }
@@ -674,7 +674,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='layouts'&&(()=>{
      const pageRatio=currentSpec.widthMm/currentSpec.heightMm;
      const shape=pageRatio<.9?'vertical':pageRatio>1.1?'horizontal':'quadrado';
-     const effectiveSpacing=(layout:PhotoLayout)=>spread?.spacing||{marginMm:Math.round(Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*(layout.marginRatio??.05)),gapMm:2};
+     const effectiveSpacing=(_layout:PhotoLayout)=>DEFAULT_SPACING;
      const thumbSpec={...currentSpec,widthMm:currentSpec.widthMm*(activePage<0?.5:1)};
      const thumbFrames=(layout:PhotoLayout)=>layout.frames.map(rect=>{const t=frameGeometry(rect,thumbSpec,activePage>=0,effectiveSpacing(layout)).trim;return {x:t.x/(thumbSpec.widthMm*2),y:t.y/thumbSpec.heightMm,w:t.w/(thumbSpec.widthMm*2),h:t.h/thumbSpec.heightMm};});
      const sameFrames=(layout:PhotoLayout)=>!!spread&&JSON.stringify(spreadRectangles(spread))===JSON.stringify(layout.frames);
@@ -682,7 +682,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      const recommended=rankedLayouts?list.slice(0,2):[];
      const others=rankedLayouts?list.slice(2):list;
      const photosHere=(spread?.slots||[cover.photo]).filter(s=>s.photoId).length;
-     const spacingPresets=[{label:'Sem borda',margin:0,gap:0},{label:'Fino',margin:5,gap:2},{label:'Médio',margin:12,gap:4},{label:'Amplo',margin:20,gap:8}];
+     const spacingPresets=[{label:'Sem borda',margin:0,gap:0},{label:'Fino',margin:2.5,gap:2},{label:'Médio',margin:12,gap:4},{label:'Amplo',margin:20,gap:8}];
      const card=({layout,lowResolution}:{layout:PhotoLayout;lowResolution:boolean},best=false)=><button key={layout.id} type="button" className={'dm-layout-card'+(best?' is-best':'')} aria-pressed={sameFrames(layout)} disabled={busy} title={lowResolution?'Alguma foto ficaria ampliada além da resolução dela':undefined} onClick={()=>applyPhotoLayout(layout)}>
       <span className="dm-layout-thumb" style={{aspectRatio:currentRatio}}>{activePage>=0&&<em className="dm-layout-fold"/>}{thumbFrames(layout).map((f,i)=><i key={i} style={{left:f.x*100+'%',top:f.y*100+'%',width:f.w*100+'%',height:f.h*100+'%'}}/>)}</span>
       <strong>{layout.name}</strong>

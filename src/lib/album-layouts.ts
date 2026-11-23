@@ -1,5 +1,7 @@
 import type {FrameRect,LayoutProject} from './layout-projects';
 export type PhotoLayout={id:string;name:string;frames:FrameRect[];marginRatio?:number};
+/** Respiro padrão dos layouts: 0,25 cm de margem externa e 0,2 cm entre as fotos. */
+export const DEFAULT_SPACING={marginMm:2.5,gapMm:2} as const;
 /** Centered spine dimensions from the manufacturer's 500 g / 800 g table. */
 export function coverSpineMm(project:LayoutProject):number {
  if(project.productionModel?.coverMode!=='wrap')return 0;
