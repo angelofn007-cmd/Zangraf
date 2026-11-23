@@ -153,9 +153,8 @@ export function photoLayouts(count:number,spreadAspect=2):PhotoLayout[]{
  for(const e of entries)if(e.mirror)all.push({id:`${e.id}-mirror-${n}`,name:`${e.name} (espelhado)`,frames:mirrorFrames(e.frames),marginRatio:e.marginRatio??.05});
  const fitting=all.filter(layout=>layoutSuits(layout,spreadAspect));
  const list=fitting.length?fitting:all;
- // Nome pela contagem de fotos; nomes repetidos ganham uma letra (1x3, 1x3 · B…).
- const seen=new Map<string,number>();
- return list.map(layout=>{const base=layoutCountName(layout.frames);const n=(seen.get(base)||0)+1;seen.set(base,n);return {...layout,description:layout.name,name:n>1?`${base} · ${String.fromCharCode(64+n)}`:base};});
+ // Nome pela contagem de fotos (o nome descritivo fica como dica).
+ return list.map(layout=>({...layout,description:layout.name,name:layoutCountName(layout.frames)}));
 }
 
 export type LayoutFit={layout:PhotoLayout;order:number[];score:number;lowResolution:boolean};
