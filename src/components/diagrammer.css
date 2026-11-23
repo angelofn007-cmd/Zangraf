@@ -991,3 +991,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-photo.is-used>button:first-child img{opacity:.42;filter:saturate(.55)}
 .dm-photo.is-used>button:first-child:hover img{opacity:.85;filter:none}
 .dm-photo.is-used small{color:var(--dm-faint)}
+/* Alça de redimensionar o quadro: mesmo desenho, área de clique bem maior (fica fácil de pegar) */
+.dm-studio .zg-resize-handle:before{content:'';position:absolute;inset:-12px;border-radius:50%}
