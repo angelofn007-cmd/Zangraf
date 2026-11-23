@@ -682,7 +682,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      const recommended=rankedLayouts?list.slice(0,2):[];
      const others=rankedLayouts?list.slice(2):list;
      const photosHere=(spread?.slots||[cover.photo]).filter(s=>s.photoId).length;
-     const spacingPresets=[{label:'Sem borda',margin:0,gap:0},{label:'Fino',margin:2.5,gap:2},{label:'Médio',margin:12,gap:4},{label:'Amplo',margin:20,gap:8}];
+     const spacingPresets=[{label:'Sem borda',margin:0,gap:0},{label:'Fino',margin:4,gap:2},{label:'Médio',margin:12,gap:4},{label:'Amplo',margin:20,gap:8}];
      const card=({layout,lowResolution}:{layout:PhotoLayout;lowResolution:boolean},best=false)=><button key={layout.id} type="button" className={'dm-layout-card'+(best?' is-best':'')} aria-pressed={sameFrames(layout)} disabled={busy} title={lowResolution?'Alguma foto ficaria ampliada além da resolução dela':undefined} onClick={()=>applyPhotoLayout(layout)}>
       <span className="dm-layout-thumb" style={{aspectRatio:currentRatio}}>{activePage>=0&&<em className="dm-layout-fold"/>}{thumbFrames(layout).map((f,i)=><i key={i} style={{left:f.x*100+'%',top:f.y*100+'%',width:f.w*100+'%',height:f.h*100+'%'}}/>)}</span>
       <strong>{layout.name}</strong>
