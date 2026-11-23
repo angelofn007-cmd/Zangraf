@@ -553,6 +553,15 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  async function autoBuildAlbum(){
   const current=projectRef.current;
   if(!current||busy||!current.photos.length||!current.spreads.length)return;
+  // Precisa de pelo menos uma foto por lâmina (as fotos da capa não entram no miolo).
+  const onCover=new Set([current.cover,current.backCover].flatMap(c=>c?[c.photo.photoId,...(c.composition?.slots.map(s=>s.photoId)||[])]:[]).filter(Boolean));
+  const available=current.photos.filter(p=>!onCover.has(p.id)).length;
+  if(available<current.spreads.length){
+   const missing=current.spreads.length-available;
+   setNotice(`Para montar o álbum, adicione mais ${missing} ${missing===1?'foto':'fotos'}: é preciso pelo menos uma por lâmina (${current.spreads.length} lâminas).`);
+   fileInput.current?.click();
+   return;
+  }
   if(current.spreads.some(s=>s.slots.some(slot=>slot.photoId))&&!window.confirm('Montar o álbum inteiro automaticamente? As fotos das lâminas serão reorganizadas (textos e capas continuam). Você pode desfazer depois.'))return;
   setBusy(true);
   try{
