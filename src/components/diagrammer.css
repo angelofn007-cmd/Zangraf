@@ -993,3 +993,10 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-photo.is-used small{color:var(--dm-faint)}
 /* Alça de redimensionar o quadro: mesmo desenho, área de clique bem maior (fica fácil de pegar) */
 .dm-studio .zg-resize-handle:before{content:'';position:absolute;inset:-12px;border-radius:50%}
+/* Seleção de várias fotos: contagem, selecionar todas e excluir em lote */
+.dm-multi-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.dm-multi-head>span{margin:0!important;font-weight:600}
+.dm-multi-head .dm-link{padding:4px 0;font-size:12px}
+.dm-multi-actions .dm-button.full{margin:6px 0 0}
+.dm-studio .dm-danger-button{border-color:#f0c3b9;background:#fff;color:#c7372f;animation:dm-tab-content .3s ease both}
+.dm-studio .dm-danger-button:hover:not(:disabled){border-color:#c7372f;background:#fdeee9}
