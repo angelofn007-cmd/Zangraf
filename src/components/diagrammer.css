@@ -1375,3 +1375,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photos-columns .dm-photo-col>.dm-photo:last-child{margin-bottom:0}
 .dm-studio .dm-photos-columns .dm-photo-trio>.dm-photo{display:block}
 .dm-studio .dm-photos.dm-photos-columns{align-items:stretch}.dm-studio .dm-photo-pair,.dm-studio .dm-photo-trio{width:100%}
+
+/* Adicionar fotos e ⋯: texto e ícones brancos (sombra leve para ler bem no amarelo) */
+.dm-studio .dm-upload-main,.dm-studio .dm-upload-more{color:#fff;text-shadow:0 1px 2px #8a7a0080,0 0 1px #8a7a0066}
+.dm-studio .dm-upload-main svg,.dm-studio .dm-upload-more svg{color:#fff;filter:drop-shadow(0 1px 1.5px #8a7a0080)}
