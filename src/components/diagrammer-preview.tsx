@@ -20,6 +20,12 @@ function SurfaceLayer({surface,width,height,bleed,compact}:{surface?:string;widt
  const fit=surfaceFit(surface,width,height,bleed);
  return <div aria-hidden="true" style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:`url(${surfaceUrl(surface,compact)})`,backgroundRepeat:'no-repeat',backgroundPosition:'center',backgroundSize:`${fit.w/width*100}% ${fit.h/height*100}%`}}/>;
 }
+/** Imagem própria no fundo da página, cobrindo tudo (por baixo das fotos e textos). */
+function BackgroundImage({id,urls}:{id?:string;urls:Images}){
+ if(!id||!urls[id])return null;
+ // eslint-disable-next-line @next/next/no-img-element
+ return <img className="zg-bg-image" src={urls[id]} alt="" aria-hidden="true" draggable={false} onError={()=>window.dispatchEvent(new CustomEvent('zangraf-photo-error',{detail:id}))} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',pointerEvents:'none'}}/>;
+}
 export function PhotoFrame({slot,urls,alt,geometry}:{slot:Slot;urls:Images;alt:string;geometry?:{trim:Box;image:Box}}){
  if(!slot?.photoId||!urls[slot.photoId])return <span className="zg-empty-frame"><ImagePlus size={24}/><span>Arraste uma foto</span></span>;
  const {trim,image}=geometry||{trim:{x:0,y:0,w:1,h:1},image:{x:0,y:0,w:1,h:1}};
@@ -76,6 +82,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
  function end(){const d=drag.current;drag.current=null;setDraft(null);if(d?.nextRect)onFrameChange?.(d.index,d.nextRect);else if(d?.nextSlot)onSlotChange?.(d.index,d.nextSlot);}
  return <div ref={stage} className="zg-spread" aria-label="Lâmina do álbum" style={{aspectRatio:ratio,background:spread.background||'#ffffff'}}>
   <SurfaceLayer surface={spread.surface} width={physical.widthMm*2} height={physical.heightMm} bleed={physical.bleedMm} compact={compact}/>
+  <BackgroundImage id={spread.backgroundPhotoId} urls={urls}/>
   {spread.rightBackground&&<div className="zg-right-background" style={{background:spread.rightBackground}}/>}
   <TextureLayer texture={spread.texture} width={physical.widthMm*2} height={physical.heightMm} compact={compact}/>
   {spreadRectangles(spread).map((original,index)=>{
@@ -116,10 +123,11 @@ export function AlbumCover({cover,urls,onPhotoDrop,ratio=1,back=false,spec,guide
  const textCanvas=useRef<HTMLCanvasElement>(null);
  useEffect(()=>{const canvas=textCanvas.current;if(!canvas)return;canvas.width=1000;canvas.height=Math.round(1000/ratio);const ctx=canvas.getContext('2d');if(ctx)drawCoverText(ctx,cover,1000,1000/ratio,back)},[cover,ratio,back]);
  const physical=spec||{...defaultPrintSpec(),widthMm:300*ratio};const bleed=physical.bleedMm;
- if(cover.composition)return <AlbumSpread spread={{...cover.composition,background:cover.color,texts:cover.texts,texture:cover.texture,surface:cover.surface,icons:cover.icons}} urls={urls} ratio={ratio} spec={{...physical,widthMm:physical.widthMm/2}} selected={selected} onSelect={onSelect} onPhotoDrop={onPhotoDrop?(index,id)=>onPhotoDrop(id,index):undefined} mode={mode} onCropRequest={onCropRequest} onSlotChange={onSlotChange} onFrameChange={onFrameChange} onSlotSwap={onSlotSwap} onReplaceRequest={onReplaceRequest} photoSizes={photoSizes} guides={guides} hideFold compact={compact} selectedIcon={selectedIcon} onIconSelect={onIconSelect} onIconChange={onIconChange} {...textProps}/>;
+ if(cover.composition)return <AlbumSpread spread={{...cover.composition,background:cover.color,texts:cover.texts,texture:cover.texture,surface:cover.surface,backgroundPhotoId:cover.backgroundPhotoId,icons:cover.icons}} urls={urls} ratio={ratio} spec={{...physical,widthMm:physical.widthMm/2}} selected={selected} onSelect={onSelect} onPhotoDrop={onPhotoDrop?(index,id)=>onPhotoDrop(id,index):undefined} mode={mode} onCropRequest={onCropRequest} onSlotChange={onSlotChange} onFrameChange={onFrameChange} onSlotSwap={onSlotSwap} onReplaceRequest={onReplaceRequest} photoSizes={photoSizes} guides={guides} hideFold compact={compact} selectedIcon={selectedIcon} onIconSelect={onIconSelect} onIconChange={onIconChange} {...textProps}/>;
  const geometry={trim:{x:0,y:0,w:physical.widthMm,h:physical.heightMm},image:{x:-bleed,y:-bleed,w:physical.widthMm+bleed*2,h:physical.heightMm+bleed*2}};
  return <div className={`zg-cover ${cover.photo.photoId&&!cover.customText?'legacy-photo':''}`} style={{background:cover.color,color:cover.textColor,aspectRatio:ratio}} onDragOver={event=>{if(onPhotoDrop&&event.dataTransfer.types.includes('application/x-zangraf-photo'))event.preventDefault()}} onDrop={event=>{event.preventDefault();const id=event.dataTransfer.getData('application/x-zangraf-photo');if(id)onPhotoDrop?.(id)}}>
   <SurfaceLayer surface={cover.surface} width={physical.widthMm} height={physical.heightMm} bleed={bleed} compact={compact}/>
+  <BackgroundImage id={cover.backgroundPhotoId} urls={urls}/>
   <TextureLayer texture={cover.texture} width={physical.widthMm} height={physical.heightMm} compact={compact}/>
   {cover.photo.photoId&&<div className="zg-cover-photo"><PhotoFrame slot={cover.photo} urls={urls} geometry={geometry} alt="Fotografia da capa"/></div>}
   <canvas ref={textCanvas} className="zg-cover-text-canvas" aria-label={cover.customText?undefined:`${back?'Verso':'Capa'}: ${cover.title}. ${cover.subtitle}`}/>

@@ -9,13 +9,13 @@ import {configuredSheetCount,physicalPrintDimensions,validatePhysicalPrintSpec,M
 
 export type LayoutName = 'inteira' | 'dupla' | 'quatro' | 'editorial' | 'seis' | 'respiro' | 'livre';
 /** `takenAt`: quando a foto foi tirada (EXIF), em ms; ausente se o arquivo não tiver essa informação. */
-export type Photo = { id: string; name: string; blob: Blob; preview?: Blob; thumbnail?: Blob; width?: number; height?: number; takenAt?: number };
+export type Photo = { id: string; name: string; blob: Blob; preview?: Blob; thumbnail?: Blob; width?: number; height?: number; takenAt?: number; /** Imagem importada só para usar como fundo (não aparece nas fotos do álbum). */ background?: boolean };
 export type Slot = { photoId: string | null; x: number; y: number; zoom?: number; flipX?: boolean; flipY?: boolean; adjust?: PhotoAdjust };
 export type FrameRect = {x:number;y:number;w:number;h:number};
 export type AlbumText = {id:string;text:string;x:number;y:number;width:number;fontSize:number;fontFamily:AlbumFont;color:string;bold:boolean;italic:boolean;align:'left'|'center'|'right';rotation?:0|90;/** Altura mínima da caixa, em % da altura da área; o texto fica centralizado nela. */height?:number};
 export type LayoutSpacing={marginMm:number;gapMm:number};
-export type Spread = { id: string; layout: LayoutName; slots: Slot[]; frames?:FrameRect[]; spacing?:LayoutSpacing; texture?:TextureName; /** Textura fotográfica de fundo (mármore, linho…). */ surface?:SurfaceName; icons?:AlbumIcon[]; background?:string; rightBackground?:string; texts?:AlbumText[] };
-export type Cover = { title: string; subtitle: string; color: string; textColor: string; photo: Slot; texts?:AlbumText[]; customText?:boolean; texture?:TextureName; surface?:SurfaceName; icons?:AlbumIcon[]; composition?:Spread };
+export type Spread = { id: string; layout: LayoutName; slots: Slot[]; frames?:FrameRect[]; spacing?:LayoutSpacing; texture?:TextureName; /** Textura fotográfica de fundo (mármore, linho…). */ surface?:SurfaceName; /** Imagem própria de fundo (foto com background:true). */ backgroundPhotoId?:string; icons?:AlbumIcon[]; background?:string; rightBackground?:string; texts?:AlbumText[] };
+export type Cover = { title: string; subtitle: string; color: string; textColor: string; photo: Slot; texts?:AlbumText[]; customText?:boolean; texture?:TextureName; surface?:SurfaceName; backgroundPhotoId?:string; icons?:AlbumIcon[]; composition?:Spread };
 export type PrintSpec = { widthMm: number; heightMm: number; bleedMm: number; dpi: number; exportMode: 'page' };
 export type LayoutProject = {
  id: string; name: string; updatedAt: string; /** Quando o projeto foi criado; ele é excluído automaticamente PROJECT_LIFETIME_DAYS depois. */ createdAt?: string; photos: Photo[]; spreads: Spread[];
@@ -143,10 +143,12 @@ export async function purgeExpiredProjects(now=Date.now()):Promise<string[]>{
 export async function listProjects(){const projects=await operation<LayoutProject[]>('readonly',store=>store.getAll());return projects.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));}
 
 export function removePhoto(project: LayoutProject, photoId: string): LayoutProject {
- return {...project, photos:project.photos.filter(p=>p.id!==photoId),
+ const clearBg=<T extends {backgroundPhotoId?:string}>(item:T):T=>item.backgroundPhotoId===photoId?{...item,backgroundPhotoId:undefined}:item;
+ const result:LayoutProject={...project, photos:project.photos.filter(p=>p.id!==photoId),
   cover:project.cover?{...project.cover,composition:project.cover.composition?{...project.cover.composition,slots:project.cover.composition.slots.map(s=>s.photoId===photoId?emptySlot():s)}:undefined,photo:project.cover.photo.photoId===photoId?emptySlot():project.cover.photo}:undefined,
   backCover:project.backCover?{...project.backCover,composition:project.backCover.composition?{...project.backCover.composition,slots:project.backCover.composition.slots.map(s=>s.photoId===photoId?emptySlot():s)}:undefined,photo:project.backCover.photo.photoId===photoId?emptySlot():project.backCover.photo}:undefined,
   spreads:project.spreads.map(s=>({...s,slots:s.slots.map(slot=>slot.photoId===photoId?emptySlot():slot)}))};
+ return {...result,spreads:result.spreads.map(clearBg),cover:result.cover&&clearBg(result.cover),backCover:result.backCover&&clearBg(result.backCover)};
 }
 export function duplicateSpread(project: LayoutProject, index: number): LayoutProject {
  if(!project.spreads[index]||project.spreads.length>=MAX_SPREADS)throw new Error(`O álbum pode ter até ${MAX_SPREADS} lâminas nesta versão.`);
@@ -179,7 +181,7 @@ export function fillEmptyFrames(project: LayoutProject): {project:LayoutProject;
  if(project.cover?.photo.photoId)used.add(project.cover.photo.photoId);
  if(project.backCover?.photo.photoId)used.add(project.backCover.photo.photoId);
  for(const c of [project.cover,project.backCover])for(const slot of c?.composition?.slots||[])if(slot.photoId)used.add(slot.photoId);
- const available=project.photos.filter(p=>!used.has(p.id));let next=0;
+ const available=project.photos.filter(p=>!p.background&&!used.has(p.id));let next=0;
  const spreads=project.spreads.map(spread=>({...spread,slots:spread.slots.map(slot=>{
   if(slot.photoId||!available[next])return slot;
   return {...emptySlot(),photoId:available[next++].id};

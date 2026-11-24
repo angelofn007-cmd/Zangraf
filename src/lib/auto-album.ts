@@ -167,7 +167,7 @@ export function autoLayoutProject(project:LayoutProject,takenAt:Record<string,nu
   for(const slot of cover?.composition?.slots||[])if(slot.photoId)onCover.add(slot.photoId);
  }
  const aspectOf=new Map<string,number>();
- const photos:AlbumPhoto[]=project.photos.filter(photo=>!onCover.has(photo.id)).map(photo=>{
+ const photos:AlbumPhoto[]=project.photos.filter(photo=>!photo.background&&!onCover.has(photo.id)).map(photo=>{
   const aspect=photo.width&&photo.height?photo.width/photo.height:1.5;aspectOf.set(photo.id,aspect);
   return {id:photo.id,aspect,takenAt:takenAt[photo.id]};
  });

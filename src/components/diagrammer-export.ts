@@ -62,6 +62,7 @@ async function drawComposition(ctx:CanvasRenderingContext2D,project:LayoutProjec
   const bleed=spec.bleedMm;
   ctx.fillStyle=cover.color;ctx.fillRect(-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2);
   await drawSurface(ctx,cover.surface,spec.widthMm,spec.heightMm,bleed);
+  if(cover.backgroundPhotoId)await drawPhoto(ctx,project,{photoId:cover.backgroundPhotoId,x:50,y:50,zoom:1},-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2);
   drawTexture(ctx,cover.texture,spec.widthMm,spec.heightMm,bleed);
   await drawPhoto(ctx,project,cover.photo,-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2);
   if(cover.photo.photoId&&!cover.customText){ctx.fillStyle='rgba(0,0,0,.16)';ctx.fillRect(-bleed,-bleed,spec.widthMm+bleed*2,spec.heightMm+bleed*2)}
@@ -76,6 +77,7 @@ async function drawComposition(ctx:CanvasRenderingContext2D,project:LayoutProjec
   const spread=project.spreads[index];if(!spread)throw new Error('A lâmina solicitada não existe.');
   ctx.fillStyle=spread.background||'#ffffff';ctx.fillRect(-spec.bleedMm,-spec.bleedMm,spec.widthMm*2+spec.bleedMm*2,spec.heightMm+spec.bleedMm*2);
   await drawSurface(ctx,spread.surface,spec.widthMm*2,spec.heightMm,spec.bleedMm);
+  if(spread.backgroundPhotoId)await drawPhoto(ctx,project,{photoId:spread.backgroundPhotoId,x:50,y:50,zoom:1},-spec.bleedMm,-spec.bleedMm,spec.widthMm*2+spec.bleedMm*2,spec.heightMm+spec.bleedMm*2);
   if(spread.rightBackground){ctx.fillStyle=spread.rightBackground;ctx.fillRect(spec.widthMm,-spec.bleedMm,spec.widthMm+spec.bleedMm,spec.heightMm+spec.bleedMm*2);}
   drawTexture(ctx,spread.texture,spec.widthMm*2,spec.heightMm,spec.bleedMm);
   for(const [frameIndex,rect] of spreadRectangles(spread).entries()){

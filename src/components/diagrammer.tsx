@@ -8,7 +8,7 @@ import { Sparkles, Focus, ShoppingBag, ArrowLeft, ArrowRight, Plus, Save, ImageP
 import {checkAlbum,ISSUE_INFO,ISSUE_ORDER,pageLabel,type AlbumIssue} from '@/lib/album-check';
 import {ALBUM_FONTS,FONT_GROUPS,MAIN_FONT_COUNT,ensureFont,fontsInGroup,type AlbumFont} from '@/lib/album-fonts';
 import {ALBUM_ICONS,TEXTURES,SURFACES,SURFACE_GROUPS,surfaceUrl,type AlbumIcon,type TextureName,type SurfaceName} from '@/lib/album-decorations';
-import {ALBUM_THEMES,applyAlbumTheme} from '@/lib/album-themes';
+import {ALBUM_THEMES,applyThemeBackground,applyThemeCover} from '@/lib/album-themes';
 import {DecorativeIcon} from './diagrammer-decoration';
 import {AlbumFlipbook} from './diagrammer-flipbook';
 import {PhotoFocus} from './diagrammer-focus';
@@ -241,6 +241,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  useEffect(()=>{setPickedPhotos(ids=>{const alive=new Set(photoIdsKey?.split('|')||[]);const next=ids.filter(id=>alive.has(id));return next.length===ids.length?ids:next;});},[photoIdsKey]);
  const [savedLayouts,setSavedLayouts]=useState<{id:string;name:string;spread:Spread}[]>([]);
  const fileInput = useRef<HTMLInputElement>(null);
+ const bgInput = useRef<HTMLInputElement>(null);
+ const [themeOpen, setThemeOpen] = useState<string|null>(null);
+ // Carrega as fontes dos temas para as capas prontas aparecerem certas.
+ useEffect(()=>{if(panel!=='background'||backgroundTab!=='themes')return;for(const t of ALBUM_THEMES)for(const c of t.covers){void ensureFont(c.font);void ensureFont(c.subFont);}},[panel,backgroundTab]);
  const previewDialog = useRef<HTMLDialogElement>(null);
  const projectRef = useRef<LayoutProject | null>(null);
  const dirtyRef = useRef(false);
@@ -505,9 +509,11 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  for(const c of [frontCover,backCover])for(const f of c.composition?.slots||[])if(f.photoId)usedIds.add(f.photoId);
  if (frontCover.photo.photoId) usedIds.add(frontCover.photo.photoId);
  if (backCover.photo.photoId) usedIds.add(backCover.photo.photoId);
- const visiblePhotos = project.photos.filter(photo => !filterUnused || !usedIds.has(photo.id));
+ /** Fotos do álbum (as imagens importadas só para fundo ficam de fora). */
+ const library = project.photos.filter(photo => !photo.background);
+ const visiblePhotos = library.filter(photo => !filterUnused || !usedIds.has(photo.id));
  const emptyCount = project.spreads.reduce((total, item) => total + item.slots.filter(frame => !frame.photoId).length, 0);
- const unusedCount = project.photos.filter(photo => !usedIds.has(photo.id)).length;
+ const unusedCount = library.filter(photo => !usedIds.has(photo.id)).length;
  const albumFilled = project.spreads.some(item => item.slots.some(frame => frame.photoId));
  const storageMb = project.photos.reduce((sum,photo)=>sum+photo.blob.size,0)/1024/1024;
  const selectedPhoto = project.photos.find(photo => photo.id === slot?.photoId);
@@ -689,7 +695,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   if(!full||busy||!full.photos.length||!full.spreads.length)return;
   // Com fotos selecionadas, monta só com elas (as outras continuam na biblioteca).
   const chosen=onlyIds?.length?new Set(onlyIds):null;
-  const current=chosen?{...full,photos:full.photos.filter(p=>chosen.has(p.id))}:full;
+  const current=chosen?{...full,photos:full.photos.filter(p=>chosen.has(p.id))}:{...full,photos:full.photos.filter(p=>!p.background)};
   // Precisa de pelo menos uma foto por lâmina (as fotos da capa não entram no miolo).
   const onCover=new Set([current.cover,current.backCover].flatMap(c=>c?[c.photo.photoId,...(c.composition?.slots.map(s=>s.photoId)||[])]:[]).filter(Boolean));
   const available=current.photos.filter(p=>!onCover.has(p.id)).length;
@@ -770,13 +776,13 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  }
  function setBackground(color:string,side:'all'|'right'='all'){
   // Escolher uma cor tira a textura de superfície, para a cor aparecer.
-  if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,color,surface:undefined}});
-  else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?(side==='right'?{...s,rightBackground:color}:{...s,background:color,rightBackground:undefined,surface:undefined}):s)});
+  if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,color,surface:undefined,backgroundPhotoId:undefined}});
+  else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?(side==='right'?{...s,rightBackground:color}:{...s,background:color,rightBackground:undefined,surface:undefined,backgroundPhotoId:undefined}):s)});
  }
  /** Coloca uma textura fotográfica (mármore, linho, metal, papel) no fundo da área atual. */
  function setSurface(surface?:SurfaceName){
-  if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,surface}});
-  else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?{...s,surface,rightBackground:surface?undefined:s.rightBackground}:s)});
+  if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,surface,backgroundPhotoId:surface?undefined:cover.backgroundPhotoId}});
+  else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?{...s,surface,rightBackground:surface?undefined:s.rightBackground,backgroundPhotoId:surface?undefined:s.backgroundPhotoId}:s)});
  }
  function surfaceForAll(surface?:SurfaceName){
   if(!window.confirm(surface?'Usar esta textura no fundo de todas as lâminas? Fotos e textos continuam. Você pode desfazer.':'Tirar a textura de todas as lâminas?'))return;
@@ -796,7 +802,29 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  }
  function addIcon(kind:string){if(icons.length>=30)return;const icon={id:crypto.randomUUID(),kind,x:wrapMode&&activePage<0?70:45,y:40,sizeMm:20,rotation:0,color:'#68563e'};updateIcons([...icons,icon]);setIconId(icon.id);setTextId(undefined);}
  function changeTexture(value:TextureName){if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,texture:value}});else if(spread)replaceSpread({...spread,texture:value});}
- function applyTheme(id:string){const theme=ALBUM_THEMES.find(t=>t.id===id);if(!theme)return;if(!window.confirm(`Aplicar o tema ${theme.name} ao álbum inteiro? Os layouts e fundos serão atualizados. As fotos e textos existentes serão mantidos. Você pode desfazer.`))return;edit(applyAlbumTheme(project!,id));setSlotIndex(0);setTextId(undefined);setIconId(undefined);}
+ function applyThemePages(id:string){edit(applyThemeBackground(project!,id));}
+ function applyThemeCoverOption(id:string,index:number){edit(applyThemeCover(project!,id,index));if(activePage>=0)setActivePage(projectPageIndices(project!)[0]);}
+ /** Importa uma imagem só para o fundo da página aberta (não entra nas fotos do álbum). */
+ async function importBackground(file?:File|null){
+  if(!file||!project)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>PHOTO_LIMIT){setNotice('Use uma imagem JPG, PNG ou WebP de até 50 MB.');return;}
+  setBusy(true);
+  try{
+   const bitmap=await createImageBitmap(file);
+   try{
+    const preview=await makePhotoPreview(bitmap,2000),thumbnail=await makePhotoPreview(bitmap,240);
+    const photo:Photo={id:crypto.randomUUID(),name:file.name,blob:file,preview,thumbnail,width:bitmap.width,height:bitmap.height,background:true};
+    const base=projectRef.current!;const withPhoto={...base,photos:[...base.photos,photo]};
+    if(activePage<0)edit({...withPhoto,[backMode?'backCover':'cover']:{...cover,backgroundPhotoId:photo.id,surface:undefined}});
+    else edit({...withPhoto,spreads:withPhoto.spreads.map((s,i)=>i===activePage?{...s,backgroundPhotoId:photo.id,surface:undefined,rightBackground:undefined}:s)});
+   }finally{bitmap.close();}
+  }catch{setNotice('Não foi possível abrir essa imagem.');}
+  finally{setBusy(false);if(bgInput.current)bgInput.current.value='';}
+ }
+ function setBackgroundImage(id?:string,all=false){
+  if(activePage<0&&!all){edit({...project!,[backMode?'backCover':'cover']:{...cover,backgroundPhotoId:id}});return;}
+  edit({...project!,spreads:project!.spreads.map((s,i)=>all||i===activePage?{...s,backgroundPhotoId:id,surface:id?undefined:s.surface}:s)});
+ }
  function setSpacing(kind:'marginMm'|'gapMm',value:number){if(!spread)return;replaceSpread({...spread,spacing:{marginMm:spread.spacing?.marginMm??0,gapMm:spread.spacing?.gapMm??2,[kind]:value}});}
  /** Exclui de uma vez as fotos marcadas em "Selecionar várias" (e tira dos quadros onde estavam). */
  function removePickedPhotos(){
@@ -899,7 +927,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='photos'&&<>
      <div className="dm-upload-bar">
       <button type="button" className="dm-upload-main" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><Upload size={18}/>{busy?'Carregando…':'Adicionar fotos'}</button>
-      {!!project.photos.length&&<button type="button" className={'dm-upload-more dm-select-all'+(selectPhotos?' is-on':'')} aria-pressed={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))} aria-label={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas as fotos'} title={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas'} disabled={busy} onClick={()=>{if(selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))){setSelectPhotos(false);setPickedPhotos([])}else{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id));setSnapKey(k=>k+1)}}}><CheckCheck size={21}/></button>}
+      {!!library.length&&<button type="button" className={'dm-upload-more dm-select-all'+(selectPhotos?' is-on':'')} aria-pressed={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))} aria-label={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas as fotos'} title={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas'} disabled={busy} onClick={()=>{if(selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))){setSelectPhotos(false);setPickedPhotos([])}else{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id));setSnapKey(k=>k+1)}}}><CheckCheck size={21}/></button>}
       {selectPhotos&&pickedPhotos.length>0&&<button type="button" className="dm-upload-trash" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length} ${pickedPhotos.length===1?'foto':'fotos'}`} onClick={()=>removePickedPhotos()}><Trash2 size={19}/><b>{pickedPhotos.length}</b></button>}
      </div>
      {importing&&!importing.finished&&(()=>{const pct=importing.total?Math.min(1,importing.done/importing.total):0;
@@ -919,10 +947,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <strong>{importing.total} {importing.total===1?'foto revelada':'fotos reveladas'}</strong>
       <div className="dm-finale-thumbs" aria-hidden="true">{importing.thumbs.map((url,k)=><img key={url} src={url} alt="" style={{['--k' as string]:k}}/>)}</div>
      </div>}
-     {project.photos.length>1&&<button type="button" className={'dm-build-button'+(selectPhotos&&pickedPhotos.length>0?' is-ready':'')} disabled={busy} title={selectPhotos&&pickedPhotos.length?`Montar com as ${pickedPhotos.length} fotos selecionadas`:undefined} onClick={()=>void autoBuildAlbum(selectPhotos&&pickedPhotos.length?pickedPhotos:undefined)}><WandSparkles size={17}/>{busy?<><span className="dm-printing" aria-hidden="true"><i/></span>Montando…</>:'Montar álbum automático'}</button>}
+     {library.length>1&&<button type="button" className={'dm-build-button'+(selectPhotos&&pickedPhotos.length>0?' is-ready':'')} disabled={busy} title={selectPhotos&&pickedPhotos.length?`Montar com as ${pickedPhotos.length} fotos selecionadas`:undefined} onClick={()=>void autoBuildAlbum(selectPhotos&&pickedPhotos.length?pickedPhotos:undefined)}><WandSparkles size={17}/>{busy?<><span className="dm-printing" aria-hidden="true"><i/></span>Montando…</>:'Montar álbum automático'}</button>}
      
       
-     {!project.photos.length?(importing?null:<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>):<>
+     {!library.length?(importing?null:<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>):<>
       <div className="dm-photo-tabs" role="tablist" ref={photoTabs}>{tabInk&&<i className="dm-tab-ink" aria-hidden="true" style={{transform:`translateX(${tabInk.left}px)`,width:tabInk.width}}/>}
        <button type="button" role="tab" aria-selected={!filterUnused} onClick={()=>setFilterUnused(false)}>Todas</button>
        <button type="button" role="tab" aria-selected={filterUnused} onClick={()=>setFilterUnused(true)}>Não usadas{!!unusedCount&&<span>{unusedCount}</span>}</button>
@@ -1000,11 +1028,30 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       {activePage<0&&!cover.customText&&<details><summary>Texto da capa anterior</summary><label>Título<input value={cover.title} onChange={e=>edit({...project,[backMode?'backCover':'cover']:{...cover,title:e.target.value}})}/></label><label>Subtítulo<input value={cover.subtitle} onChange={e=>edit({...project,[backMode?'backCover':'cover']:{...cover,subtitle:e.target.value}})}/></label><button className="dm-button" onClick={()=>edit({...project,[backMode?'backCover':'cover']:{...cover,customText:true}})}>Usar somente os novos textos</button></details>}</>;})()}
     {panel==='icons'&&<>{(()=>{const categories=['Todos','Casamento','Festa','Bebê e família','Momentos'];const short=['Todos','Casamento','Festa','Família','Momentos'];const colors=['var(--zg-red)','var(--zg-green)','var(--zg-yellow)','var(--zg-blue)','var(--zg-magenta)'];const active=Math.max(0,categories.indexOf(iconCategory));
       return <div className="dm-icon-tabs" role="tablist" aria-label="Categorias de ícones" style={{'--active':active,'--active-color':colors[active]} as CSSProperties}>{categories.map((category,i)=><button key={category} type="button" role="tab" data-color={i} title={category} aria-selected={category===iconCategory} onClick={()=>setIconCategory(category)}><i aria-hidden="true"/><span className="dm-tab-word" key={category===iconCategory?'on':'off'} aria-label={short[i]}>{Array.from(short[i]).map((ch,k)=><b key={k} aria-hidden="true" style={{['--k' as string]:k}}>{ch}</b>)}</span></button>)}</div>;})()}<div className="dm-search dm-icon-search"><Search size={15}/><input aria-label="Buscar ícones" placeholder="Buscar ícone (ex.: coração, bolo)" value={iconSearch} onChange={e=>setIconSearch(e.target.value)}/></div><div className="dm-icon-grid" key={iconCategory}>{ALBUM_ICONS.filter(i=>(iconCategory==='Todos'||i.category===iconCategory)&&i.label.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(iconSearch.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim())).map((icon,order)=><button key={icon.id} style={{'--i':Math.min(order,24)} as CSSProperties} title={icon.label} aria-label={`Adicionar ícone ${icon.label}`} disabled={icons.length>=30} onClick={()=>addIcon(icon.id)}><DecorativeIcon kind={icon.id}/><small>{icon.label}</small></button>)}</div></>}
-    {panel==='background'&&<><div className="dm-panel-title"><h2>O cenário da sua história</h2></div><div className="dm-category-tabs"><button aria-pressed={backgroundTab==='colors'} onClick={()=>setBackgroundTab('colors')}>Cores e texturas</button><button aria-pressed={backgroundTab==='themes'} onClick={()=>setBackgroundTab('themes')}>Temas de álbum</button></div>{backgroundTab==='themes'?<><div className="dm-theme-grid">{ALBUM_THEMES.map(theme=><button key={theme.id} onClick={()=>applyTheme(theme.id)}><div style={{background:theme.color,color:theme.ink}}><DecorativeIcon kind={theme.icon}/><span style={{fontFamily:`"${theme.font}"`}}>{theme.name}</span></div><strong>{theme.name}</strong><small>{theme.subtitle}</small></button>)}</div></>:<><div className="dm-color-grid">{palette.map(color=><button key={color} style={{background:color}} aria-label={`Fundo ${color}`} aria-pressed={(activePage<0?cover.color:spread?.background||'#fffdf8')===color} onClick={()=>setBackground(color)}/>)}</div><label className="dm-color-input">Escolher outra cor<input type="color" value={activePage<0?cover.color:spread?.background||'#fffdf8'} onChange={e=>setBackground(e.target.value)}/></label>{activePage>=0&&<label className="dm-color-input">Somente o lado direito<input type="color" value={spread?.rightBackground||spread?.background||'#fffdf8'} onChange={e=>setBackground(e.target.value,'right')}/></label>}{(()=>{const current=activePage<0?cover.surface:spread?.surface;return <>
+    {panel==='background'&&<><div className="dm-category-tabs dm-bg-tabs"><button aria-pressed={backgroundTab==='colors'} onClick={()=>setBackgroundTab('colors')}>Cores e texturas</button><button aria-pressed={backgroundTab==='themes'} onClick={()=>{setBackgroundTab('themes');setThemeOpen(null)}}>Temas de álbum</button></div>
+     {backgroundTab==='themes'?(()=>{const theme=ALBUM_THEMES.find(t=>t.id===themeOpen);
+      if(!theme)return <div className="dm-theme-list">{ALBUM_THEMES.map((t,i)=>{const c=t.covers[0];return <button key={t.id} type="button" className="dm-theme-card" style={{['--i' as string]:i}} onClick={()=>setThemeOpen(t.id)}><span className="dm-theme-cover" style={{background:c.color,color:c.ink,...(c.surface?{backgroundImage:`url(${surfaceUrl(c.surface,true)})`}:{})}}><b style={{fontFamily:`"${c.font}"`}}>{c.title}</b><small style={{fontFamily:`"${c.subFont}"`}}>{c.subtitle}</small></span><strong>{t.name}</strong><small>{t.subtitle}</small></button>})}</div>;
+      return <div className="dm-theme-detail" key={theme.id}>
+       <button type="button" className="dm-theme-back" onClick={()=>setThemeOpen(null)}><ChevronLeft size={16}/>Temas</button>
+       <h3>{theme.name}</h3><p className="dm-muted">Só o fundo e a capa mudam. Suas fotos e a montagem continuam.</p>
+       <span className="dm-theme-label">Capas prontas</span>
+       <div className="dm-theme-covers">{theme.covers.map((c,i)=><button key={c.name} type="button" style={{['--i' as string]:i}} onClick={()=>applyThemeCoverOption(theme.id,i)}><span className="dm-theme-cover" style={{background:c.color,color:c.ink,...(c.surface?{backgroundImage:`url(${surfaceUrl(c.surface,true)})`}:{})}}><b style={{fontFamily:`"${c.font}"`}}>{c.title}</b><small style={{fontFamily:`"${c.subFont}"`}}>{c.subtitle}</small></span><strong>{c.name}</strong></button>)}</div>
+       <span className="dm-theme-label">Fundo das lâminas</span>
+       <button type="button" className="dm-theme-pages" onClick={()=>applyThemePages(theme.id)}><span style={{background:theme.page.color,...(theme.page.surface?{backgroundImage:`url(${surfaceUrl(theme.page.surface,true)})`}:{})}} className={'texture-swatch '+(theme.page.texture||'none')}/><span><strong>Aplicar em todas as lâminas</strong><small>As fotos não mudam de lugar</small></span></button>
+      </div>;})():<>
+     <div className="dm-color-grid dm-ink-swatches">{palette.map((color,i)=><button key={color} style={{background:color,['--i' as string]:i}} aria-label={`Fundo ${color}`} aria-pressed={(activePage<0?cover.color:spread?.background||'#ffffff')===color&&!(activePage<0?cover.backgroundPhotoId:spread?.backgroundPhotoId)} onClick={()=>setBackground(color)}/>)}</div>
+     <label className="dm-color-input">Escolher outra cor<input type="color" value={activePage<0?cover.color:spread?.background||'#ffffff'} onChange={e=>setBackground(e.target.value)}/></label>
+     {(()=>{const bgId=activePage<0?cover.backgroundPhotoId:spread?.backgroundPhotoId;const thumb=bgId?thumbUrls[bgId]:undefined;
+      return <div className={'dm-bg-image'+(thumb?' has-image':'')}>
+       <input ref={bgInput} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e=>void importBackground(e.target.files?.[0])}/>
+       {thumb?<><span className="dm-bg-thumb" style={{backgroundImage:`url(${thumb})`}}/><span className="dm-bg-actions"><strong>Imagem de fundo</strong>{activePage>=0&&<button type="button" className="dm-link" onClick={()=>setBackgroundImage(bgId,true)}>Usar em todas as lâminas</button>}<button type="button" className="dm-link" onClick={()=>bgInput.current?.click()}>Trocar imagem</button></span><button type="button" className="dm-icon" aria-label="Tirar imagem de fundo" onClick={()=>setBackgroundImage(undefined)}><X size={15}/></button></>
+       :<button type="button" className="dm-bg-import" disabled={busy} onClick={()=>bgInput.current?.click()}><ImagePlus size={20}/><span><strong>Importar imagem de fundo</strong><small>JPG, PNG ou WebP</small></span></button>}
+      </div>;})()}
+     {(()=>{const current=activePage<0?cover.surface:spread?.surface;return <>
       <button type="button" role="switch" className={'dm-surface-none'+(current?'':' is-active')} aria-checked={!current} onClick={()=>setSurface(undefined)}><span className="dm-switch" aria-hidden="true"><i/></span><span>Sem superfície</span><em key={current?'off':'on'}>{current?'Desligado':'Ligado'}</em></button>
-      {SURFACE_GROUPS.map(group=><div key={group} className="dm-surface-group"><span>{group}</span><div className="dm-surface-grid">{SURFACES.filter(s=>s.group===group).map(s=><button key={s.id} type="button" aria-pressed={current===s.id} title={s.name} onClick={()=>setSurface(s.id)}><span style={{backgroundImage:`url(${surfaceUrl(s.id,true)})`}}/><small>{s.name}</small></button>)}</div></div>)}
+      {SURFACE_GROUPS.map(group=><div key={group} className="dm-surface-group"><span>{group}</span><div className="dm-surface-grid">{SURFACES.filter(s=>s.group===group).map((s,i)=><button key={s.id} type="button" aria-pressed={current===s.id} title={s.name} style={{['--i' as string]:i}} onClick={()=>setSurface(s.id)}><span style={{backgroundImage:`url(${surfaceUrl(s.id,true)})`}}/><small>{s.name}</small></button>)}</div></div>)}
       {activePage>=0&&<button type="button" className="dm-button full" onClick={()=>surfaceForAll(current)}>{current?'Usar esta superfície em todas as lâminas':'Tirar a superfície de todas as lâminas'}</button>}</>;})()}
-      <h3>Texturas</h3><div className="dm-texture-grid">{TEXTURES.map(t=><button key={t.id} aria-pressed={texture===t.id} onClick={()=>changeTexture(t.id)}><span className={'texture-swatch '+t.id} style={{backgroundColor:activePage<0?cover.color:spread?.background||'#fffdf8'}}/><small>{t.name}</small></button>)}</div></>}</>}
+      <h3>Texturas</h3><div className="dm-texture-grid">{TEXTURES.map(t=><button key={t.id} aria-pressed={texture===t.id} onClick={()=>changeTexture(t.id)}><span className={'texture-swatch '+t.id} style={{backgroundColor:activePage<0?cover.color:spread?.background||'#ffffff'}}/><small>{t.name}</small></button>)}</div></>}</>}
    </div></aside>
    <section className="dm-workbench" aria-label="Área de edição">
     <button type="button" className="dm-panel-handle" aria-controls="dm-tool-panel" aria-expanded={panelOpen} aria-label={panelOpen?'Recolher painel':'Abrir painel'} title={panelOpen?'Clique ou arraste para a esquerda para recolher':'Clique ou arraste para a direita para abrir'} style={handleDx?{transform:`translate(${handleDx}px,-50%)`}:undefined}
@@ -1044,7 +1091,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {activePage<0&&!spread&&selectedPhoto&&!selectedText&&<div className="dm-cover-crop"><label>Horizontal<input type="range" min="0" max="100" value={slot.x} onChange={e=>updateSlot({x:Number(e.target.value)})}/></label><label>Vertical<input type="range" min="0" max="100" value={slot.y} onChange={e=>updateSlot({y:Number(e.target.value)})}/></label></div>}
     {activePage===-1&&wrapMode&&spineMm>0&&coverHasPhoto&&<div className="dm-cover-region-tools"><span>Dorso central: <strong>{formatCm(spineMm)} cm</strong></span><button type="button" role="switch" aria-checked={coverIsSingle} className={'dm-cover-single'+(coverIsSingle?' is-active':'')} onClick={toggleSingleCover}><span className="dm-switch" aria-hidden="true"><i/></span>Capa inteira</button><button onClick={addSpineText}><Type size={14}/>Texto no dorso</button></div>}
     <div className="dm-canvas-area">
-    {replaceTarget!==null&&(()=>{const current=spread?.slots[replaceTarget]?.photoId||(activePage<0&&!spread?cover.photo.photoId:null);const list=[...project.photos].sort((a,b)=>Number(usedIds.has(a.id))-Number(usedIds.has(b.id)));
+    {replaceTarget!==null&&(()=>{const current=spread?.slots[replaceTarget]?.photoId||(activePage<0&&!spread?cover.photo.photoId:null);const list=[...library].sort((a,b)=>Number(usedIds.has(a.id))-Number(usedIds.has(b.id)));
      return <div className="dm-replace-layer" onPointerDown={e=>{if(e.target===e.currentTarget)setReplaceTarget(null)}}><section className="dm-replace-picker" role="dialog" aria-label="Trocar foto">
       <header><RefreshCw size={18} aria-hidden="true"/><h3>Trocar foto</h3><button type="button" className="dm-icon" aria-label="Fechar" onClick={()=>setReplaceTarget(null)}><X size={16}/></button></header>
       <div className="dm-replace-grid">{list.map(photo=><button type="button" key={photo.id} className={(photo.id===current?'is-current ':'')+(usedIds.has(photo.id)?'is-used':'')} disabled={photo.id===current} title={photo.name} onClick={()=>replaceWith(photo.id)}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false}/>{photo.id===current&&<span>Atual</span>}</button>)}</div>

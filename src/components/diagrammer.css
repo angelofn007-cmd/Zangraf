@@ -1649,3 +1649,56 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Faixa "Festa" (amarela) precisa de um tom mais escuro para ler */
 .dm-icon-tabs>button[data-color="2"][aria-selected=true]>span.dm-tab-word{color:#8a7a00}
 @media(prefers-reduced-motion:reduce){.dm-tab-word b{animation:none!important;transition:none}}
+
+/* ===================== Aba Fundo: impressão fotográfica ===================== */
+.dm-bg-tabs{margin-top:2px}
+/* Cores caem como gotas de tinta, uma depois da outra */
+.dm-studio .dm-ink-swatches>button{animation:dm-ink-swatch .55s cubic-bezier(.34,1.6,.64,1) calc(var(--i) * 40ms) both;transition:transform .3s cubic-bezier(.34,1.6,.64,1),box-shadow .25s}
+@keyframes dm-ink-swatch{0%{opacity:0;transform:translateY(-14px) scale(.4);border-radius:50% 50% 50% 0}60%{opacity:1;transform:translateY(2px) scale(1.06)}100%{transform:none}}
+.dm-studio .dm-ink-swatches>button:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 8px 16px #2a2a1e26}
+/* Escolhida: marcas de registro de impressão (como as cruzes de corte) */
+.dm-studio .dm-ink-swatches>button[aria-pressed=true]{box-shadow:0 0 0 3px #fff,0 0 0 5px #00aeef,0 0 0 7px #fff,0 0 0 9px #ec008c;animation:dm-registro .5s cubic-bezier(.34,1.6,.64,1)}
+@keyframes dm-registro{from{box-shadow:0 0 0 3px #fff,0 0 0 14px #00aeef00,0 0 0 16px #fff,0 0 0 22px #ec008c00}}
+/* Importar imagem de fundo */
+.dm-bg-image{margin:14px 0 6px}
+.dm-bg-import{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:1.5px dashed #c9c2a8;border-radius:14px;background:repeating-linear-gradient(135deg,#fffdf4 0 10px,#fbf6e2 10px 20px);color:var(--dm-ink);text-align:left;cursor:pointer;transition:border-color .2s,transform .3s cubic-bezier(.34,1.5,.64,1)}
+.dm-bg-import:hover:not(:disabled){border-color:#e4d300;transform:translateY(-2px)}
+.dm-bg-import>svg{flex-shrink:0;padding:8px;width:38px;height:38px;border-radius:10px;background:#fdf153;color:#2f2d12;transition:transform .4s cubic-bezier(.34,1.6,.64,1)}
+.dm-bg-import:hover>svg{transform:rotate(-8deg) scale(1.08)}
+.dm-bg-import span{display:flex;flex-direction:column;gap:2px}
+.dm-bg-import strong{font-size:13.5px}.dm-bg-import small{font-size:11.5px;color:var(--dm-muted)}
+.dm-bg-image.has-image{display:flex;align-items:center;gap:12px;padding:10px;border-radius:14px;background:var(--dm-soft);animation:dm-photo-in .45s cubic-bezier(.34,1.3,.64,1)}
+.dm-bg-thumb{flex:0 0 64px;height:48px;border:3px solid #fff;border-bottom-width:8px;border-radius:3px;background-size:cover;background-position:center;box-shadow:0 4px 10px #2a2a1e33;transform:rotate(-3deg);animation:dm-develop 1.2s ease-out both}
+.dm-bg-actions{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.dm-bg-actions strong{font-size:13px}
+.dm-bg-actions .dm-link{font-size:12px}
+/* Superfícies e temas aparecem "revelando" */
+.dm-studio .dm-surface-grid>button{animation:dm-photo-in .45s cubic-bezier(.34,1.3,.64,1) calc(var(--i,0) * 45ms) both}
+.dm-studio .dm-surface-grid>button>span{animation:dm-develop 1.1s ease-out calc(var(--i,0) * 45ms + .1s) both}
+/* ===================== Temas ===================== */
+.dm-theme-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.dm-theme-card,.dm-theme-covers>button{display:flex;flex-direction:column;gap:4px;padding:0;border:0;background:none;text-align:left;cursor:pointer;color:var(--dm-ink);animation:dm-photo-in .5s cubic-bezier(.34,1.3,.64,1) calc(var(--i,0) * 45ms) both}
+.dm-theme-cover{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;aspect-ratio:1/1.08;padding:10px;overflow:hidden;border-radius:6px 10px 10px 6px;background-size:cover;background-position:center;box-shadow:inset 7px 0 0 -4px #00000026,0 6px 14px #2a2a1e26;text-align:center;transition:transform .35s cubic-bezier(.34,1.5,.64,1),box-shadow .3s}
+.dm-theme-cover:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:35%;background:linear-gradient(100deg,transparent,#ffffff70,transparent);transform:skewX(-16deg);transition:left .7s ease}
+.dm-theme-card:hover .dm-theme-cover,.dm-theme-covers>button:hover .dm-theme-cover{transform:translateY(-3px) rotate(-1deg);box-shadow:inset 7px 0 0 -4px #00000026,0 12px 22px #2a2a1e33}
+.dm-theme-card:hover .dm-theme-cover:after,.dm-theme-covers>button:hover .dm-theme-cover:after{left:130%}
+.dm-theme-cover b{font-weight:400;font-size:20px;line-height:1.05;text-shadow:0 1px 1px #00000014}
+.dm-theme-cover small{font-size:8.5px;letter-spacing:.08em;opacity:.85}
+.dm-theme-card>strong{font-size:13px;margin-top:4px}
+.dm-theme-card>small{font-size:11px;color:var(--dm-muted)}
+.dm-theme-detail{animation:dm-panel-slide .4s cubic-bezier(.2,.9,.25,1.05)}
+@keyframes dm-panel-slide{from{opacity:0;transform:translateX(24px)}}
+.dm-theme-back{display:inline-flex;align-items:center;gap:4px;margin:4px 0 8px;padding:0;border:0;background:none;color:var(--dm-muted);font-size:12.5px;font-weight:600;cursor:pointer}
+.dm-theme-back:hover{color:var(--dm-ink)}
+.dm-theme-detail h3{margin:0;font:500 22px Georgia,serif}
+.dm-theme-detail .dm-muted{margin:4px 0 14px;font-size:12px}
+.dm-theme-label{display:block;margin:12px 0 8px;font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--dm-muted)}
+.dm-theme-covers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dm-theme-covers .dm-theme-cover b{font-size:15px}
+.dm-theme-covers>button>strong{font-size:11.5px;text-align:center}
+.dm-theme-pages{display:flex;align-items:center;gap:12px;width:100%;padding:10px;border:1px solid var(--dm-line);border-radius:12px;background:var(--dm-surface);color:var(--dm-ink);text-align:left;cursor:pointer;transition:border-color .2s,transform .3s cubic-bezier(.34,1.5,.64,1)}
+.dm-theme-pages:hover{border-color:var(--dm-ink);transform:translateY(-2px)}
+.dm-theme-pages>span:first-child{flex:0 0 70px;height:44px;border-radius:4px;background-size:cover;box-shadow:inset 0 0 0 1px #0000001a}
+.dm-theme-pages>span:last-child{display:flex;flex-direction:column;gap:2px}
+.dm-theme-pages strong{font-size:13px}.dm-theme-pages small{font-size:11px;color:var(--dm-muted)}
+@media(prefers-reduced-motion:reduce){.dm-ink-swatches>button,.dm-theme-card,.dm-theme-covers>button,.dm-theme-detail,.dm-bg-thumb,.dm-surface-grid>button,.dm-surface-grid>button>span{animation:none!important}}
