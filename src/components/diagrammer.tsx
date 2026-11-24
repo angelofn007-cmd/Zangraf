@@ -806,13 +806,30 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   void flyToTrash(ids).then(()=>{
    const base=projectRef.current;if(!base)return;
    let next=base;for(const id of ids)next=removePhoto(next,id);
+   const before=tilePositions();
    edit(next);setPickedPhotos([]);setSelectPhotos(false);
+   settleTiles(before);
   });
  }
  /** Animação de exclusão: as fotos voam para a lixeira (ou somem num "puf", se a lixeira não estiver à vista). */
+ /** Guarda onde cada foto está no painel (para as que ficam deslizarem até o novo lugar). */
+ function tilePositions(){const map=new Map<string,DOMRect>();document.querySelectorAll<HTMLElement>('.dm-photo[data-photo]').forEach(el=>map.set(el.dataset.photo!,el.getBoundingClientRect()));return map;}
+ /** Depois de excluir, as fotos que ficaram deslizam suavemente para o novo lugar, em vez de pular. */
+ function settleTiles(before:Map<string,DOMRect>){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   document.querySelectorAll<HTMLElement>('.dm-photo[data-photo]').forEach((el,i)=>{
+    const old=before.get(el.dataset.photo!);if(!old)return;const now=el.getBoundingClientRect();
+    const dx=old.left-now.left,dy=old.top-now.top,sx=old.width/Math.max(1,now.width),sy=old.height/Math.max(1,now.height);
+    if(Math.abs(dx)<1&&Math.abs(dy)<1&&Math.abs(sx-1)<.01)return;
+    el.animate([{transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`,transformOrigin:'top left'},{transform:'none',transformOrigin:'top left'}],{duration:520,delay:Math.min(i,12)*18,easing:'cubic-bezier(.34,1.25,.64,1)'});
+   });
+  }));
+ }
  async function flyToTrash(ids:string[]){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const trash=document.querySelector<HTMLElement>('.dm-upload-trash');
+  trash?.scrollIntoView({block:'nearest'});
   const target=trash?.getBoundingClientRect();
   const tiles=ids.map(id=>document.querySelector<HTMLElement>(`.dm-photo[data-photo="${CSS.escape(id)}"]`)).filter((el):el is HTMLElement=>!!el);
   // As fotos voam numa camada por cima da tela (o painel corta o que sai dele).
@@ -919,7 +936,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        return <div className={'dm-photo'+(checked?' is-checked':'')} key={photo.id} data-photo={photo.id} style={{aspectRatio:ratio,flexGrow:ratio,['--d' as string]:`${Math.min(order,14)*35}ms`}}>
         <button className="dm-photo-image" aria-label={`Usar ${photo.name}`} title={photo.name} draggable={!busy} disabled={busy} onDragStart={e=>{e.dataTransfer.setData('application/x-zangraf-photo',photo.id);e.dataTransfer.effectAllowed='copy'}} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else{placePhoto(photo.id);setTextId(undefined)}}}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false} loading="lazy" decoding="async" onError={()=>window.dispatchEvent(new CustomEvent('zangraf-photo-error',{detail:photo.id}))}/></button>
         <button type="button" className="dm-photo-check" aria-pressed={checked} disabled={busy} aria-label={selectPhotos?(picked?'Desmarcar foto':'Marcar foto'):used?'Tirar do álbum':'Colocar no álbum'} title={selectPhotos?(picked?'Desmarcar':'Marcar'):used?'Tirar do álbum':'Colocar no álbum'} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else if(used)unusePhoto(photo.id);else{placePhoto(photo.id);setTextId(undefined)}}}>{checked&&<Check size={13} strokeWidth={3}/>}</button>
-        {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))void flyToTrash([photo.id]).then(()=>{const base=projectRef.current;if(base)edit(removePhoto(base,photo.id))})}}><X size={12}/></button>}
+        {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))void flyToTrash([photo.id]).then(()=>{const base=projectRef.current;if(!base)return;const before=tilePositions();edit(removePhoto(base,photo.id));settleTiles(before)})}}><X size={12}/></button>}
        </div>;};
        return photoBlocks(visiblePhotos,ratioOf,photoGridWidth,6,photo=>photoSeed(photo.id+'*')).map((block,b)=>block.kind==='trio'?<div className="dm-photo-trio" key={b}>{block.items.map(tile)}</div>:<div className="dm-photo-pair" key={b}>{block.columns.map((column,c)=><div className="dm-photo-col" key={c} style={{flex:`0 0 ${block.widths[c]}px`}}>{column.map(tile)}</div>)}</div>)})()}</div></div>
       {!visiblePhotos.length&&<p className="dm-photos-empty">{filterUnused?'Todas já estão no álbum ✓':''}</p>}

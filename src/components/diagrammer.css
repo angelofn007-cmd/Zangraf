@@ -1587,3 +1587,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-cover-region-tools>*:nth-child(3){animation-delay:.16s}
 @keyframes dm-cover-tools-in{from{opacity:0;transform:translateY(12px) scale(.96)}}
 @media(prefers-reduced-motion:reduce){.dm-studio .dm-cover-region-tools,.dm-studio .dm-cover-region-tools>*{animation:none}}
+/* Barra de Adicionar fotos fica presa no topo do painel ao rolar (a lixeira está sempre à vista) */
+.dm-studio .dm-panel .dm-upload-bar{position:sticky;top:-22px;margin-top:-8px;padding:10px 0 8px;background:var(--dm-surface);box-shadow:0 10px 12px -12px #2a2a1e40}
