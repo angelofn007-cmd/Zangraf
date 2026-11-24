@@ -1401,3 +1401,12 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Lixeira da seleção bem visível */
 .dm-studio .dm-multi-actions .dm-danger-icon{flex-shrink:0;width:44px;min-height:38px;border:0;border-radius:var(--dm-r-sm);background:#c7372f;color:#fff;box-shadow:0 4px 12px #c7372f40}
 .dm-studio .dm-multi-actions .dm-danger-icon:hover:not(:disabled){background:#a92a23}
+/* Botões de fotos no estilo do Canva: planos, mais baixos, cantos menores — mantendo o amarelo */
+.dm-studio .dm-upload-bar{gap:6px}
+.dm-studio .dm-upload-main,.dm-studio .dm-upload-more{min-height:44px;height:44px;border:0;border-radius:10px;background:linear-gradient(180deg,#fbe94a,#f0d91c);box-shadow:0 1px 2px #8a7a0026;font-weight:600;letter-spacing:.005em;text-shadow:0 1px 1px #8a7a0059}
+.dm-studio .dm-upload-main{font-size:15px;gap:8px}
+.dm-studio .dm-upload-more{width:48px;flex:0 0 48px}
+.dm-studio .dm-upload-main svg{width:18px;height:18px}
+.dm-studio .dm-upload-main:hover:not(:disabled),.dm-studio .dm-upload-more:hover:not(:disabled){background:linear-gradient(180deg,#f6e33c,#e6cf12);box-shadow:0 1px 2px #8a7a0026}
+.dm-studio .dm-upload-main:active:not(:disabled),.dm-studio .dm-upload-more:active:not(:disabled){background:#e0c90e}
+.dm-studio .dm-select-all.is-on{background:#e0c90e;box-shadow:inset 0 1px 3px #8a7a0040}
