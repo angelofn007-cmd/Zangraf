@@ -135,6 +135,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [tabSlide, setTabSlide] = useState<''|'from-left'|'from-right'>('');
  const setFilterUnused = (value: boolean) => { if (value === filterUnused) return; setTabSlide(value ? 'from-right' : 'from-left'); setFilterUnusedState(value); };
  const [photoGridWidth, setPhotoGridWidth] = useState(0);
+ const [revealKey, setRevealKey] = useState(0);
  const [importing, setImporting] = useState<{done:number;total:number;thumbs:string[];finished?:boolean}|null>(null);
  const photoTabs = useRef<HTMLDivElement>(null);
  const [tabInk, setTabInk] = useState<{left:number;width:number}|null>(null);
@@ -454,7 +455,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       photos.push({id:crypto.randomUUID(),name:file.name,blob:file,preview,thumbnail,width:bitmap.width,height:bitmap.height,...(takenAt!==undefined?{takenAt}:{})});
       const thumbUrl=URL.createObjectURL(thumbnail);shown.push(thumbUrl);setImporting(state=>state&&{...state,done:index+1,thumbs:[...state.thumbs.slice(-3),thumbUrl]});
      }finally{bitmap.close();}
-     await new Promise<void>(resolve=>window.setTimeout(resolve,0));
+     // Deixa a tela desenhar a cada foto (a barra anda junto com o contador).
+     await new Promise<void>(resolve=>requestAnimationFrame(()=>window.setTimeout(resolve,0)));
     } catch { rejected.push(file.name); }
     setImporting(state=>state&&state.done<index+1?{...state,done:index+1}:state);
    }
@@ -464,7 +466,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
    }
    // Fim: a animação comemora; só aparece aviso se algum arquivo ficou de fora.
    setImporting(state=>state&&{...state,done:state.total,total:photos.length,finished:true});
-   window.setTimeout(()=>{setImporting(null);shown.forEach(URL.revokeObjectURL);},1600);
+   window.setTimeout(()=>{setImporting(null);setRevealKey(k=>k+1);shown.forEach(URL.revokeObjectURL);},2300);
    if(rejected.length)setNotice(`${rejected.length} arquivo(s) não foram importados: ${rejected.slice(0, 3).join(', ')}${rejected.length > 3 ? '…' : ''}. Use JPG, PNG ou WebP de até 50 MB e 40 megapixels.`);
   } catch (error) { setImporting(null); shown.forEach(URL.revokeObjectURL); setNotice(error instanceof Error ? error.message : 'Não foi possível importar as fotos.'); }
   finally { setBusy(false); if (fileInput.current) fileInput.current.value = ''; }
@@ -843,21 +845,28 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       {!!project.photos.length&&<button type="button" className={'dm-upload-more dm-select-all'+(selectPhotos?' is-on':'')} aria-pressed={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))} aria-label={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas as fotos'} title={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas'} disabled={busy} onClick={()=>{if(selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))){setSelectPhotos(false);setPickedPhotos([])}else{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id))}}}><CheckCheck size={21}/></button>}
       {selectPhotos&&pickedPhotos.length>0&&<button type="button" className="dm-upload-trash" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length} ${pickedPhotos.length===1?'foto':'fotos'}`} onClick={()=>removePickedPhotos()}><Trash2 size={19}/><b>{pickedPhotos.length}</b></button>}
      </div>
-     {importing&&(()=>{const pct=importing.finished?100:importing.total?Math.min(100,Math.round(importing.done/importing.total*100)):0;
-      return <div className={'dm-import'+(importing.finished?' is-done':'')} role="status" aria-live="polite" aria-label={importing.finished?`${importing.total} fotos prontas`:`Carregando ${importing.done} de ${importing.total} fotos`}>
-      <div className="dm-import-stack" aria-hidden="true">{importing.finished?<span className="dm-import-check"><Check size={26} strokeWidth={3}/>{[0,1,2,3,4,5].map(k=><i key={k} style={{['--a' as string]:`${k*60}deg`}}/>)}</span>:importing.thumbs.length?importing.thumbs.map((url,k)=><img key={url} src={url} alt="" style={{['--r' as string]:`${[-10,6,-4,11][k%4]}deg`,['--x' as string]:`${[-4,3,-2,5][k%4]}px`}}/>):<span className="dm-import-empty"><ImagePlus size={22}/></span>}</div>
-      <div className="dm-import-copy"><div className="dm-import-line"><strong>{importing.finished?`${importing.total} ${importing.total===1?'foto pronta':'fotos prontas'}`:<><b key={importing.done}>{importing.done}</b> de {importing.total}</>}</strong><span>{pct}%</span></div><span className="dm-import-track"><span className="dm-import-fill" style={{clipPath:`inset(0 ${100-pct}% 0 0 round 6px)`}}/><span className="dm-import-glow" style={{left:`${pct}%`}}/></span></div>
+     {importing&&!importing.finished&&(()=>{const pct=importing.total?Math.min(1,importing.done/importing.total):0;
+      return <div className="dm-import" role="status" aria-live="polite" aria-label={`Carregando ${importing.done} de ${importing.total} fotos`}>
+      <div className="dm-import-stack" aria-hidden="true">{importing.thumbs.length?importing.thumbs.map((url,k)=><img key={url} src={url} alt="" style={{['--r' as string]:`${[-10,6,-4,11][k%4]}deg`,['--x' as string]:`${[-4,3,-2,5][k%4]}px`}}/>):<span className="dm-import-empty"><ImagePlus size={22}/></span>}</div>
+      <div className="dm-import-copy"><div className="dm-import-line"><strong><b key={importing.done}>{importing.done}</b> de {importing.total} fotos</strong></div>
+       {/* Barra movida só com transform: anda mesmo com o navegador ocupado lendo as fotos. */}
+       <span className="dm-import-track"><span className="dm-import-mask" style={{transform:`translateX(${(pct-1)*100}%)`}}><span className="dm-import-fill" style={{transform:`translateX(${(1-pct)*100}%)`}}/></span><span className="dm-import-runner" style={{transform:`translateX(${pct*100}%)`}}><i/></span></span></div>
      </div>})()}
+     {importing?.finished&&<div className="dm-import-finale" role="status" aria-live="polite">
+      <div className="dm-finale-burst" aria-hidden="true">{Array.from({length:14},(_,k)=><i key={k} style={{['--a' as string]:`${k*360/14}deg`,['--c' as string]:['#e8221e','#19b33a','#f5e21a','#1aa8e8','#e81aa5'][k%5],['--d' as string]:`${(k%3)*40}ms`}}/>)}<span className="dm-finale-check"><Check size={34} strokeWidth={3}/></span></div>
+      <strong>{importing.total} {importing.total===1?'foto pronta':'fotos prontas'}</strong>
+      <div className="dm-finale-thumbs" aria-hidden="true">{importing.thumbs.map((url,k)=><img key={url} src={url} alt="" style={{['--k' as string]:k}}/>)}</div>
+     </div>}
      {project.photos.length>1&&<button type="button" className={'dm-build-button'+(selectPhotos&&pickedPhotos.length>0?' is-ready':'')} disabled={busy} title={selectPhotos&&pickedPhotos.length?`Montar com as ${pickedPhotos.length} fotos selecionadas`:undefined} onClick={()=>void autoBuildAlbum(selectPhotos&&pickedPhotos.length?pickedPhotos:undefined)}><WandSparkles size={17}/>{busy?'Montando…':'Montar álbum automático'}</button>}
      
       
-     {!project.photos.length?<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>:<>
+     {!project.photos.length?(importing?null:<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>):<>
       <div className="dm-photo-tabs" role="tablist" ref={photoTabs}>{tabInk&&<i className="dm-tab-ink" aria-hidden="true" style={{transform:`translateX(${tabInk.left}px)`,width:tabInk.width}}/>}
        <button type="button" role="tab" aria-selected={!filterUnused} onClick={()=>setFilterUnused(false)}>Todas</button>
        <button type="button" role="tab" aria-selected={filterUnused} onClick={()=>setFilterUnused(true)}>Não usadas{!!unusedCount&&<span>{unusedCount}</span>}</button>
        {selectPhotos&&<button type="button" className="dm-photo-tabs-done" onClick={()=>{setSelectPhotos(false);setPickedPhotos([])}}><Check size={14}/>Pronto</button>}
       </div>
-      <div ref={photoGridRef} className="dm-photo-viewport"><div key={filterUnused?'unused':'all'} className={'dm-photos dm-photos-rows dm-photos-columns'+(tabSlide?' is-'+tabSlide:'')}>{photoGridWidth>0&&(()=>{let order=0;const ratioOf=(photo:Photo)=>photo.width&&photo.height?photo.width/photo.height:1.33;
+      <div ref={photoGridRef} className={'dm-photo-viewport'+(revealKey?' is-revealing':'')}><div key={(filterUnused?'unused':'all')+'-'+revealKey} className={'dm-photos dm-photos-rows dm-photos-columns'+(tabSlide?' is-'+tabSlide:'')}>{photoGridWidth>0&&(()=>{let order=0;const ratioOf=(photo:Photo)=>photo.width&&photo.height?photo.width/photo.height:1.33;
        // Duas colunas (larguras variadas, fotos inteiras, sem corte); às vezes uma faixa com 3 fotos menores.
        const tile=({item:photo,ratio}:{item:Photo;ratio:number})=>{order++;
        const used=usedIds.has(photo.id);const picked=pickedPhotos.includes(photo.id);

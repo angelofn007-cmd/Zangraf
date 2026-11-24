@@ -1472,3 +1472,32 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-import-check i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:#f5e21a;animation:dm-spark .7s ease-out both}
 .dm-import-check i:nth-child(3n){background:#e81aa5}.dm-import-check i:nth-child(3n+1){background:#1aa8e8}
 @keyframes dm-spark{from{transform:rotate(var(--a)) translateY(0);opacity:1}to{transform:rotate(var(--a)) translateY(-34px);opacity:0}}
+
+/* ===================== Carregamento v3: barra por transform (fluida mesmo com o navegador ocupado) ===================== */
+.dm-import-line{justify-content:flex-start}
+.dm-import-line>span{display:none}
+.dm-import-track{overflow:hidden;height:10px}
+.dm-import-mask{position:absolute;inset:0;overflow:hidden;border-radius:6px;transition:transform .5s cubic-bezier(.25,.8,.3,1);will-change:transform}
+.dm-import-mask>.dm-import-fill{position:absolute;inset:0;clip-path:none;transition:transform .5s cubic-bezier(.25,.8,.3,1);will-change:transform}
+.dm-import-runner{position:absolute;inset:0;pointer-events:none;transition:transform .5s cubic-bezier(.25,.8,.3,1);will-change:transform}
+.dm-import-runner i{position:absolute;left:-7px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #ffffffa0,0 0 14px 5px #fff6a8;animation:dm-runner-pulse 1s ease-in-out infinite}
+@keyframes dm-runner-pulse{50%{box-shadow:0 0 0 5px #ffffff60,0 0 20px 8px #fff6a8}}
+.dm-import-track{overflow:visible}
+.dm-import-glow{display:none}
+/* Final: comemoração dentro da aba de fotos e depois as fotos entram em cascata */
+.dm-panel{position:relative}
+.dm-import-finale{position:absolute;inset:0;z-index:55;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--dm-surface);animation:dm-finale 2.3s ease both}
+@keyframes dm-finale{0%{opacity:0}10%{opacity:1}80%{opacity:1}100%{opacity:0}}
+.dm-import-finale strong{font:500 22px Georgia,serif;animation:dm-finale-text .5s cubic-bezier(.34,1.5,.64,1) .25s both}
+@keyframes dm-finale-text{from{opacity:0;transform:translateY(10px)}}
+.dm-finale-burst{position:relative;width:96px;height:96px}
+.dm-finale-check{position:absolute;inset:14px;display:grid;place-items:center;border-radius:50%;background:#19b33a;color:#fff;box-shadow:0 10px 28px #19b33a55;animation:dm-check-burst .6s cubic-bezier(.34,1.8,.64,1) both}
+.dm-finale-burst i{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px;border-radius:2px;background:var(--c);animation:dm-confetti 1.1s cubic-bezier(.2,.8,.3,1) var(--d) both}
+@keyframes dm-confetti{0%{opacity:1;transform:rotate(var(--a)) translateY(0) rotate(0)}100%{opacity:0;transform:rotate(var(--a)) translateY(-78px) rotate(220deg)}}
+.dm-finale-thumbs{display:flex;justify-content:center}
+.dm-finale-thumbs img{width:44px;height:44px;margin:0 -7px;object-fit:cover;border:3px solid #fff;border-radius:6px;box-shadow:0 6px 14px #2a2a1e33;animation:dm-finale-card .55s cubic-bezier(.34,1.6,.64,1) both;animation-delay:calc(.35s + var(--k) * 80ms)}
+.dm-finale-thumbs img:nth-child(odd){transform:rotate(-6deg)}.dm-finale-thumbs img:nth-child(even){transform:rotate(6deg) translateY(4px)}
+@keyframes dm-finale-card{from{opacity:0;transform:translateY(24px) scale(.6)}}
+.dm-studio .dm-photo-viewport.is-revealing .dm-photo{animation:dm-photo-reveal .6s cubic-bezier(.34,1.4,.64,1) var(--d,0ms) both!important}
+@keyframes dm-photo-reveal{from{opacity:0;transform:translateY(22px) scale(.88)}}
+@media(prefers-reduced-motion:reduce){.dm-import-finale,.dm-import-finale *{animation:none!important}.dm-import-mask,.dm-import-fill,.dm-import-runner{transition:none}}
