@@ -1834,3 +1834,22 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(prefers-reduced-motion:reduce){.dm-ink-intro{display:none}.dm-studio .dm-icon-tabs>button>i{animation:none;clip-path:none}.dm-studio .dm-icon-tabs>button:before{display:none}}
 .dm-studio .dm-icon-tabs{margin-top:34px}
 @keyframes dm-splat-dots{0%{opacity:0;transform:scale(.4)}1%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
+
+/* ===================== Montar: rótulo acima e botão que chama atenção ===================== */
+.dm-studio .dm-build-label{margin:16px 0 8px}
+.dm-studio .dm-build-button{position:relative;overflow:hidden;isolation:isolate;margin-top:0;font-size:15.5px;letter-spacing:.02em}
+/* Borda nas cinco cores girando em volta do botão */
+.dm-studio .dm-build-button:not(:disabled):before{content:'';position:absolute;inset:-60%;z-index:-2;background:conic-gradient(from 0deg,var(--zg-red),var(--zg-green),var(--zg-yellow),var(--zg-blue),var(--zg-magenta),var(--zg-red));animation:dm-build-spin 3.2s linear infinite}
+.dm-studio .dm-build-button:not(:disabled){border-color:transparent;background:var(--dm-surface);background-clip:padding-box}
+.dm-studio .dm-build-button:not(:disabled)>*{position:relative}
+.dm-studio .dm-build-button:not(:disabled):after{content:'';position:absolute;inset:2px;z-index:-1;border-radius:8px;background:var(--dm-surface);box-shadow:inset 0 0 0 1px #00000008}
+@keyframes dm-build-spin{to{transform:rotate(360deg)}}
+/* Varinha balançando e brilhinhos de tempos em tempos */
+.dm-studio .dm-build-button:not(:disabled)>svg{animation:dm-wand-call 2.4s ease-in-out infinite}
+@keyframes dm-build-wand{0%,70%,100%{transform:none}78%{transform:rotate(-18deg) scale(1.15)}86%{transform:rotate(10deg)}92%{transform:rotate(-4deg)}}
+@keyframes dm-wand-call{0%,70%,100%{transform:none}78%{transform:rotate(-18deg) scale(1.18)}86%{transform:rotate(10deg) scale(1.05)}92%{transform:rotate(-4deg)}}
+.dm-studio .dm-build-button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 8px 20px #2a2a1e26}
+.dm-studio .dm-build-button:not(:disabled):hover:before{animation-duration:1.2s}
+.dm-studio .dm-build-button:not(:disabled):active{transform:scale(.97)}
+@media(prefers-reduced-motion:reduce){.dm-studio .dm-build-button:before,.dm-studio .dm-build-button>svg{animation:none!important}}
+.dm-studio .dm-build-button.is-ready:not(:disabled):after{background:#fffbd6}

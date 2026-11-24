@@ -950,7 +950,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <strong>{importing.total} {importing.total===1?'foto revelada':'fotos reveladas'}</strong>
       <div className="dm-finale-thumbs" aria-hidden="true">{importing.thumbs.map((url,k)=><img key={url} src={url} alt="" style={{['--k' as string]:k}}/>)}</div>
      </div>}
-     {library.length>1&&<button type="button" className={'dm-build-button'+(selectPhotos&&pickedPhotos.length>0?' is-ready':'')} disabled={busy} title={selectPhotos&&pickedPhotos.length?`Montar com as ${pickedPhotos.length} fotos selecionadas`:undefined} onClick={()=>void autoBuildAlbum(selectPhotos&&pickedPhotos.length?pickedPhotos:undefined)}><WandSparkles size={17}/>{busy?<><span className="dm-printing" aria-hidden="true"><i/></span>Montando…</>:'Montar álbum automático'}</button>}
+     {library.length>1&&<span className="dm-section-label dm-build-label">Álbum automático inteligente</span>}
+     {library.length>1&&<button type="button" className={'dm-build-button'+(selectPhotos&&pickedPhotos.length>0?' is-ready':'')} disabled={busy} title={selectPhotos&&pickedPhotos.length?`Montar com as ${pickedPhotos.length} fotos selecionadas`:undefined} onClick={()=>void autoBuildAlbum(selectPhotos&&pickedPhotos.length?pickedPhotos:undefined)}><WandSparkles size={17}/>{busy?<><span className="dm-printing" aria-hidden="true"><i/></span>Montando…</>:'Montar'}</button>}
      
       
      {!library.length?(importing?null:<button type="button" className="dm-dropzone" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><ImagePlus size={34} strokeWidth={1.4}/><strong>Arraste suas fotos aqui</strong></button>):<>
