@@ -119,6 +119,35 @@ async function keepPreviewsInMemory(project:LayoutProject):Promise<LayoutProject
  return {...project,photos};
 }
 
+/** Traços da palavra "Texto" escrita à mão (na ordem em que se escreve). */
+const TEXTO_STROKES=[
+ 'M12 20 C 28 15, 50 14, 70 17',
+ 'M42 17 C 41 30, 38 42, 33 54 C 31 58, 26 58, 24 54',
+ 'M50 44 C 58 43, 64 38, 61 34 C 58 31, 50 35, 50 43 C 50 51, 58 53, 66 48 C 70 45, 72 40, 76 40 C 80 40, 82 46, 86 52 C 88 55, 92 55, 96 50 C 99 46, 102 36, 105 24 C 106 20, 107 30, 106 40 C 105 48, 106 53, 112 53 C 118 53, 120 46, 124 42 C 128 37, 136 37, 137 44 C 138 51, 130 54, 126 50 C 123 46, 126 40, 132 40 C 136 40, 140 42, 146 40',
+ 'M86 40 C 84 45, 80 51, 76 56',
+ 'M98 32 C 104 31, 110 31, 115 32',
+];
+/** Título da aba Texto: a caneta escreve cada traço e a tinta só aparece onde a ponta já passou. */
+function HandwrittenTitle(){
+ const svg=useRef<SVGSVGElement>(null),pen=useRef<HTMLSpanElement>(null),[done,setDone]=useState(false);
+ useEffect(()=>{
+  const paths=Array.from(svg.current?.querySelectorAll<SVGPathElement>('path.dm-hand')||[]);const penEl=pen.current;if(!paths.length||!penEl)return;
+  const lengths=paths.map(p=>p.getTotalLength());const total=lengths.reduce((a,b)=>a+b,0);
+  paths.forEach((p,i)=>{p.style.strokeDasharray=`${lengths[i]}`;p.style.strokeDashoffset=`${lengths[i]}`;});
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){paths.forEach(p=>{p.style.strokeDashoffset='0';});setDone(true);return;}
+  const speed=170,lift=120;let start=0,frame=0;
+  // Linha do tempo: cada traço leva seu comprimento/velocidade; entre traços, a caneta "levanta" por um instante.
+  const plan=paths.map((_,i)=>({from:0,len:lengths[i]}));let t0=0;for(const [i,item] of plan.entries()){item.from=t0;t0+=lengths[i]/speed*1000+lift;}
+  const step=(now:number)=>{if(!start)start=now;const t=now-start-250;let tip:{x:number;y:number}|null=null;
+   plan.forEach((item,i)=>{const dur=item.len/speed*1000;const k=Math.max(0,Math.min(1,(t-item.from)/dur));paths[i].style.strokeDashoffset=`${item.len*(1-k)}`;if(t>=item.from&&t<=item.from+dur+lift){const pt=paths[i].getPointAtLength(item.len*k);tip={x:pt.x,y:pt.y};}});
+   if(tip){penEl.style.opacity='1';penEl.style.transform=`translate(${(tip as {x:number}).x}px,${(tip as {y:number}).y}px)`;}
+   if(t<t0){frame=requestAnimationFrame(step);}else{penEl.style.opacity='0';setDone(true);}
+  };
+  frame=requestAnimationFrame(step);return()=>cancelAnimationFrame(frame);
+ },[]);
+ return <h2 className={'dm-hand-title'+(done?' is-done':'')} aria-label="Texto"><span className="dm-sun" aria-hidden="true"/><svg ref={svg} viewBox="0 0 160 66" width="160" height="66" aria-hidden="true">{TEXTO_STROKES.map((d,i)=><path key={i} className="dm-hand" d={d}/>)}</svg><span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
+}
+
 export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }: { projectId?: string; cartItemId?: string; requireLoginToSave?: boolean }) {
  const [project, setProject] = useState<LayoutProject | null>(null);
  const [activePage, setActivePage] = useState(-1);
@@ -1024,7 +1053,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='text'&&(()=>{
      const pickFont=(family:AlbumFont)=>{if(selectedText)updateText(selectedText.id,{fontFamily:family});else addText('title',family);};
      const fontButton=(font:typeof ALBUM_FONTS[number])=><button key={font.family} type="button" aria-pressed={selectedText?.fontFamily===font.family} disabled={busy||(!selectedText&&texts.length>=20)} title={selectedText?`Usar ${font.family} no texto selecionado`:`Adicionar texto em ${font.family}`} onClick={()=>pickFont(font.family)}><span style={{fontFamily:`"${font.family}"`}}>{font.label}</span><small>{font.style} · {font.family}</small></button>;
-     return <><h2 className="dm-text-title" aria-label="Texto" ref={el=>{if(!el)return;const t=el.querySelector('text');void document.fonts.ready.then(()=>{try{const box=(t as SVGTextElement).getBBox();el.style.setProperty('--x1',`${Math.round(box.x+box.width)}px`);el.classList.add('is-ready');}catch{el.classList.add('is-ready');}});}}><svg viewBox="0 0 220 70" width="220" height="70" aria-hidden="true"><text x="6" y="50" className="dm-write">Texto</text></svg><span className="dm-pen" aria-hidden="true"><i/></span></h2>
+     return <><HandwrittenTitle/>
       <button className="dm-button primary full" disabled={busy||texts.length>=20} onClick={()=>addText()}><Plus size={18}/>Adicionar texto</button>
       {selectedText?<label>Seu texto<textarea autoFocus rows={3} maxLength={600} value={selectedText.text} onChange={e=>updateText(selectedText.id,{text:e.target.value})}/></label>:null}
       {texts.length>1&&<><h3 className="dm-tone-heading">Textos nesta {activePage<0?'capa':'lâmina'}</h3>{texts.map(t=><button className={'dm-text-list '+(textId===t.id?'active':'')} key={t.id} onClick={()=>setTextId(t.id)}><Type size={14}/>{t.text||'Texto vazio'}</button>)}</>}

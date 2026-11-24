@@ -1993,3 +1993,24 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-text-title.is-ready:after{animation:dm-text-shine 1s ease-in-out calc(var(--dur) + .5s) both}
 @keyframes dm-text-shine{0%{opacity:0;transform:translateX(0)}20%{opacity:1}100%{opacity:0;transform:translateX(var(--x1))}}
 @media(prefers-reduced-motion:reduce){.dm-text-title svg{clip-path:none;animation:none!important}.dm-pen{display:none}}
+
+/* ===================== Texto v3: escrita à mão traço a traço, com um sol amarelo atrás ===================== */
+.dm-hand-title{position:relative;height:70px;margin:-4px 0 8px;isolation:isolate}
+.dm-hand-title svg{position:relative;z-index:1;display:block;overflow:visible}
+.dm-hand{fill:none;stroke:#1d1e20;stroke-width:4.2;stroke-linecap:round;stroke-linejoin:round}
+/* O sol: nasce atrás da palavra quando a escrita termina e fica pulsando bem de leve */
+.dm-sun{position:absolute;left:28px;top:-22px;z-index:0;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,#fffbd0 0,#fdf153 32%,#fdf15399 48%,#fdf15300 70%);opacity:0;transform:translateY(16px) scale(.5);pointer-events:none}
+.dm-hand-title.is-done .dm-sun{animation:dm-sun-rise 1s cubic-bezier(.3,1.2,.5,1) forwards,dm-sun-breathe 4s ease-in-out 1s infinite}
+@keyframes dm-sun-rise{to{opacity:1;transform:none}}
+@keyframes dm-sun-breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.07);opacity:.85}}
+/* Raios girando devagar atrás de tudo */
+.dm-sun:before{content:'';position:absolute;inset:-12px;border-radius:50%;background:repeating-conic-gradient(#fdf15359 0 6deg,transparent 6deg 22deg);-webkit-mask:radial-gradient(circle,transparent 40%,#000 46%,transparent 72%);mask:radial-gradient(circle,transparent 40%,#000 46%,transparent 72%);animation:dm-rays 24s linear infinite}
+@keyframes dm-rays{to{transform:rotate(360deg)}}
+/* Caneta: a ponta fica exatamente no ponto que está sendo traçado */
+.dm-pen2{position:absolute;left:0;top:0;z-index:2;width:0;height:0;opacity:0;pointer-events:none;transition:opacity .2s}
+.dm-pen2 i{position:absolute;left:-2px;bottom:0;width:8px;height:44px;border-radius:4px 4px 2px 2px;background:linear-gradient(90deg,#2c2d27,#5a5b51 50%,#2c2d27);transform:rotate(28deg);transform-origin:50% 100%;box-shadow:3px 5px 8px #0000004d}
+.dm-pen2 i:before{content:'';position:absolute;left:1px;bottom:-9px;border-left:3px solid transparent;border-right:3px solid transparent;border-top:10px solid #d4b45a}
+.dm-pen2 i:after{content:'';position:absolute;left:0;right:0;top:8px;height:3px;background:#d4b45a}
+.dm-pen2 i{margin-bottom:9px}
+@media(prefers-reduced-motion:reduce){.dm-sun:before{animation:none}}
+.dm-sun{top:-16px;left:34px;width:100px;height:100px}
