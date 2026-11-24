@@ -1635,3 +1635,17 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Ícones: barra simples nas cinco cores, nomes numa linha só */
 .dm-studio .dm-icon-tabs{margin-top:4px}
 .dm-studio .dm-icon-tabs>button>span{font-size:11.5px;white-space:nowrap}
+
+/* ===================== Ícones: nomes das categorias com luz e sombra na cor de cada faixa ===================== */
+.dm-icon-tabs>button>span.dm-tab-word{display:inline-flex;font-size:11.5px;font-weight:600;letter-spacing:.01em;color:var(--dm-muted);transition:color .25s}
+.dm-icon-tabs>button>span.dm-tab-word:before{display:none}
+.dm-tab-word b{display:inline-block;font-weight:inherit;white-space:pre;transition:transform .3s cubic-bezier(.34,1.6,.64,1)}
+.dm-icon-tabs>button:hover>span.dm-tab-word{color:color-mix(in srgb,var(--tab) 60%,#2a2a22);transform:none}
+.dm-icon-tabs>button:hover .dm-tab-word b{transform:translateY(-2px);transition-delay:calc(var(--k) * 18ms)}
+/* Selecionada: letras pulam em onda, ganham a cor da faixa, brilho e sombra */
+.dm-icon-tabs>button[aria-selected=true]>span.dm-tab-word{font-weight:800;color:color-mix(in srgb,var(--tab) 72%,#1d1e20);text-shadow:0 0 10px color-mix(in srgb,var(--tab) 55%,transparent),0 2px 3px #2a2a1e26}
+.dm-icon-tabs>button[aria-selected=true] .dm-tab-word b{animation:dm-letter-hop .55s cubic-bezier(.34,1.8,.64,1) calc(var(--k) * 35ms) both}
+@keyframes dm-letter-hop{0%{transform:translateY(0)}35%{transform:translateY(-6px) scale(1.12)}70%{transform:translateY(1px)}100%{transform:translateY(-1px)}}
+/* Faixa "Festa" (amarela) precisa de um tom mais escuro para ler */
+.dm-icon-tabs>button[data-color="2"][aria-selected=true]>span.dm-tab-word{color:#8a7a00}
+@media(prefers-reduced-motion:reduce){.dm-tab-word b{animation:none!important;transition:none}}
