@@ -340,8 +340,23 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const next = Object.fromEntries(project.photos.map(photo => [photo.id, URL.createObjectURL(photo.preview??photo.blob)]));
   const thumbs=Object.fromEntries(project.photos.map(photo=>[photo.id,URL.createObjectURL(photo.thumbnail??photo.preview??photo.blob)]));
   setUrls(next);setThumbUrls(thumbs);
-  return () => {Object.values(next).forEach(URL.revokeObjectURL);Object.values(thumbs).forEach(URL.revokeObjectURL);};
+  // Libera os endereços antigos só depois que a tela já trocou para os novos (evita imagem quebrada no meio da troca).
+  return () => {const old=[...Object.values(next),...Object.values(thumbs)];window.setTimeout(()=>old.forEach(URL.revokeObjectURL),5000);};
  }, [project?.photos]);
+ // Se o navegador não conseguir mostrar uma foto (ex.: Safari ao ler do armazenamento), recria a imagem a partir dos bytes.
+ useEffect(()=>{
+  const tried=new Set<string>();
+  const repair=async(event:Event)=>{
+   const id=(event as CustomEvent<string>).detail;const photo=projectRef.current?.photos.find(p=>p.id===id);
+   if(!photo||tried.has(id))return;tried.add(id);
+   for(const source of [photo.preview,photo.blob,photo.thumbnail]){
+    if(!source)continue;
+    try{const copy=new Blob([await source.arrayBuffer()],{type:source.type||'image/jpeg'});const url=URL.createObjectURL(copy);setUrls(u=>({...u,[id]:url}));setThumbUrls(u=>({...u,[id]:url}));return;}catch{/* tenta a próxima versão da foto */}
+   }
+   setNotice(`Não foi possível abrir “${photo.name}”. Exclua e envie essa foto de novo.`);
+  };
+  window.addEventListener('zangraf-photo-error',repair);return()=>window.removeEventListener('zangraf-photo-error',repair);
+ },[]);
 
  useEffect(() => {
   if (!project || !dirtyRef.current) return;
@@ -799,7 +814,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        const used=usedIds.has(photo.id);const picked=pickedPhotos.includes(photo.id);
        const checked=selectPhotos?picked:used;
        return <div className={'dm-photo'+(checked?' is-checked':'')} key={photo.id} style={{aspectRatio:ratio,flexGrow:ratio,['--d' as string]:`${Math.min(order,14)*35}ms`}}>
-        <button className="dm-photo-image" aria-label={`Usar ${photo.name}`} title={photo.name} draggable={!busy} disabled={busy} onDragStart={e=>{e.dataTransfer.setData('application/x-zangraf-photo',photo.id);e.dataTransfer.effectAllowed='copy'}} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else{placePhoto(photo.id);setTextId(undefined)}}}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false} loading="lazy" decoding="async"/></button>
+        <button className="dm-photo-image" aria-label={`Usar ${photo.name}`} title={photo.name} draggable={!busy} disabled={busy} onDragStart={e=>{e.dataTransfer.setData('application/x-zangraf-photo',photo.id);e.dataTransfer.effectAllowed='copy'}} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else{placePhoto(photo.id);setTextId(undefined)}}}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false} loading="lazy" decoding="async" onError={()=>window.dispatchEvent(new CustomEvent('zangraf-photo-error',{detail:photo.id}))}/></button>
         <button type="button" className="dm-photo-check" aria-pressed={checked} disabled={busy} aria-label={selectPhotos?(picked?'Desmarcar foto':'Marcar foto'):used?'Tirar do álbum':'Colocar no álbum'} title={selectPhotos?(picked?'Desmarcar':'Marcar'):used?'Tirar do álbum':'Colocar no álbum'} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else if(used)unusePhoto(photo.id);else{placePhoto(photo.id);setTextId(undefined)}}}>{checked&&<Check size={13} strokeWidth={3}/>}</button>
         {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))edit(removePhoto(project,photo.id))}}><X size={12}/></button>}
        </div>;};
