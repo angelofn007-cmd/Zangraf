@@ -1745,3 +1745,23 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Layouts: sem a animação de cores ao passar o mouse */
 .dm-studio .dm-layout-print .dm-layout-card:hover .dm-layout-thumb>i,.dm-studio .dm-layout-print .dm-layout-card[aria-pressed=true] .dm-layout-thumb>i{background:#e7e3d8}
 .dm-studio .dm-layout-print .dm-layout-thumb:after{display:none}
+
+/* ===================== Título "Layouts" sendo impresso em CMYK ===================== */
+.dm-print-title{position:relative;display:flex;align-items:center;gap:10px;margin:0 0 2px;padding:4px 0}
+.dm-print-word{position:relative;display:inline-block;font:italic 600 30px/1 Georgia,'Playfair Display',serif;letter-spacing:.01em;color:#ece8dd}
+/* A tinta: listras ciano, magenta, amarelo e preto, reveladas da esquerda para a direita */
+.dm-print-word:after{content:attr(data-text);position:absolute;inset:0;background:linear-gradient(180deg,#00aeef 0 28%,#ec008c 28% 52%,#f5c400 52% 76%,#231f20 76%);-webkit-background-clip:text;background-clip:text;color:transparent;clip-path:inset(0 100% 0 0);animation:dm-print-word 1.4s cubic-bezier(.45,.05,.4,1) .15s forwards}
+@keyframes dm-print-word{to{clip-path:inset(0 0 0 0)}}
+/* Cabeça de impressão correndo junto com a tinta */
+.dm-print-head{position:absolute;left:0;top:0;bottom:0;width:150px;pointer-events:none;animation:dm-print-head-run 1.4s cubic-bezier(.45,.05,.4,1) .15s forwards}
+.dm-print-head i{position:absolute;left:0;top:2px;bottom:2px;width:7px;border-radius:3px;background:linear-gradient(180deg,#45463e,#1d1d19);box-shadow:0 2px 6px #0000004d}
+.dm-print-head i:after{content:'';position:absolute;left:1.5px;top:4px;width:4px;height:4px;border-radius:50%;background:#0096d6;box-shadow:0 0 6px #0096d6}
+@keyframes dm-print-head-run{0%{transform:translateX(-4px);opacity:1}92%{opacity:1}100%{transform:translateX(118px);opacity:0}}
+/* Marcas de registro de impressão no fim do título */
+.dm-print-marks{position:relative;width:16px;height:16px;margin-left:2px;opacity:0;animation:dm-marks-in .5s cubic-bezier(.34,1.8,.64,1) 1.45s forwards}
+.dm-print-marks:before,.dm-print-marks:after{content:'';position:absolute}
+.dm-print-marks:before{inset:3px;border:1.5px solid #ec008c;border-radius:50%}
+.dm-print-marks:after{left:50%;top:0;bottom:0;width:1.5px;margin-left:-.75px;background:#00aeef;box-shadow:0 0 0 0 transparent}
+@keyframes dm-marks-in{from{opacity:0;transform:scale(.3) rotate(-90deg)}to{opacity:1;transform:none}}
+.dm-print-title:hover .dm-print-word:after{animation:dm-print-word 1s cubic-bezier(.45,.05,.4,1) forwards;clip-path:inset(0 100% 0 0)}
+@media(prefers-reduced-motion:reduce){.dm-print-word:after{animation:none;clip-path:none}.dm-print-head{display:none}.dm-print-marks{animation:none;opacity:1}}

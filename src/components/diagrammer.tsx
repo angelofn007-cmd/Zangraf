@@ -1001,6 +1001,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      </button>;
      const marginCm=(spread?.spacing?.marginMm||0)/10,gapCm=(spread?.spacing?.gapMm??2)/10;
      return <div className="dm-layouts-v2">
+      <h2 className="dm-print-title" aria-label="Layouts"><span className="dm-print-word" data-text="Layouts" aria-hidden="true">Layouts</span><span className="dm-print-head" aria-hidden="true"><i/></span><span className="dm-print-marks" aria-hidden="true"/></h2>
       {/* Respiro: dois controles compactos, com ícones em vez de explicação */}
       <div className="dm-space-mini" aria-label="Espaçamento">
        <label title="Margem externa"><span className="dm-space-ico outer" aria-hidden="true"><i/></span><input aria-label="Margem externa em centímetros" type="range" min={0} max={Math.min(5,Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*.02)} step={.05} disabled={!spread} value={marginCm} onChange={e=>setSpacing('marginMm',Number(e.target.value)*10)}/><output>{marginCm.toLocaleString('pt-BR')}</output></label>
