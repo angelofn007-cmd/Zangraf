@@ -1765,3 +1765,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-marks-in{from{opacity:0;transform:scale(.3) rotate(-90deg)}to{opacity:1;transform:none}}
 .dm-print-title:hover .dm-print-word:after{animation:dm-print-word 1s cubic-bezier(.45,.05,.4,1) forwards;clip-path:inset(0 100% 0 0)}
 @media(prefers-reduced-motion:reduce){.dm-print-word:after{animation:none;clip-path:none}.dm-print-head{display:none}.dm-print-marks{animation:none;opacity:1}}
+/* Título Layouts: fonte de letreiro, larga e reta, para as faixas de tinta aparecerem bem */
+.dm-print-word{font:400 38px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.06em}

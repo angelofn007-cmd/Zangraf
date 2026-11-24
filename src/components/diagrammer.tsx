@@ -243,6 +243,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const fileInput = useRef<HTMLInputElement>(null);
  const bgInput = useRef<HTMLInputElement>(null);
  const [themeOpen, setThemeOpen] = useState<string|null>(null);
+ // Fonte do título animado da aba Layouts.
+ useEffect(()=>{if(panel==='layouts')void ensureFont('Bebas Neue');},[panel]);
  // Carrega as fontes dos temas para as capas prontas aparecerem certas.
  useEffect(()=>{if(panel!=='background'||backgroundTab!=='themes')return;for(const t of ALBUM_THEMES)for(const c of t.covers){void ensureFont(c.font);void ensureFont(c.subFont);}},[panel,backgroundTab]);
  const previewDialog = useRef<HTMLDialogElement>(null);
