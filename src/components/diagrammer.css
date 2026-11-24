@@ -1950,3 +1950,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-bg-word b{background:linear-gradient(var(--tint),var(--tint)),var(--tex) center/120px auto;background-blend-mode:multiply;-webkit-background-clip:text;background-clip:text}
 .dm-roller:before{background:repeating-linear-gradient(180deg,#c9a24a 0 6px,#3a3a36 6px 12px,#5d7ea6 12px 18px,#2f6b52 18px 24px,#c98a86 24px 30px)}
 .dm-bg-word b{font-size:46px;background-size:auto,90px auto}
+/* Fundo: letras nos tons da paleta de fundos, da mais clara à mais escura (com trama leve de textura) */
+.dm-bg-word b{background:repeating-linear-gradient(45deg,#ffffff38 0 1.5px,transparent 1.5px 4px),var(--tint);background-blend-mode:normal;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 #00000026)}
+.dm-roller:before{background:repeating-linear-gradient(180deg,#e1d5c4 0 6px,#c8d1c1 6px 12px,#dfb4a3 12px 18px,#9ba9a0 18px 24px,#393e3b 24px 30px)}
