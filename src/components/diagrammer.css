@@ -1883,3 +1883,9 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-ink-dot{0%{opacity:0;transform:scale(0)}40%{opacity:1;transform:scale(1.4)}100%{opacity:0;transform:scale(.6)}}
 @media(prefers-reduced-motion:reduce){.dm-icon-press *,.dm-studio .dm-icon-search{animation:none!important}.dm-press-head{display:none}.dm-studio .dm-icon-press .dm-icon-grid>button svg *{stroke-dasharray:none;stroke-dashoffset:0}}
 @keyframes dm-head-down{0%{opacity:1;transform:translateY(-8px)}92%{opacity:1;transform:translateY(600px)}100%{opacity:0;transform:translateY(620px)}}
+/* Montar mais calmo: borda dourada com brilho suave passando devagar; varinha só mexe ao passar o mouse */
+.dm-studio .dm-build-button:not(:disabled):before{background:conic-gradient(from 0deg,#efe7b0 0deg,#efe7b0 250deg,#fdf153 300deg,#fffbd0 320deg,#fdf153 340deg,#efe7b0 360deg);animation:dm-build-spin 7s linear infinite}
+.dm-studio .dm-build-button:not(:disabled):hover:before{animation-duration:7s}
+.dm-studio .dm-build-button:not(:disabled)>svg{animation:none;color:#b8a000;transition:transform .35s cubic-bezier(.34,1.6,.64,1)}
+.dm-studio .dm-build-button:not(:disabled):hover>svg{transform:rotate(-12deg) scale(1.08)}
+.dm-studio .dm-build-button:not(:disabled):hover{box-shadow:0 6px 16px #e4d30033}
