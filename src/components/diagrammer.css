@@ -2066,3 +2066,11 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-no-intro :is(.dm-print-title,.dm-bg-title,.dm-icon-tabs>button,.dm-icon-press .dm-icon-grid>button)::before,
 .dm-no-intro :is(.dm-print-title,.dm-bg-title,.dm-icon-tabs>button,.dm-icon-press .dm-icon-grid>button)::after{animation-delay:0s!important;animation-duration:1ms!important;animation-iteration-count:1!important}
 .dm-no-intro :is(.dm-roller,.dm-print-head,.dm-photo-flash,.dm-ink-intro,.dm-press-head,.dm-pen,.dm-pen2){display:none!important}
+/* Ícones: nomes das categorias alinhados, centralizados embaixo de cada cor, todos na mesma linha */
+.dm-studio .dm-icon-tabs>button{min-width:0;align-items:center;justify-content:flex-start}
+.dm-studio .dm-icon-tabs>button>span.dm-tab-word{display:flex;justify-content:center;width:100%;height:16px;margin-top:2px;overflow:visible;font-size:10.5px;line-height:16px;letter-spacing:0;white-space:nowrap;transform:none!important}
+.dm-studio .dm-icon-tabs .dm-tab-word b{transform:none}
+.dm-studio .dm-icon-tabs>button:hover .dm-tab-word b{transform:none}
+.dm-studio .dm-icon-tabs>button[aria-selected=true] .dm-tab-word b{animation:dm-letter-hop2 .5s cubic-bezier(.34,1.8,.64,1) calc(var(--k) * 30ms) both}
+@keyframes dm-letter-hop2{0%{transform:none}40%{transform:translateY(-4px)}100%{transform:none}}
+.dm-studio .dm-icon-tabs>button[aria-selected=true]>span.dm-tab-word{text-shadow:0 0 8px color-mix(in srgb,var(--tab) 45%,transparent)}
