@@ -165,7 +165,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [workspaceSize,setWorkspaceSize]=useState({width:800,height:500});
  const canvasViewport=useRef<HTMLDivElement>(null);
  const [guides,setGuides]=useState(true);
- const [photoMode,setPhotoMode]=useState<'crop'|'position'>('position');
+ const [photoMode,setPhotoMode]=useState<'crop'|'position'>('crop');
  const [positionOpen,setPositionOpen]=useState(false);
  const [printOpen,setPrintOpen]=useState(false);
  // Avisos: cartão no canto direito que fecha sozinho quando a faixa colorida termina
@@ -226,6 +226,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [pickedPhotos,setPickedPhotos]=useState<string[]>([]);
  // Quadro esperando uma foto nova (botão "Substituir foto" na lâmina).
  const [replaceTarget,setReplaceTarget]=useState<number|null>(null);
+ // Ao abrir qualquer lâmina, começa sempre em Enquadrar; Mover só com o clique em "Mover".
+ useEffect(()=>{setPhotoMode('crop');},[activePage]);
  // Sublinhado das abas desliza até a aba escolhida
  useEffect(()=>{const tabs=photoTabs.current;if(!tabs){setTabInk(null);return}const measure=()=>{const active=tabs.querySelector<HTMLElement>('[role=tab][aria-selected=true]');if(active)setTabInk({left:active.offsetLeft,width:active.offsetWidth})};measure();const observer=new ResizeObserver(measure);observer.observe(tabs);return()=>observer.disconnect();},[filterUnused,panel,!!project?.photos.length]);
  // Fotos excluídas saem da seleção (a contagem fica sempre certa).
@@ -527,7 +529,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  }
  function requestReplace(index:number){setSlotIndex(index);setTextId(undefined);setIconId(undefined);setSelectPhotos(false);setReplaceTarget(index);}
  function replaceWith(id:string){if(replaceTarget===null)return;assignPhoto(id,replaceTarget);setReplaceTarget(null);setNotice('Foto trocada. Desfazer volta a anterior.');}
- function selectPage(index: number) {setReplaceTarget(null); setActivePage(pageIndices.includes(index)?index:pageIndices[0]); if(index>=0&&project?.spreads[index])setLayoutCount(Math.min(10,Math.max(1,project.spreads[index].slots.filter(s=>s.photoId).length||project.spreads[index].slots.length))); setSlotIndex(0); setTextId(undefined);setIconId(undefined);setFocusOpen(false); setPositionOpen(false); }
+ function selectPage(index: number) {setReplaceTarget(null);setPhotoMode('crop'); setActivePage(pageIndices.includes(index)?index:pageIndices[0]); if(index>=0&&project?.spreads[index])setLayoutCount(Math.min(10,Math.max(1,project.spreads[index].slots.filter(s=>s.photoId).length||project.spreads[index].slots.length))); setSlotIndex(0); setTextId(undefined);setIconId(undefined);setFocusOpen(false); setPositionOpen(false); }
  function replaceSpread(next:Spread){if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,composition:next,photo:emptySlot(),...(next.texts?{texts:next.texts}:{}),...(next.background?{color:next.background}:{})}});else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?next:s)});}
  function changeTemplate(layout: LayoutName) {
   if(!spread){const next=createSpread(layout);next.slots[0]={...cover.photo};replaceSpread(next);setSlotIndex(0);return;}
@@ -746,7 +748,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  }
  function handleElementKey(event:KeyboardEvent){
   if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='d'){event.preventDefault();duplicateSelected();return;}
-  if(event.key==='Escape'){setReplaceTarget(null);setIconId(undefined);setTextId(undefined);setPositionOpen(false);setPhotoMode('position');return;}
+  if(event.key==='Escape'){setReplaceTarget(null);setIconId(undefined);setTextId(undefined);setPositionOpen(false);setPhotoMode('crop');return;}
   if(event.key==='Delete'||event.key==='Backspace'){event.preventDefault();if(selectedIcon){updateIcons(icons.filter(i=>i.id!==selectedIcon.id));setIconId(undefined)}else if(selectedText){updateTexts(texts.filter(t=>t.id!==selectedText.id));setTextId(undefined)}else if(spread&&spread.slots.length>1)removeFrame();else if(slot?.photoId)updateSlot(emptySlot());return;}
   if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
   event.preventDefault();const dx=event.key==='ArrowLeft'?-1:event.key==='ArrowRight'?1:0,dy=event.key==='ArrowUp'?-1:event.key==='ArrowDown'?1:0;const amount=event.shiftKey?1:.2;
