@@ -1385,3 +1385,11 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photo-menu>button.danger,.dm-studio .dm-photo-menu>button.danger svg{color:#c7372f}
 .dm-studio .dm-photo-menu>button.danger:hover:not(:disabled){background:#fdeeec}
 .dm-studio .dm-photo-menu>button:disabled{opacity:.45}
+/* Menu ⋯ sempre por cima do resto do painel */
+.dm-studio .dm-upload-bar{position:relative;z-index:60}
+.dm-studio .dm-photo-more{position:relative;z-index:61}
+.dm-studio .dm-photo-menu{z-index:70;width:244px;padding:6px;border:1px solid var(--dm-line);border-radius:14px;background:#fff;box-shadow:0 18px 48px #2a2a1e2e,0 2px 6px #2a2a1e14;transform-origin:top right;animation:dm-menu-pop .22s cubic-bezier(.34,1.4,.64,1)}
+@keyframes dm-menu-pop{from{opacity:0;transform:translateY(-6px) scale(.96)}}
+.dm-studio .dm-photo-menu>button{min-height:40px;border-radius:9px;font-weight:600}
+.dm-studio .dm-photo-menu>button:hover:not(:disabled) svg{color:var(--dm-ink)}
+.dm-studio[data-night=true] .dm-photo-menu{background:var(--dm-control)}
