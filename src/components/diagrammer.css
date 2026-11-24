@@ -1358,3 +1358,12 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photos-columns .dm-delete-photo{top:6px;right:auto;left:6px}
 .dm-studio .dm-photos-columns .dm-photo.is-checked .dm-photo-image img{opacity:1}
 .dm-studio .dm-photos-columns .dm-delete-photo{width:18px;height:18px}.dm-studio .dm-photos-columns .dm-delete-photo svg{width:10px;height:10px}
+
+/* ===================== 2 colunas + faixas de 3 menores ===================== */
+.dm-studio .dm-photos.dm-photos-columns{flex-direction:column;gap:8px}
+.dm-studio .dm-photo-pair{display:flex;align-items:flex-start;gap:6px}
+.dm-studio .dm-photo-pair>.dm-photo-col{gap:6px}
+.dm-studio .dm-photo-trio{display:flex;gap:6px}
+.dm-studio .dm-photo-trio>.dm-photo{flex:1 1 0;min-width:0;animation:dm-photo-in .5s cubic-bezier(.34,1.25,.64,1) var(--d,0ms) both}
+.dm-studio .dm-photos-columns.is-from-right .dm-photo-trio>.dm-photo,.dm-studio .dm-photos-columns.is-from-left .dm-photo-trio>.dm-photo{animation:none}
+.dm-studio .dm-photos-columns{gap:6px!important}
