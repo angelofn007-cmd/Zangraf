@@ -1393,3 +1393,11 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photo-menu>button{min-height:40px;border-radius:9px;font-weight:600}
 .dm-studio .dm-photo-menu>button:hover:not(:disabled) svg{color:var(--dm-ink)}
 .dm-studio[data-night=true] .dm-photo-menu{background:var(--dm-control)}
+/* Botão de selecionar todas (no lugar do ⋯) */
+.dm-studio .dm-select-all{transition:background .2s,box-shadow .2s,transform .2s}
+.dm-studio .dm-select-all.is-on{background:linear-gradient(180deg,#f3e43b,#e4d300);box-shadow:inset 0 2px 4px #8a7a0040}
+.dm-studio .dm-select-all svg{transition:transform .35s cubic-bezier(.34,1.8,.64,1)!important}
+.dm-studio .dm-select-all.is-on svg{transform:scale(1.12)!important}
+/* Lixeira da seleção bem visível */
+.dm-studio .dm-multi-actions .dm-danger-icon{flex-shrink:0;width:44px;min-height:38px;border:0;border-radius:var(--dm-r-sm);background:#c7372f;color:#fff;box-shadow:0 4px 12px #c7372f40}
+.dm-studio .dm-multi-actions .dm-danger-icon:hover:not(:disabled){background:#a92a23}

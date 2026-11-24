@@ -4,7 +4,7 @@ import {MAX_PHOTO_BYTES,checkAlbumCapacity} from '@/lib/album-capacity';
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import {coverSpineMm,coverRegions,photoLayouts,rankLayoutsForPhotos,DEFAULT_SPACING,type PhotoLayout} from '@/lib/album-layouts';
-import { Sparkles, Focus, ShoppingBag, ArrowLeft, ArrowRight, Plus, Save, ImagePlus, Undo2, Redo2, Copy, Trash2, WandSparkles, Eye, X, Check, BookOpen, RotateCcw, Upload, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Send, Type, Palette, LayoutTemplate, Settings2, Minus, Maximize, Search, Info, SunMoon, RotateCw, Replace, RefreshCw, Images, MousePointer2, Crop, AlignLeft, AlignCenter, AlignRight, Bold, Italic, FlipHorizontal2, FlipVertical2, Layers3, CircleCheck, CircleAlert, Ellipsis, ImageOff, ZoomIn } from 'lucide-react';
+import { Sparkles, Focus, ShoppingBag, ArrowLeft, ArrowRight, Plus, Save, ImagePlus, Undo2, Redo2, Copy, Trash2, WandSparkles, Eye, X, Check, BookOpen, RotateCcw, Upload, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Send, Type, Palette, LayoutTemplate, Settings2, Minus, Maximize, Search, Info, SunMoon, RotateCw, Replace, RefreshCw, Images, MousePointer2, Crop, AlignLeft, AlignCenter, AlignRight, Bold, Italic, FlipHorizontal2, FlipVertical2, Layers3, CircleCheck, CircleAlert, Ellipsis, ImageOff, CheckCheck, ZoomIn } from 'lucide-react';
 import {checkAlbum,ISSUE_INFO,ISSUE_ORDER,pageLabel,type AlbumIssue} from '@/lib/album-check';
 import {ALBUM_FONTS,FONT_GROUPS,MAIN_FONT_COUNT,ensureFont,fontsInGroup,type AlbumFont} from '@/lib/album-fonts';
 import {ALBUM_ICONS,TEXTURES,SURFACES,SURFACE_GROUPS,surfaceUrl,type AlbumIcon,type TextureName,type SurfaceName} from '@/lib/album-decorations';
@@ -224,10 +224,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [pickedPhotos,setPickedPhotos]=useState<string[]>([]);
  // Quadro esperando uma foto nova (botão "Substituir foto" na lâmina).
  const [replaceTarget,setReplaceTarget]=useState<number|null>(null);
- const [photoMenu,setPhotoMenu]=useState(false);
  // Sublinhado das abas desliza até a aba escolhida
  useEffect(()=>{const tabs=photoTabs.current;if(!tabs){setTabInk(null);return}const measure=()=>{const active=tabs.querySelector<HTMLElement>('[role=tab][aria-selected=true]');if(active)setTabInk({left:active.offsetLeft,width:active.offsetWidth})};measure();const observer=new ResizeObserver(measure);observer.observe(tabs);return()=>observer.disconnect();},[filterUnused,panel,!!project?.photos.length]);
- useEffect(()=>{if(!photoMenu)return;const close=(e:PointerEvent)=>{if(!(e.target as HTMLElement).closest?.('.dm-photo-more'))setPhotoMenu(false)};document.addEventListener('pointerdown',close);return()=>document.removeEventListener('pointerdown',close);},[photoMenu]);
  // Fotos excluídas saem da seleção (a contagem fica sempre certa).
  const photoIdsKey=project?.photos.map(p=>p.id).join('|');
  useEffect(()=>{setPickedPhotos(ids=>{const alive=new Set(photoIdsKey?.split('|')||[]);const next=ids.filter(id=>alive.has(id));return next.length===ids.length?ids:next;});},[photoIdsKey]);
@@ -819,18 +817,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='photos'&&<>
      <div className="dm-upload-bar">
       <button type="button" className="dm-upload-main" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><Upload size={18}/>{busy?'Carregando…':'Adicionar fotos'}</button>
-      {!!project.photos.length&&<div className="dm-photo-more"><button type="button" className="dm-upload-more" aria-label="Mais opções de fotos" aria-haspopup="menu" aria-expanded={photoMenu} onClick={()=>setPhotoMenu(v=>!v)}><Ellipsis size={20}/></button>
-       {photoMenu&&<div className="dm-photo-menu" role="menu" onKeyDown={e=>{if(e.key==='Escape')setPhotoMenu(false)}}>
-        <button type="button" role="menuitem" onClick={()=>{setSelectPhotos(true);setPickedPhotos([]);setPhotoMenu(false)}}><MousePointer2 size={15}/>Selecionar fotos</button>
-        <button type="button" role="menuitem" onClick={()=>{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id));setPhotoMenu(false)}}><CircleCheck size={15}/>Selecionar todas</button>
-        <i className="dm-photo-menu-line" aria-hidden="true"/>
-        <button type="button" role="menuitem" disabled={busy||!unusedCount||!emptyCount} onClick={()=>{autoFill();setPhotoMenu(false)}}><LayoutTemplate size={15}/>Preencher quadros vazios</button>
-        <button type="button" role="menuitem" onClick={()=>{setFilterUnused(!filterUnused);setPhotoMenu(false)}}><Images size={15}/>{filterUnused?'Ver todas as fotos':'Ver só as não usadas'}</button>
-        <i className="dm-photo-menu-line" aria-hidden="true"/>
-        <button type="button" role="menuitem" className="danger" disabled={busy||!unusedCount} onClick={()=>{setPhotoMenu(false);const ids=project.photos.filter(p=>!usedIds.has(p.id)).map(p=>p.id);if(!window.confirm(`Excluir as ${ids.length} fotos que não estão no álbum? Você pode desfazer.`))return;let next=project;for(const id of ids)next=removePhoto(next,id);edit(next);setNotice(`${ids.length} ${ids.length===1?'foto excluída':'fotos excluídas'}. Desfazer volta.`)}}><ImageOff size={15}/>Excluir as não usadas</button>
-        <button type="button" role="menuitem" className="danger" disabled={busy} onClick={()=>{setPhotoMenu(false);if(!window.confirm(`Excluir todas as ${project.photos.length} fotos? Elas saem também do álbum. Você pode desfazer.`))return;let next=project;for(const p of project.photos)next=removePhoto(next,p.id);edit(next);setSelectPhotos(false);setPickedPhotos([]);setNotice('Todas as fotos foram excluídas. Desfazer volta.')}}><Trash2 size={15}/>Excluir todas</button>
-       </div>}
-      </div>}
+      {!!project.photos.length&&<button type="button" className={'dm-upload-more dm-select-all'+(selectPhotos?' is-on':'')} aria-pressed={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))} aria-label={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas as fotos'} title={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas'} disabled={busy} onClick={()=>{if(selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))){setSelectPhotos(false);setPickedPhotos([])}else{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id))}}}><CheckCheck size={21}/></button>}
      </div>
      {project.photos.length>1&&<button type="button" className="dm-build-button" disabled={busy} onClick={()=>void autoBuildAlbum()}><WandSparkles size={17}/>{busy?'Montando…':'Montar álbum automático'}</button>}
      
