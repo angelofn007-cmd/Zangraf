@@ -1006,6 +1006,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <h2 className="dm-print-title" aria-label="Layouts"><span className="dm-print-word" data-text="Layouts" aria-hidden="true">Layouts</span><span className="dm-print-head" aria-hidden="true"><i/></span><span className="dm-print-marks" aria-hidden="true"/></h2>
       {/* Quantas fotos: quadros de um filme fotográfico */}
       <div className="dm-film-count" role="group" aria-label={`Fotos nesta ${activePage<0?'capa':'lâmina'} · álbum ${shape}`}>{Array.from({length:10},(_,i)=>i+1).map(n=><button key={n} type="button" aria-pressed={layoutCount===n} className={photosHere===n?'is-here':''} title={photosHere===n?`${n} ${n===1?'foto':'fotos'} nesta página`:`${n} ${n===1?'foto':'fotos'}`} onClick={()=>{setLayoutCount(n);if(pickedPhotos.length&&n<pickedPhotos.length)setPickedPhotos([])}}><span>{n}</span></button>)}</div>
+      <span className="dm-section-label">Ajustar margem entre fotos</span>
       {/* Respiro: dois controles compactos, com ícones em vez de explicação */}
       <div className="dm-space-mini" aria-label="Espaçamento">
        <label title="Margem externa"><span className="dm-space-ico outer" aria-hidden="true"><i/></span><input aria-label="Margem externa em centímetros" type="range" min={0} max={Math.min(5,Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*.02)} step={.05} disabled={!spread} value={marginCm} onChange={e=>setSpacing('marginMm',Number(e.target.value)*10)}/><output>{marginCm.toLocaleString('pt-BR')}</output></label>

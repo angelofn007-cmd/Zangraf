@@ -1773,3 +1773,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-film-count{padding:8px 10px;border-radius:8px;overflow:hidden;box-sizing:border-box;width:100%}
 .dm-film-count>button{margin:0 2px;min-width:0}
 .dm-film-count>button:first-child{margin-left:0}.dm-film-count>button:last-child{margin-right:0}
+/* Rótulo de seção no mesmo estilo de "FONTES PRINCIPAIS" */
+.dm-studio .dm-section-label{display:block;margin:4px 0 -6px;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--dm-muted)}
