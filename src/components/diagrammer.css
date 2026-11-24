@@ -2021,3 +2021,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-hand-title svg{transition:filter .8s ease}
 .dm-hand-title.is-done svg{filter:drop-shadow(0 0 5px #fdf15399) drop-shadow(0 0 1px #fdf15366)}
 .dm-hand-mask{stroke-width:20}
+/* Cada traço revela só a sua parte da letra (máscara fina); no fim a palavra se completa suavemente */
+.dm-hand-mask{stroke-width:10}
+.dm-hand-final{transition:opacity .5s ease}
+.dm-hand-mask{stroke-width:12}
+.dm-hand-mask{stroke-width:15}

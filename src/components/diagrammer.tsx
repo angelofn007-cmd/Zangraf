@@ -128,20 +128,17 @@ function HandwrittenTitle(){
  // 1) Depois que a fonte carrega, monta um traço de escrita para cada letra (sobe e desce dentro da letra).
  useEffect(()=>{let alive=true;void ensureFont('Dancing Script').then(()=>document.fonts.ready).then(()=>{
   const text=svg.current?.querySelector<SVGTextElement>('text.dm-hand-word');if(!alive||!text)return;
-  // Traços na ordem e no sentido marcados: 1 haste do T (de baixo para cima), 2 barra do T (esquerda→direita),
-  // 3–4 o "e", 5–6 as duas pernas do "x", 7 o "t" (subindo) e 8 o "o" terminando com a saída para a direita.
-  const box=(i:number)=>{const r=text.getExtentOfChar(i);return {x:r.x,y:r.y,w:r.width,h:r.height};};
-  const P=(b:{x:number;y:number;w:number;h:number},fx:number,fy:number)=>`${(b.x+b.w*fx).toFixed(1)} ${(b.y+b.h*fy).toFixed(1)}`;
-  const T=box(0),e=box(1),x=box(2),t=box(3),o=box(4);
+  // Traços copiados exatamente dos riscos marcados (ordem e sentido): 1 haste do T ↑, 2 barra do T →, 3 o "e",
+  // 4 e 5 as pernas do "x", 6 a haste do "t" ↓, 7 o corte do "t" →, 8 o "o" com a saída para a direita.
   const list:string[]=[
-   `M${P(T,.28,.98)} C ${P(T,.32,.7)}, ${P(T,.42,.4)}, ${P(T,.52,.12)}`,
-   `M${P(T,.0,.2)} C ${P(T,.3,.08)}, ${P(T,.7,.06)}, ${P(T,1.05,.1)}`,
-   `M${P(e,-.05,.8)} C ${P(e,.35,.75)}, ${P(e,.85,.55)}, ${P(e,.7,.4)} C ${P(e,.55,.25)}, ${P(e,.15,.45)}, ${P(e,.15,.75)}`,
-   `M${P(e,.15,.75)} C ${P(e,.15,1.0)}, ${P(e,.65,1.02)}, ${P(e,1.05,.82)}`,
-   `M${P(x,.05,.45)} C ${P(x,.35,.55)}, ${P(x,.6,.85)}, ${P(x,.95,1.0)}`,
-   `M${P(x,.95,.45)} C ${P(x,.65,.6)}, ${P(x,.35,.85)}, ${P(x,.05,1.0)}`,
-   `M${P(t,.3,.98)} C ${P(t,.38,.7)}, ${P(t,.5,.4)}, ${P(t,.68,.12)} M${P(t,.05,.42)} C ${P(t,.4,.38)}, ${P(t,.7,.38)}, ${P(t,1.0,.4)}`,
-   `M${P(o,.55,.45)} C ${P(o,.15,.4)}, ${P(o,.0,.95)}, ${P(o,.4,1.0)} C ${P(o,.8,1.0)}, ${P(o,.9,.5)}, ${P(o,.55,.45)} C ${P(o,.75,.5)}, ${P(o,.95,.4)}, ${P(o,1.15,.3)}`,
+   'M11.7 51.1 C 12.3 49.1, 14.2 42.9, 15.4 38.9 C 16.6 34.9, 17.8 30.7, 18.8 27.4 C 19.8 24.1, 21.1 20.5, 21.6 19.1',
+   'M6.3 12.7 L37.5 11.8',
+   'M35.8 43.4 C 37.3 42.8, 43.7 41.1, 44.9 39.5 C 46.1 37.9, 44.3 34.5, 43.2 33.8 C 42.1 33.1, 39.4 33.6, 38.1 35.1 C 36.8 36.6, 34.9 40.2, 35.2 42.7 C 35.5 45.2, 37.6 49.9, 39.8 50.4 C 42.0 50.9, 46.9 46.6, 48.3 45.9',
+   'M54.0 33.2 L65.4 50.4',
+   'M65.4 35.1 L51.7 53.6',
+   'M84.7 10.8 L75.6 51.7',
+   'M69.9 31.9 L87.0 31.5',
+   'M99.5 35.1 C 98.3 35.5, 93.9 35.7, 92.6 37.6 C 91.3 39.5, 90.5 44.9, 91.5 46.6 C 92.5 48.3, 96.4 48.8, 98.3 47.9 C 100.2 47.0, 102.6 43.6, 102.9 41.5 C 103.2 39.4, 99.4 35.3, 100.0 35.1 C 100.6 34.9, 103.7 39.8, 106.3 40.2 C 108.9 40.6, 113.9 38.0, 115.4 37.6',
   ];
   setPaths(list);});return()=>{alive=false};},[]);
  // 2) A caneta percorre os traços; a máscara revela a fonte exatamente onde ela passou.
@@ -149,7 +146,7 @@ function HandwrittenTitle(){
   if(!paths.length)return;const els=Array.from(svg.current?.querySelectorAll<SVGPathElement>('path.dm-hand-mask')||[]);const penEl=pen.current;if(!els.length||!penEl)return;
   const lengths=els.map(p=>p.getTotalLength());els.forEach((p,i)=>{p.style.strokeDasharray=`${lengths[i]}`;p.style.strokeDashoffset=`${lengths[i]}`;});
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(p=>{p.style.strokeDashoffset='0';});setDone(true);return;}
-  const speed=400,lift=40;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
+  const speed=170,lift=140;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
   let start=0,frame=0;
   const step=(now:number)=>{if(!start)start=now;const raw=Math.max(0,Math.min(1,(now-start-120)/total));const eased=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;const t=raw>=1?total+1:eased*total;let tip:DOMPoint|null=null;
    plan.forEach((item,i)=>{const k=Math.max(0,Math.min(1,(t-item.from)/item.dur));els[i].style.strokeDashoffset=`${lengths[i]*(1-k)}`;if(t>=item.from&&t<=item.from+item.dur+lift)tip=els[i].getPointAtLength(lengths[i]*k);});
@@ -161,6 +158,8 @@ function HandwrittenTitle(){
  return <h2 className={'dm-hand-title'+(done?' is-done':'')} aria-label="Texto"><svg ref={svg} viewBox="0 0 170 70" width="170" height="70" aria-hidden="true">
   <defs><mask id="dm-hand-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="170" height="70">{paths.map((d,i)=><path key={i} className="dm-hand-mask" d={d}/>)}</mask></defs>
   <text x="6" y="50" className="dm-hand-word" mask={paths.length?'url(#dm-hand-reveal)':undefined} style={paths.length?undefined:{opacity:0}}>Texto</text>
+  {/* Ao terminar, completa qualquer pedacinho da letra que o traço não cobriu */}
+  <text x="6" y="50" className="dm-hand-word dm-hand-final" style={{opacity:done?1:0}}>Texto</text>
  </svg><span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
 }
 
