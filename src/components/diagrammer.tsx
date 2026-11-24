@@ -543,9 +543,23 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  /** Clique numa foto: ocupa o quadro selecionado (ou o primeiro vazio); se não houver vazio, entra na lâmina. */
  function placePhoto(id:string){
   if(replaceTarget!==null){assignPhoto(id,replaceTarget);setReplaceTarget(null);setNotice('Foto substituída. Desfazer volta a anterior.');return;}
-  if(activePage<0||!spread){assignPhoto(id);return;}
-  const target=spread.slots[slotIndex]&&!spread.slots[slotIndex].photoId?slotIndex:spread.slots.findIndex(s=>!s.photoId);
-  if(target>=0)assignPhoto(id,target);else appendPhoto(id);
+  // 1) Um quadro vazio na página aberta (o selecionado primeiro).
+  // Na capa inteira, o quadro do meio é o dorso: não recebe foto automaticamente.
+  const isSpine=(i:number)=>activePage<0&&spineMm>0&&spread?.slots.length===3&&i===1;
+  if(spread){const target=spread.slots[slotIndex]&&!spread.slots[slotIndex].photoId&&!isSpine(slotIndex)?slotIndex:spread.slots.findIndex((s,i)=>!s.photoId&&!isSpine(i));if(target>=0){assignPhoto(id,target);return;}}
+  else if(activePage<0&&!cover.photo.photoId){assignPhoto(id);return;}
+  // 2) Próximo quadro vazio do álbum: lâminas seguintes e, depois, as anteriores. A foto já colocada continua onde está.
+  const total=project!.spreads.length,start=activePage>=0?activePage+1:0;
+  for(let step=0;step<total;step++){
+   const k=(start+step)%total;if(k===activePage)continue;
+   const slot=project!.spreads[k].slots.findIndex(s=>!s.photoId);
+   if(slot<0)continue;
+   edit({...project!,spreads:project!.spreads.map((s,i)=>i===k?{...s,slots:s.slots.map((v,j)=>j===slot?{...emptySlot(),photoId:id}:v)}:s)});
+   setActivePage(k);setSlotIndex(slot);setTextId(undefined);setIconId(undefined);return;
+  }
+  // 3) Álbum cheio: acrescenta na lâmina aberta (o layout se ajusta).
+  if(activePage>=0)appendPhoto(id);
+  else setNotice('Todos os quadros já têm foto. Abra uma lâmina para acrescentar mais.');
  }
  /** Troca duas fotos de lugar na mesma área, levando junto o enquadramento de cada uma. */
  function swapSlots(from:number,to:number){
