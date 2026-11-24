@@ -484,6 +484,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const coverMargins=project.productionModel?.coverMargins||(legacyMargin?{topMm:legacyMargin,rightMm:legacyMargin,bottomMm:legacyMargin,leftMm:legacyMargin}:undefined);
  const spreadExport=project.productionModel?.insideMode==='spread';
  const spineMm=coverSpineMm(project);
+ /** A capa já tem alguma foto? Antes disso, as barras de edição da capa ficam escondidas. */
+ const coverHasPhoto=activePage<0&&(!!cover.photo.photoId||!!cover.composition?.slots.some(s=>s.photoId));
  const backMode = activePage === -2;
  const frontCover = project.cover || defaultCover();
  const backCover = project.backCover || defaultBackCover();
@@ -995,7 +997,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      onPointerCancel={()=>{handleStart.current=null;setHandleDx(0)}}
      onClick={()=>{if(handleDragged.current){handleDragged.current=false;return}setPanelOpen(v=>!v)}}>{panelOpen?<ChevronLeft size={16}/>:<ChevronRight size={16}/>}</button>
     {activePage<0&&showMarginNotice&&<aside className={'dm-side-notice'+(noticeLeaving?' is-leaving':'')} role="note" aria-label="Aviso de margem"><Info size={16} aria-hidden="true"/><p>{coverMarginDescription(coverMargins)}</p><span className="dm-notice-timer" aria-hidden="true" onAnimationEnd={e=>{if(e.animationName==='dm-notice-countdown')closeMarginNotice()}}/><button type="button" className="dm-icon" aria-label="Fechar aviso de margem" onClick={closeMarginNotice}><X size={14}/></button></aside>}
-    <div className={'dm-contextbar'+(frameFocus||selectedText||selectedIcon?' is-open':' is-hidden')} aria-hidden={!(frameFocus||selectedText||selectedIcon)}><div><strong>{selectedIcon?'Editar ícone':selectedText?'Editar texto':title}</strong></div><div className="dm-context-actions">{selectedIcon?<>
+    <div className={'dm-contextbar'+((frameFocus&&(activePage>=0||coverHasPhoto))||selectedText||selectedIcon?' is-open':' is-hidden')} aria-hidden={!((frameFocus&&(activePage>=0||coverHasPhoto))||selectedText||selectedIcon)}><div><strong>{selectedIcon?'Editar ícone':selectedText?'Editar texto':title}</strong></div><div className="dm-context-actions">{selectedIcon?<>
       <label className="dm-color-swatch" title="Cor do ícone"><span style={{background:selectedIcon.color}}/><input type="color" aria-label="Cor do ícone" value={selectedIcon.color} onChange={e=>updateIcon(selectedIcon.id,{color:e.target.value})}/></label>
       <span className="dm-bar-divider"/>
       <div className="dm-size-control" title="Tamanho do ícone"><button type="button" className="dm-icon" aria-label="Diminuir ícone" onClick={()=>setIconSize(selectedIcon.sizeMm-2)}><Minus size={14}/></button><span className="dm-size-value">{(selectedIcon.sizeMm/10).toLocaleString('pt-BR',{maximumFractionDigits:1})} cm</span><button type="button" className="dm-icon" aria-label="Aumentar ícone" onClick={()=>setIconSize(selectedIcon.sizeMm+2)}><Plus size={14}/></button></div>
@@ -1023,7 +1025,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <hr/><button role="menuitem" onClick={()=>{addText();setPositionOpen(false)}}><Type size={15}/>Adicionar texto</button>
      </div>}</div></>}</div></div>
     {activePage<0&&!spread&&selectedPhoto&&!selectedText&&<div className="dm-cover-crop"><label>Horizontal<input type="range" min="0" max="100" value={slot.x} onChange={e=>updateSlot({x:Number(e.target.value)})}/></label><label>Vertical<input type="range" min="0" max="100" value={slot.y} onChange={e=>updateSlot({y:Number(e.target.value)})}/></label></div>}
-    {activePage===-1&&wrapMode&&spineMm>0&&<div className="dm-cover-region-tools"><span>Dorso central: <strong>{formatCm(spineMm)} cm</strong></span><button type="button" role="switch" aria-checked={coverIsSingle} className={'dm-cover-single'+(coverIsSingle?' is-active':'')} onClick={toggleSingleCover}><span className="dm-switch" aria-hidden="true"><i/></span>Capa inteira</button><button onClick={addSpineText}><Type size={14}/>Texto no dorso</button></div>}
+    {activePage===-1&&wrapMode&&spineMm>0&&coverHasPhoto&&<div className="dm-cover-region-tools"><span>Dorso central: <strong>{formatCm(spineMm)} cm</strong></span><button type="button" role="switch" aria-checked={coverIsSingle} className={'dm-cover-single'+(coverIsSingle?' is-active':'')} onClick={toggleSingleCover}><span className="dm-switch" aria-hidden="true"><i/></span>Capa inteira</button><button onClick={addSpineText}><Type size={14}/>Texto no dorso</button></div>}
     <div className="dm-canvas-area">
     {replaceTarget!==null&&(()=>{const current=spread?.slots[replaceTarget]?.photoId||(activePage<0&&!spread?cover.photo.photoId:null);const list=[...project.photos].sort((a,b)=>Number(usedIds.has(a.id))-Number(usedIds.has(b.id)));
      return <div className="dm-replace-layer" onPointerDown={e=>{if(e.target===e.currentTarget)setReplaceTarget(null)}}><section className="dm-replace-picker" role="dialog" aria-label="Trocar foto">

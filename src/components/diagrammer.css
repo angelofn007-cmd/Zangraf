@@ -1580,3 +1580,10 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-contextbar button:hover:not(:disabled) svg{transform:scale(1.15)}
 .dm-studio .dm-contextbar button:active:not(:disabled){transform:scale(.95)}
 @media(prefers-reduced-motion:reduce){.dm-studio .dm-contextbar,.dm-studio .dm-contextbar *{animation:none!important;transition:none!important}}
+/* Ferramentas da capa entram animadas quando a primeira foto chega */
+.dm-studio .dm-cover-region-tools{animation:dm-cover-tools-in .5s cubic-bezier(.34,1.4,.64,1) both}
+.dm-studio .dm-cover-region-tools>*{animation:dm-ctx-in .45s cubic-bezier(.34,1.5,.64,1) both}
+.dm-studio .dm-cover-region-tools>*:nth-child(2){animation-delay:.08s}
+.dm-studio .dm-cover-region-tools>*:nth-child(3){animation-delay:.16s}
+@keyframes dm-cover-tools-in{from{opacity:0;transform:translateY(12px) scale(.96)}}
+@media(prefers-reduced-motion:reduce){.dm-studio .dm-cover-region-tools,.dm-studio .dm-cover-region-tools>*{animation:none}}
