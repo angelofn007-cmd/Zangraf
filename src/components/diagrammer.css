@@ -2074,3 +2074,16 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-icon-tabs>button[aria-selected=true] .dm-tab-word b{animation:dm-letter-hop2 .5s cubic-bezier(.34,1.8,.64,1) calc(var(--k) * 30ms) both}
 @keyframes dm-letter-hop2{0%{transform:none}40%{transform:translateY(-4px)}100%{transform:none}}
 .dm-studio .dm-icon-tabs>button[aria-selected=true]>span.dm-tab-word{text-shadow:0 0 8px color-mix(in srgb,var(--tab) 45%,transparent)}
+
+/* ===================== Ícones: abertura mais fluida ===================== */
+.dm-ink-ball{animation:dm-ink-ball2 1.1s cubic-bezier(.37,0,.25,1) both}
+@keyframes dm-ink-ball2{0%{transform:translateY(-26px) scale(.5) rotate(0);opacity:0}30%{transform:translateY(4px) scale(1) rotate(160deg);opacity:1}55%{transform:translateY(22px) scale(1.06,.94) rotate(300deg)}80%{transform:translateY(28px) scale(1.4,.6) rotate(420deg);opacity:.9}100%{transform:translateY(30px) scale(2.2,.15) rotate(480deg);opacity:0}}
+.dm-ink-drop2{animation:dm-ink-fly .7s cubic-bezier(.33,.7,.3,1) calc(.85s + var(--i) * 45ms) both}
+.dm-studio .dm-icon-tabs>button>i{animation:dm-bar-splat .7s cubic-bezier(.25,.9,.3,1) calc(1.3s + var(--ci,0) * 60ms) forwards}
+.dm-press-head{animation:dm-head-down 2.3s cubic-bezier(.45,.05,.35,1) var(--base) forwards}
+.dm-studio .dm-icon-press .dm-icon-grid>button{animation:dm-card-feed2 .6s cubic-bezier(.22,.8,.3,1) calc(var(--base) + var(--i) * 50ms) both}
+@keyframes dm-card-feed2{0%{opacity:0;transform:translateY(-6px) scale(.96)}100%{opacity:1;transform:none}}
+.dm-studio .dm-icon-press .dm-icon-grid>button svg{animation:dm-ink-color 1.2s ease-in-out calc(var(--base) + var(--i) * 50ms + .1s) both}
+.dm-studio .dm-icon-press .dm-icon-grid>button svg *{animation:dm-ink-draw 1.1s cubic-bezier(.45,0,.25,1) calc(var(--base) + var(--i) * 50ms + .08s) forwards}
+.dm-studio .dm-icon-press .dm-icon-grid>button small{animation:dm-label-in .5s ease calc(var(--base) + var(--i) * 50ms + .35s) both}
+.dm-studio .dm-icon-press .dm-icon-grid>button:after{animation:dm-ink-dot .7s ease-out calc(var(--base) + var(--i) * 50ms + .8s) both}
