@@ -1429,3 +1429,24 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-ready-shine{0%,60%{left:-50%}100%{left:130%}}
 @keyframes dm-wand{0%,100%{transform:rotate(0)}30%{transform:rotate(-16deg) scale(1.1)}60%{transform:rotate(8deg)}}
 @media(prefers-reduced-motion:reduce){.dm-studio .dm-upload-trash,.dm-studio .dm-build-button.is-ready,.dm-studio .dm-build-button.is-ready svg,.dm-studio .dm-build-button.is-ready:after{animation:none}}
+
+/* ===================== Carregando fotos: polaroides caindo + barra nas cinco cores ===================== */
+.dm-import{display:flex;align-items:center;gap:16px;margin-top:12px;padding:14px 16px;border-radius:14px;background:#fffbd6;box-shadow:inset 0 0 0 1px #f3e88a;animation:dm-import-in .4s cubic-bezier(.34,1.4,.64,1)}
+@keyframes dm-import-in{from{opacity:0;transform:translateY(-8px) scale(.97)}}
+.dm-import-stack{position:relative;flex:0 0 56px;height:56px}
+.dm-import-stack img{position:absolute;inset:4px;width:48px;height:48px;object-fit:cover;border:3px solid #fff;border-bottom-width:8px;border-radius:3px;box-shadow:0 4px 10px #2a2a1e33;transform:rotate(var(--r,0deg));animation:dm-polaroid-drop .55s cubic-bezier(.34,1.5,.64,1) both}
+@keyframes dm-polaroid-drop{from{opacity:0;transform:translateY(-26px) rotate(calc(var(--r,0deg) * -3)) scale(1.2)}}
+.dm-import-empty{position:absolute;inset:6px;display:grid;place-items:center;border-radius:10px;background:#fff;color:#b8a800;animation:dm-import-bob 1s ease-in-out infinite}
+@keyframes dm-import-bob{50%{transform:translateY(-4px)}}
+.dm-import-check{position:absolute;inset:4px;display:grid;place-items:center;border-radius:50%;background:#19b33a;color:#fff;box-shadow:0 6px 16px #19b33a55;animation:dm-check-burst .5s cubic-bezier(.34,1.8,.64,1) both}
+@keyframes dm-check-burst{from{transform:scale(0) rotate(-40deg)}}
+.dm-import-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.dm-import-copy strong{font-size:14px;font-variant-numeric:tabular-nums}
+.dm-import-bar{position:relative;display:block;height:7px;overflow:hidden;border-radius:4px;background:#fff}
+.dm-import-bar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:linear-gradient(90deg,#e8221e 0 20%,#19b33a 20% 40%,#f5e21a 40% 60%,#1aa8e8 60% 80%,#e81aa5 80%);background-size:var(--bar,280px) 100%;transition:width .35s cubic-bezier(.3,.7,.3,1)}
+.dm-import-bar i:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff90,transparent);background-size:60px 100%;animation:dm-bar-run 1s linear infinite}
+@keyframes dm-bar-run{from{background-position:-60px 0}to{background-position:260px 0}}
+.dm-import.is-done{background:#eaf8ec;box-shadow:inset 0 0 0 1px #bfe8c6;animation:dm-import-out .4s ease 1.2s forwards}
+.dm-import.is-done .dm-import-bar i:after{animation:none}
+@keyframes dm-import-out{to{opacity:0;transform:translateY(-6px) scale(.97)}}
+@media(prefers-reduced-motion:reduce){.dm-import,.dm-import *{animation:none!important}}

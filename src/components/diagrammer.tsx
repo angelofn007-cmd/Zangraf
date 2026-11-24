@@ -133,6 +133,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [tabSlide, setTabSlide] = useState<''|'from-left'|'from-right'>('');
  const setFilterUnused = (value: boolean) => { if (value === filterUnused) return; setTabSlide(value ? 'from-right' : 'from-left'); setFilterUnusedState(value); };
  const [photoGridWidth, setPhotoGridWidth] = useState(0);
+ const [importing, setImporting] = useState<{done:number;total:number;thumbs:string[];finished?:boolean}|null>(null);
  const photoTabs = useRef<HTMLDivElement>(null);
  const [tabInk, setTabInk] = useState<{left:number;width:number}|null>(null);
  const photoGridObserver = useRef<ResizeObserver|null>(null);
@@ -424,7 +425,9 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  async function addPhotos(files: FileList | File[] | null) {
   const current = projectRef.current;
   if (!current || !files?.length || busy) return;
-  setBusy(true); setNotice('Abrindo suas fotos…');
+  setBusy(true); setNotice('');
+  const shown:string[]=[];
+  setImporting({done:0,total:files.length,thumbs:[]});
   try {
    const incoming = Array.from(files);
    checkAlbumCapacity(current.photos.map(photo=>photo.blob),incoming);
@@ -436,7 +439,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
    if(navigator.storage?.persist)void navigator.storage.persist().catch(()=>false);
    const photos: Photo[] = []; const rejected: string[] = [];
    for (const [index, file] of incoming.entries()) {
-    setNotice(`Importando foto ${index + 1} de ${incoming.length}…`);
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > PHOTO_LIMIT) { rejected.push(file.name); continue; }
     try {
      const bitmap = await createImageBitmap(file);
@@ -446,16 +448,21 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       const thumbnail=await makePhotoPreview(bitmap,240);
       const takenAt=await photoTakenAt(file);
       photos.push({id:crypto.randomUUID(),name:file.name,blob:file,preview,thumbnail,width:bitmap.width,height:bitmap.height,...(takenAt!==undefined?{takenAt}:{})});
+      const thumbUrl=URL.createObjectURL(thumbnail);shown.push(thumbUrl);setImporting(state=>state&&{...state,done:index+1,thumbs:[...state.thumbs.slice(-3),thumbUrl]});
      }finally{bitmap.close();}
      await new Promise<void>(resolve=>window.setTimeout(resolve,0));
     } catch { rejected.push(file.name); }
+    setImporting(state=>state&&state.done<index+1?{...state,done:index+1}:state);
    }
    if (photos.length) {
     setPast(items => [...items.slice(-39), current]); setFuture([]);
     apply({ ...current, photos: [...current.photos, ...photos] });
    }
-   setNotice(`${photos.length} foto(s) adicionada(s).${rejected.length ? ` ${rejected.length} arquivo(s) não foram importados: ${rejected.slice(0, 3).join(', ')}${rejected.length > 3 ? '…' : ''}. Use JPG, PNG ou WebP de até 50 MB e 40 megapixels.` : ' Arraste uma foto para o álbum ou selecione um quadro e clique na foto.'}`);
-  } catch (error) { setNotice(error instanceof Error ? error.message : 'Não foi possível importar as fotos.'); }
+   // Fim: a animação comemora; só aparece aviso se algum arquivo ficou de fora.
+   setImporting(state=>state&&{...state,done:state.total,total:photos.length,finished:true});
+   window.setTimeout(()=>{setImporting(null);shown.forEach(URL.revokeObjectURL);},1600);
+   if(rejected.length)setNotice(`${rejected.length} arquivo(s) não foram importados: ${rejected.slice(0, 3).join(', ')}${rejected.length > 3 ? '…' : ''}. Use JPG, PNG ou WebP de até 50 MB e 40 megapixels.`);
+  } catch (error) { setImporting(null); shown.forEach(URL.revokeObjectURL); setNotice(error instanceof Error ? error.message : 'Não foi possível importar as fotos.'); }
   finally { setBusy(false); if (fileInput.current) fileInput.current.value = ''; }
  }
 
@@ -830,6 +837,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       {!!project.photos.length&&<button type="button" className={'dm-upload-more dm-select-all'+(selectPhotos?' is-on':'')} aria-pressed={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))} aria-label={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas as fotos'} title={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas'} disabled={busy} onClick={()=>{if(selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))){setSelectPhotos(false);setPickedPhotos([])}else{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id))}}}><CheckCheck size={21}/></button>}
       {selectPhotos&&pickedPhotos.length>0&&<button type="button" className="dm-upload-trash" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length} ${pickedPhotos.length===1?'foto':'fotos'}`} onClick={()=>removePickedPhotos()}><Trash2 size={19}/><b>{pickedPhotos.length}</b></button>}
      </div>
+     {importing&&<div className={'dm-import'+(importing.finished?' is-done':'')} role="status" aria-live="polite">
+      <div className="dm-import-stack" aria-hidden="true">{importing.finished?<span className="dm-import-check"><Check size={26} strokeWidth={3}/></span>:importing.thumbs.length?importing.thumbs.map((url,i)=><img key={url} src={url} alt="" style={{['--r' as string]:`${[-8,5,-3,9][i%4]}deg`}}/>):<span className="dm-import-empty"><ImagePlus size={22}/></span>}</div>
+      <div className="dm-import-copy"><strong>{importing.finished?`${importing.total} ${importing.total===1?'foto pronta':'fotos prontas'}`:`${importing.done} de ${importing.total}`}</strong><span className="dm-import-bar"><i style={{width:`${importing.total?Math.round(importing.done/Math.max(1,importing.finished?importing.done:importing.total)*100):0}%`}}/></span></div>
+     </div>}
      {project.photos.length>1&&<button type="button" className={'dm-build-button'+(selectPhotos&&pickedPhotos.length>0?' is-ready':'')} disabled={busy} title={selectPhotos&&pickedPhotos.length?`Montar com as ${pickedPhotos.length} fotos selecionadas`:undefined} onClick={()=>void autoBuildAlbum(selectPhotos&&pickedPhotos.length?pickedPhotos:undefined)}><WandSparkles size={17}/>{busy?'Montando…':'Montar álbum automático'}</button>}
      
       
