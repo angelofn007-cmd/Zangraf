@@ -484,12 +484,12 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const coverMargins=project.productionModel?.coverMargins||(legacyMargin?{topMm:legacyMargin,rightMm:legacyMargin,bottomMm:legacyMargin,leftMm:legacyMargin}:undefined);
  const spreadExport=project.productionModel?.insideMode==='spread';
  const spineMm=coverSpineMm(project);
- /** A capa já tem alguma foto? Antes disso, as barras de edição da capa ficam escondidas. */
- const coverHasPhoto=activePage<0&&(!!cover.photo.photoId||!!cover.composition?.slots.some(s=>s.photoId));
  const backMode = activePage === -2;
  const frontCover = project.cover || defaultCover();
  const backCover = project.backCover || defaultBackCover();
  const cover = backMode ? backCover : frontCover;
+ /** A capa já tem alguma foto? Antes disso, as barras de edição da capa ficam escondidas. */
+ const coverHasPhoto=activePage<0&&(!!cover.photo.photoId||!!cover.composition?.slots.some(s=>s.photoId));
  const spec = project.printSpec;
  const currentSpec=projectSpec(project,activePage);
  const currentRatio=currentSpec.widthMm/currentSpec.heightMm*(activePage<0?1:2);
