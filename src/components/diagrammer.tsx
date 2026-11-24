@@ -1050,8 +1050,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      </>}</>}
     {panel==='tone'&&(()=>{const adjust=slot?.adjust||{};const thumb=selectedPhoto?thumbUrls[selectedPhoto.id]:undefined;
      const sliders=[{key:'brightness',label:'Brilho',low:'Mais escuro',high:'Mais claro'},{key:'contrast',label:'Contraste',low:'Suave',high:'Marcado'},{key:'saturation',label:'Cores',low:'Apagadas',high:'Intensas'},{key:'warmth',label:'Temperatura',low:'Fria',high:'Quente'}] as const;
-     return <>{toneIntro&&<div className="dm-tone-splash" aria-hidden="true">{TONE_SPLATS.map((b,i)=><i key={i} style={{['--x' as string]:`${b[0]}%`,['--y' as string]:`${b[1]}%`,['--s' as string]:`${b[2]}px`,['--r' as string]:`${b[3]}deg`,['--d' as string]:`${b[4]}ms`,['--c' as string]:b[5]}}/>)}</div>}
-      <h2 className="dm-tone-title" aria-label="Tonalidade">{Array.from('TONALIDADE').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--hue' as string]:['#e8221e','#f08a12','#f5c400','#19b33a','#1aa8e8','#2b5bd7','#7d2a86','#e81aa5','#e8221e','#19b33a'][k],['--tone' as string]:`hsl(0 0% ${12+k*6}%)`}}>{ch}</b>)}</h2>
+     return <>      <h2 className="dm-tone-title" aria-label="Tonalidade">{Array.from('TONALIDADE').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--hue' as string]:['#e8221e','#f08a12','#f5c400','#19b33a','#1aa8e8','#2b5bd7','#7d2a86','#e81aa5','#e8221e','#19b33a'][k],['--tone' as string]:`hsl(0 0% ${12+k*6}%)`}}>{ch}</b>)}</h2>
      {!selectedPhoto?<div className="dm-empty"><SunMoon size={32}/><p>Clique numa foto da lâmina<br/>para ajustar brilho, cores e efeitos.</p></div>:<>
       
       <h3 className="dm-tone-heading">Efeitos</h3>
