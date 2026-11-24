@@ -751,6 +751,11 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   if(event.key==='Escape'){setReplaceTarget(null);setIconId(undefined);setTextId(undefined);setPositionOpen(false);setPhotoMode('crop');return;}
   if(event.key==='Delete'||event.key==='Backspace'){event.preventDefault();if(selectedIcon){updateIcons(icons.filter(i=>i.id!==selectedIcon.id));setIconId(undefined)}else if(selectedText){updateTexts(texts.filter(t=>t.id!==selectedText.id));setTextId(undefined)}else if(spread&&spread.slots.length>1)removeFrame();else if(slot?.photoId)updateSlot(emptySlot());return;}
   if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
+  // Fora do modo Mover (e sem texto/ícone selecionado), as setas ← → trocam de lâmina.
+  if(!selectedIcon&&!selectedText&&photoMode!=='position'){
+   if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();if(event.key==='ArrowLeft')previousPage();else nextPage();}
+   return;
+  }
   event.preventDefault();const dx=event.key==='ArrowLeft'?-1:event.key==='ArrowRight'?1:0,dy=event.key==='ArrowUp'?-1:event.key==='ArrowDown'?1:0;const amount=event.shiftKey?1:.2;
   if(selectedIcon){updateIcon(selectedIcon.id,{x:Math.max(0,Math.min(90,selectedIcon.x+dx*amount)),y:Math.max(0,Math.min(90,selectedIcon.y+dy*amount))})}
   else if(selectedText){updateText(selectedText.id,{x:Math.max(0,Math.min(100-selectedText.width,selectedText.x+dx*amount)),y:Math.max(0,Math.min(95,selectedText.y+dy*amount))})}
