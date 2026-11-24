@@ -151,7 +151,7 @@ function HandwrittenTitle(){
    // Brilho amarelo no formato da palavra, já aceso antes da caneta começar.
    const g=glow.current?.getContext('2d');if(g){g.setTransform(S,0,0,S,0,0);g.fillStyle='#fdf153';g.font="700 54px 'Dancing Script'";g.fillText('Texto',6,50);glow.current!.classList.add('is-on');}
    // 2) Linha do tempo: cada risco na velocidade da caneta, com uma pausinha entre um e outro.
-   const speed=150,lift=160;const samples:{x:number;y:number;t:number}[]=[];const plan:{from:number;dur:number;len:number}[]=[];let total=0;
+   const speed=200,lift=110;const samples:{x:number;y:number;t:number}[]=[];const plan:{from:number;dur:number;len:number}[]=[];let total=0;
    els.forEach(el=>{const len=el.getTotalLength(),dur=len/speed*1000;plan.push({from:total,dur,len});
     for(let d=0;d<=len;d+=.6){const pt=el.getPointAtLength(d);samples.push({x:pt.x*S,y:pt.y*S,t:total+d/len*dur});}
     total+=dur+lift;});
