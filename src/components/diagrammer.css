@@ -1917,3 +1917,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-print-word.is-letters b:nth-child(4n){text-shadow:0 1px 0 #0000001a}
 .dm-print-title:hover .dm-print-word.is-letters b{animation:dm-letter-ink .35s ease-out calc(var(--k) * .12s) forwards}
 @media(prefers-reduced-motion:reduce){.dm-print-word.is-letters b{animation:none;color:var(--ink)}}
+/* Título Layouts em faixas: vermelho, verde, azul, rosa, amarelo e preto */
+.dm-print-word:after{background:linear-gradient(180deg,#e8221e 0 16.6%,#19b33a 16.6% 33.3%,#00aeef 33.3% 50%,#ec008c 50% 66.6%,#f5c400 66.6% 83.3%,#231f20 83.3%);-webkit-background-clip:text;background-clip:text}
