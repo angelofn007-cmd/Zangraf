@@ -1,9 +1,9 @@
 'use client';
 import {useCallback, useEffect, useState} from 'react';
-import {Copy, ExternalLink, MessageCircle, RefreshCw, Send, Trash2} from 'lucide-react';
+import {Check, Copy, Heart, Mail, MapPin, MessageCircle, RefreshCw, Send, Trash2} from 'lucide-react';
 import {projectPageIndices, type LayoutProject} from '@/lib/layout-projects';
 import {pageLabel} from '@/lib/album-check';
-import {MAX_PREVIEW_BYTES, STATUS_LABEL, whatsappShareUrl, type OwnerApproval} from '@/lib/approval';
+import {MAX_PREVIEW_BYTES, STATUS_LABEL, emailShareUrl, parseComment, whatsappShareUrl, type OwnerApproval} from '@/lib/approval';
 import {renderPage} from './diagrammer-export';
 
 const dateFormat = new Intl.DateTimeFormat('pt-BR', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'});
@@ -29,6 +29,7 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
   const [progress, setProgress] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true); setError('');
@@ -72,27 +73,33 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
   const older = (approval?.comments.length || 0) - current.length;
   const working = !!progress;
 
+  const likes = current.filter(c => parseComment(c.body).like).length;
+  const changes = current.filter(c => !parseComment(c.body).like);
+
   return <div className="dm-approval">
     <div className="dm-approval-head">
       <h3>Aprovação do cliente</h3>
       {approval && <button type="button" className="dm-icon" aria-label="Atualizar comentários" title="Atualizar" disabled={loading || working} onClick={() => void load()}><RefreshCw size={15}/></button>}
     </div>
     {loading && !approval ? <p className="dm-muted">Carregando…</p> : approval ? <>
-      <p className={`dm-approval-status ${approval.status}`}><i aria-hidden="true"/>{STATUS_LABEL[approval.status]}{approval.status === 'approved' && approval.approvedBy && <> por {approval.approvedBy}</>} · versão {approval.version}</p>
-      <div className="dm-approval-link"><input readOnly value={link} aria-label="Link de aprovação" onFocus={e => e.currentTarget.select()}/><button type="button" className="dm-button small" onClick={() => void copy()}><Copy size={14}/>{copied ? 'Copiado' : 'Copiar'}</button></div>
+      <p className={`dm-approval-status ${approval.status}`}><i aria-hidden="true"/>{STATUS_LABEL[approval.status]}{approval.status === 'approved' && approval.approvedBy && <> por {approval.approvedBy}</>}</p>
+      <form className="dm-approval-email" onSubmit={e => { e.preventDefault(); window.location.href = emailShareUrl(link, approval.albumName, email); }}>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="E-mail do cliente" aria-label="E-mail do cliente" autoComplete="off"/>
+        <button type="submit" className="dm-button primary"><Mail size={15}/>Enviar</button>
+      </form>
       <div className="dm-two">
         <a className="dm-button" href={whatsappShareUrl(link, approval.albumName)} target="_blank" rel="noopener noreferrer"><MessageCircle size={15}/>WhatsApp</a>
-        <a className="dm-button" href={link} target="_blank" rel="noopener noreferrer"><ExternalLink size={15}/>Abrir</a>
+        <button type="button" className="dm-button" onClick={() => void copy()}>{copied ? <Check size={15}/> : <Copy size={15}/>}{copied ? 'Copiado' : 'Copiar link'}</button>
       </div>
-      <p className="dm-muted dm-small">Link válido até {dateFormat.format(new Date(approval.expiresAt))}. O cliente não precisa de conta.</p>
-      {current.length ? <ul className="dm-approval-comments">{current.map(c => <li key={c.id}><button type="button" onClick={() => onGoToPage(c.page)}><strong>{pageLabel(project, c.page)}</strong><span>{c.body}</span><small>{c.author} · {dateFormat.format(new Date(c.createdAt))}</small></button></li>)}</ul>
-        : <p className="dm-muted dm-small">Nenhum comentário nesta versão ainda.</p>}
-      {older > 0 && <p className="dm-muted dm-small">{older} comentário(s) de versões anteriores ficam visíveis para o cliente no link.</p>}
-      <button type="button" className="dm-button full" disabled={busy || working} onClick={() => void sendVersion()}><Send size={15}/>{working ? progress : 'Enviar nova versão'}</button>
+      {!!current.length && <div className="dm-approval-summary">{likes > 0 && <span className="like"><Heart size={13}/>{likes}</span>}{changes.length > 0 && <span className="change"><MapPin size={13}/>{changes.length} {changes.length === 1 ? 'ajuste' : 'ajustes'}</span>}</div>}
+      {changes.length ? <ul className="dm-approval-comments">{changes.map(c => { const parsed = parseComment(c.body); return <li key={c.id}><button type="button" onClick={() => onGoToPage(c.page)}><strong>{pageLabel(project, c.page)}{parsed.pin && <MapPin size={11}/>}</strong><span>{parsed.text}</span><small>{c.author} · {dateFormat.format(new Date(c.createdAt))}</small></button></li>; })}</ul>
+        : !current.length && <p className="dm-muted dm-small">Nenhuma resposta ainda.</p>}
+      {older > 0 && <p className="dm-muted dm-small">{older} comentário(s) de versões anteriores.</p>}
+      <button type="button" className="dm-button full" disabled={busy || working} onClick={() => void sendVersion()}><Send size={15}/>{working ? progress : 'Enviar versão atualizada'}</button>
       <button type="button" className="dm-approval-remove" disabled={working} onClick={() => void remove()}><Trash2 size={13}/>Encerrar link</button>
     </> : <>
-      <p className="dm-muted">Mande um link para seu cliente folhear o álbum, comentar cada lâmina e aprovar, sem precisar de conta. Chega de prints no WhatsApp.</p>
-      <button type="button" className="dm-button full" disabled={busy || working} onClick={() => void sendVersion()}><Send size={15}/>{working ? progress : 'Enviar para aprovação'}</button>
+      <p className="dm-muted">O cliente folheia, toca no que quer mudar e aprova. Sem precisar de conta.</p>
+      <button type="button" className="dm-button primary full" disabled={busy || working} onClick={() => void sendVersion()}><Send size={15}/>{working ? progress : 'Criar link de aprovação'}</button>
     </>}
     {error && <p className="dm-error" role="alert">{error}</p>}
   </div>;

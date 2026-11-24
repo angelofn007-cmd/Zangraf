@@ -53,3 +53,27 @@ export function whatsappShareUrl(link:string,albumName:string){
  const text=`Oi! Seu álbum "${albumName}" está pronto para você ver. Folheie, deixe comentários nas lâminas e aprove por aqui: ${link}`;
  return 'https://wa.me/?text='+encodeURIComponent(text);
 }
+
+/**
+ * Comentários guardam marcações simples no começo do texto, sem mudar o banco:
+ * "@like" = o cliente gostou da lâmina; "@pin:x,y " = ponto marcado na lâmina (0–1).
+ */
+export type ParsedComment={like:boolean;pin:{x:number;y:number}|null;text:string};
+export function parseComment(body:string):ParsedComment{
+ if(body.startsWith('@like'))return {like:true,pin:null,text:body.slice(5).trim()};
+ const match=/^@pin:(0(?:\.\d+)?|1(?:\.0+)?),(0(?:\.\d+)?|1(?:\.0+)?) ?/.exec(body);
+ if(match)return {like:false,pin:{x:Number(match[1]),y:Number(match[2])},text:body.slice(match[0].length)};
+ return {like:false,pin:null,text:body};
+}
+export function encodePin(pin:unknown):string{
+ const p=pin as {x?:unknown;y?:unknown}|null;
+ if(!p||typeof p.x!=='number'||typeof p.y!=='number'||!(p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1))return '';
+ return `@pin:${p.x.toFixed(3)},${p.y.toFixed(3)} `;
+}
+
+/** Link de e-mail com a mensagem pronta para o cliente. */
+export function emailShareUrl(link:string,albumName:string,to=''){
+ const subject=`Seu álbum "${albumName}" está pronto para aprovação`;
+ const body=`Olá!\n\nSeu álbum "${albumName}" está pronto para você ver.\n\nAbra o link, folheie as lâminas, toque no que quiser mudar e deixe sua observação. Quando estiver tudo certo, é só aprovar:\n\n${link}\n\nNão precisa criar conta.`;
+ return `mailto:${encodeURIComponent(to.trim())}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}

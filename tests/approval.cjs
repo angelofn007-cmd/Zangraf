@@ -25,3 +25,14 @@ test('Mensagem pronta para o WhatsApp leva o link',()=>{
  assert.ok(url.startsWith('https://wa.me/?text='));
  assert.match(decodeURIComponent(url),/Casamento.*https:\/\/zangraf\.com\/aprovar\/abc/);
 });
+
+{
+  const assert = require('node:assert');
+  const {parseComment, encodePin, emailShareUrl} = require('./load-ts.cjs')('src/lib/approval.ts');
+  assert.deepStrictEqual(parseComment('@like'), {like: true, pin: null, text: ''});
+  assert.deepStrictEqual(parseComment(encodePin({x: .5, y: .25}) + 'Trocar'), {like: false, pin: {x: .5, y: .25}, text: 'Trocar'});
+  assert.strictEqual(encodePin({x: 2, y: .1}), '');
+  assert.deepStrictEqual(parseComment('Normal'), {like: false, pin: null, text: 'Normal'});
+  assert.ok(emailShareUrl('https://x/aprovar/abc', 'Ana').startsWith('mailto:?subject='));
+  console.log('approval markers ok');
+}

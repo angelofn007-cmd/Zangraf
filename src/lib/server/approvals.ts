@@ -4,7 +4,7 @@ import {del, get, put} from '@vercel/blob';
 import sharp from 'sharp';
 import {getDatabase} from './db';
 import {AdminError} from './admin-access';
-import {APPROVAL_BUDGET_BYTES, APPROVAL_DAYS, MAX_COMMENTS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH, MAX_PREVIEW_BYTES, MAX_PREVIEW_SIDE, cleanText, statusAfterComment, validatePages, type ApprovalComment, type ApprovalStatus, type OwnerApproval, type PublicApproval} from '@/lib/approval';
+import {APPROVAL_BUDGET_BYTES, APPROVAL_DAYS, MAX_COMMENTS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH, MAX_PREVIEW_BYTES, MAX_PREVIEW_SIDE, cleanText, encodePin, statusAfterComment, validatePages, type ApprovalComment, type ApprovalStatus, type OwnerApproval, type PublicApproval} from '@/lib/approval';
 
 type StoredPage={index:number;label:string;pathname:string|null;width:number;height:number;size:number};
 type ShareRow={id:string;token:string;user_id:string;project_id:string;album_name:string;version:number;pages:StoredPage[];bytes:string;status:ApprovalStatus;approved_by:string|null;approved_at:Date|null;expires_at:Date;updated_at:Date};
@@ -127,13 +127,15 @@ export async function clientAction(token:string,body:Record<string,unknown>):Pro
    if(Number(body.version)!==row.version)throw new AdminError('Há uma versão mais nova deste álbum. Atualize a página antes de aprovar.',409);
    if(row.status!=='approved')await client.query("UPDATE zangraf_album_shares SET status='approved',approved_by=$2,approved_at=now(),updated_at=now() WHERE id=$1",[row.id,author]);
   }else if(body.action==='comment'){
-   const text=cleanText(body.body,MAX_COMMENT_LENGTH);
-   if(!text)throw new AdminError('Escreva o comentário antes de enviar.',400);
+   const like=body.like===true;
+   const note=cleanText(body.body,MAX_COMMENT_LENGTH).replace(/^@(like|pin:)/,'');
+   if(!like&&!note)throw new AdminError('Escreva o comentário antes de enviar.',400);
+   const text=like?('@like '+note).trim():encodePin(body.pin)+note;
    if(!Number.isInteger(body.page)||!row.pages.some(p=>p.index===body.page))throw new AdminError('Lâmina inválida.',400);
    const count=await client.query('SELECT count(*)::int AS n FROM zangraf_album_comments WHERE share_id=$1',[row.id]);
    if(count.rows[0].n>=MAX_COMMENTS)throw new AdminError('Este álbum já recebeu o máximo de comentários. Fale direto com o fotógrafo.',429);
    await client.query('INSERT INTO zangraf_album_comments(id,share_id,version,page,author,body) VALUES($1,$2,$3,$4,$5,$6)',[randomUUID(),row.id,row.version,body.page,author,text]);
-   const next=statusAfterComment(row.status);
+   const next=like?row.status:statusAfterComment(row.status);
    if(next!==row.status)await client.query('UPDATE zangraf_album_shares SET status=$2,updated_at=now() WHERE id=$1',[row.id,next]);
   }else throw new AdminError('Ação inválida.',400);
   await client.query('COMMIT');
