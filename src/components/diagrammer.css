@@ -1501,3 +1501,4 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photo-viewport.is-revealing .dm-photo{animation:dm-photo-reveal .6s cubic-bezier(.34,1.4,.64,1) var(--d,0ms) both!important}
 @keyframes dm-photo-reveal{from{opacity:0;transform:translateY(22px) scale(.88)}}
 @media(prefers-reduced-motion:reduce){.dm-import-finale,.dm-import-finale *{animation:none!important}.dm-import-mask,.dm-import-fill,.dm-import-runner{transition:none}}
+.dm-import-track{clip-path:inset(-14px -14px -14px 0)}
