@@ -1321,3 +1321,25 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(max-width:900px){.dm-preview-body{flex-direction:column}.dm-share-sheet{flex-basis:auto;max-height:none}.dm-book-arrow{position:absolute;top:50%;width:42px;height:42px;margin-top:-21px}.dm-book-arrow.prev{left:0}.dm-book-arrow.next{right:0}}
 @media(max-width:700px){.dm-studio .dm-preview-dialog{padding:14px}.dm-book-count{min-width:0}.dm-book-count small{display:none}.dm-book-mode span{display:none}.dm-studio .dm-preview-checkout{flex-direction:column-reverse;align-items:stretch}}
 @media(prefers-reduced-motion:reduce){.dm-book-shine,.dm-studio .dm-preview-order:after{display:none}}
+
+/* ===================== Capa fechada: abre como um livro de verdade ===================== */
+.dm-studio .dm-book{transform:translateX(var(--shift,0%)) rotateX(5deg);transition:transform .76s cubic-bezier(.32,.1,.38,1)}
+.dm-studio .dm-book-stage.flat .dm-book{transform:translateX(var(--shift,0%))}
+.dm-studio .dm-book-stage:not(.flat):hover .dm-book{transform:translateX(var(--shift,0%)) rotateX(3deg) translateY(-3px)}
+@keyframes dm-book-in{from{opacity:0;transform:translateX(var(--shift,0%)) rotateX(28deg) translateY(30px) scale(.92)}}
+.dm-studio .dm-book.is-closed,.dm-studio .dm-book.is-cover-turn{background:transparent;box-shadow:none}
+.dm-book-half.is-empty{background:transparent}
+.dm-book-half.is-cover{border-radius:3px;box-shadow:0 22px 38px #181b182e}
+.dm-book.is-closed[data-side=front] .dm-book-half.is-cover{box-shadow:3px 2px 0 #f3efe6,6px 4px 0 #d9d4c9,0 22px 38px #181b182e}
+.dm-book.is-closed[data-side=back] .dm-book-half.is-cover{box-shadow:-3px 2px 0 #f3efe6,-6px 4px 0 #d9d4c9,0 22px 38px #181b182e}
+.dm-cover-part{position:absolute;inset:0;overflow:hidden}
+.dm-cover-part>div{position:absolute;top:0;height:100%}
+.dm-cover-part .zg-spread,.dm-cover-part .zg-cover{width:100%!important;height:100%!important;max-height:none!important;box-shadow:none!important}
+.dm-cover-part .zg-frame{outline:none!important}.dm-cover-part .zg-fold,.dm-cover-part .zg-empty-frame,.dm-cover-part .zg-spine-guide,.dm-cover-part .dm-spine-guide{display:none}
+.dm-book-thumbs>button>span{position:relative}
+.dm-book.is-closed[data-side=front] .dm-book-shine{left:50%}
+.dm-book.is-closed[data-side=back] .dm-book-shine{right:50%}
+/* Na capa fechada, a frente balança de leve chamando para abrir */
+.dm-book.is-closed[data-side=front] .dm-book-half.is-cover{transform-origin:left center;animation:dm-cover-tease 3.2s ease-in-out 1.4s infinite}
+@keyframes dm-cover-tease{0%,78%,100%{transform:none}86%{transform:perspective(1400px) rotateY(-9deg)}}
+@media(prefers-reduced-motion:reduce){.dm-book.is-closed[data-side=front] .dm-book-half.is-cover{animation:none}}
