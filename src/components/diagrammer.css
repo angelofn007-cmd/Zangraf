@@ -1893,3 +1893,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-build-button:not(:disabled):before{background:conic-gradient(from 0deg,#ece08a 0deg,#ece08a 220deg,#fdf153 270deg,#fffde6 305deg,#fdf153 340deg,#ece08a 360deg)}
 .dm-studio .dm-build-button:not(:disabled){box-shadow:0 0 14px #fdf15359}
 .dm-studio .dm-build-button:not(:disabled):hover{box-shadow:0 0 20px #fdf15380,0 6px 16px #e4d30033}
+/* Montar: sem a borda girando — só o brilho amarelo pulsando devagar */
+.dm-studio .dm-build-button:not(:disabled):before,.dm-studio .dm-build-button:not(:disabled):after{display:none}
+.dm-studio .dm-build-button:not(:disabled){border:1.5px solid #ecd94a;background:var(--dm-surface);animation:dm-build-glow 3.2s ease-in-out infinite}
+@keyframes dm-build-glow{0%,100%{box-shadow:0 0 8px #fdf15340}50%{box-shadow:0 0 20px #fdf153a6,0 0 2px #fdf153}}
+.dm-studio .dm-build-button.is-ready:not(:disabled){background:#fffbd6}
