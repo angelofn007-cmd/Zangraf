@@ -1589,3 +1589,20 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(prefers-reduced-motion:reduce){.dm-studio .dm-cover-region-tools,.dm-studio .dm-cover-region-tools>*{animation:none}}
 /* Barra de Adicionar fotos fica presa no topo do painel ao rolar (a lixeira está sempre à vista) */
 .dm-studio .dm-panel .dm-upload-bar{position:sticky;top:-22px;margin-top:-8px;padding:10px 0 8px;background:var(--dm-surface);box-shadow:0 10px 12px -12px #2a2a1e40}
+
+/* ===================== Barra de carregamento v4: filme fotográfico impresso em CMYK (cores das tintas HP) ===================== */
+.dm-import-track{height:18px;margin-top:4px;border-radius:4px;background:
+  repeating-linear-gradient(90deg,transparent 0 4px,#f6f3e8 4px 8px,transparent 8px 12px) 0 2px/12px 3px repeat-x,
+  repeating-linear-gradient(90deg,transparent 0 4px,#f6f3e8 4px 8px,transparent 8px 12px) 0 calc(100% - 2px)/12px 3px repeat-x,
+  #262622;box-shadow:0 2px 6px #2a2a1e40,inset 0 0 0 1px #00000040;clip-path:inset(-16px -16px -16px 0)}
+.dm-import-mask{top:6px;bottom:6px;border-radius:1px}
+.dm-import-mask>.dm-import-fill{border-radius:1px;background:linear-gradient(180deg,#00aeef 0 25%,#ec008c 25% 50%,#fff200 50% 75%,#3a3a36 75% 100%);background-size:auto;animation:none}
+.dm-import-mask>.dm-import-fill:before{top:0;height:100%;border-radius:0;background:linear-gradient(180deg,#ffffff55,transparent 45%,#00000014)}
+.dm-import-mask>.dm-import-fill:after{background:repeating-linear-gradient(90deg,transparent 0 9px,#ffffff2e 9px 10px);animation:none}
+/* Cabeça de impressão passando sobre o filme */
+.dm-import-runner i{left:-9px;top:50%;width:18px;height:26px;margin-top:-13px;border-radius:5px;transform:none;background:linear-gradient(180deg,#45463e,#1d1d19);box-shadow:0 3px 8px #00000055,inset 0 1px 0 #ffffff30;animation:dm-head-shake .18s linear infinite}
+.dm-import-runner i:before{content:'';position:absolute;left:4px;right:4px;bottom:4px;height:4px;border-radius:2px;background:linear-gradient(90deg,#00aeef 0 25%,#ec008c 25% 50%,#fff200 50% 75%,#000 75%)}
+.dm-import-runner i:after{content:'';position:absolute;left:50%;top:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#0096d6;box-shadow:0 0 6px 1px #0096d6;animation:dm-head-led 1s ease-in-out infinite}
+@keyframes dm-head-shake{50%{transform:translateY(.7px)}}
+@keyframes dm-head-led{50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.dm-import-runner i,.dm-import-runner i:after{animation:none}}
