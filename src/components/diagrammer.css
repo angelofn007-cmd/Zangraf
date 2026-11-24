@@ -1767,3 +1767,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(prefers-reduced-motion:reduce){.dm-print-word:after{animation:none;clip-path:none}.dm-print-head{display:none}.dm-print-marks{animation:none;opacity:1}}
 /* Título Layouts: fonte de letreiro, larga e reta, para as faixas de tinta aparecerem bem */
 .dm-print-word{font:400 38px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.06em}
+/* Ordem das tintas: amarelo, azul (ciano) e rosa (magenta) */
+.dm-print-word:after{background:linear-gradient(180deg,#f5c400 0 34%,#00aeef 34% 67%,#ec008c 67%);-webkit-background-clip:text;background-clip:text}
