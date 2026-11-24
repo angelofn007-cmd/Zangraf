@@ -2030,3 +2030,4 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-hand-mask{stroke-linecap:butt}
 /* A ponta da pena fica exatamente no ponto do traço, inclusive com a caneta inclinada */
 .dm-pen2 i{left:-4px;bottom:0;margin-bottom:9px;transform-origin:50% calc(100% + 9px)}
+.dm-hand-mask{stroke-width:22}

@@ -158,8 +158,6 @@ function HandwrittenTitle(){
  return <h2 className={'dm-hand-title'+(done?' is-done':'')} aria-label="Texto"><svg ref={svg} viewBox="0 0 170 70" width="170" height="70" aria-hidden="true">
   <defs><mask id="dm-hand-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="170" height="70">{paths.map((d,i)=><path key={i} className="dm-hand-mask" d={d}/>)}</mask></defs>
   <text x="6" y="50" className="dm-hand-word" mask={paths.length?'url(#dm-hand-reveal)':undefined} style={paths.length?undefined:{opacity:0}}>Texto</text>
-  {/* Ao terminar, completa qualquer pedacinho da letra que o traço não cobriu */}
-  <text x="6" y="50" className="dm-hand-word dm-hand-final" style={{opacity:done?1:0}}>Texto</text>
  </svg><span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
 }
 
