@@ -1535,3 +1535,4 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-printing i{position:absolute;left:4px;right:4px;top:8px;height:9px;border-radius:1px;background:linear-gradient(90deg,#1aa8e8,#e81aa5,#f5e21a);animation:dm-paper-out 1.2s ease-in-out infinite}
 @keyframes dm-paper-out{0%{transform:scaleY(0);transform-origin:top}60%,100%{transform:scaleY(1);transform-origin:top}}
 @media(prefers-reduced-motion:reduce){.dm-import-flash,.dm-shutter,.dm-printing i{animation:none;opacity:0}.dm-studio .dm-photo-viewport.is-revealing .dm-photo img{animation:none}}
+.dm-studio .dm-build-button:has(.dm-printing)>svg{display:none}
