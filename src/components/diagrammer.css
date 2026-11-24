@@ -2031,3 +2031,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* A ponta da pena fica exatamente no ponto do traço, inclusive com a caneta inclinada */
 .dm-pen2 i{left:-4px;bottom:0;margin-bottom:9px;transform-origin:50% calc(100% + 9px)}
 .dm-hand-mask{stroke-width:22}
+/* Texto v5: tinta desenhada pixel a pixel atrás da caneta */
+.dm-hand-title canvas{display:block;position:relative;z-index:1;transition:filter .8s ease}
+.dm-hand-title.is-done canvas{filter:drop-shadow(0 0 5px #fdf15399) drop-shadow(0 0 1px #fdf15366)}
+.dm-hand-title svg.dm-hand-guide{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;filter:none}
