@@ -137,9 +137,9 @@ function HandwrittenTitle(){
   if(!paths.length)return;const els=Array.from(svg.current?.querySelectorAll<SVGPathElement>('path.dm-hand-mask')||[]);const penEl=pen.current;if(!els.length||!penEl)return;
   const lengths=els.map(p=>p.getTotalLength());els.forEach((p,i)=>{p.style.strokeDasharray=`${lengths[i]}`;p.style.strokeDashoffset=`${lengths[i]}`;});
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(p=>{p.style.strokeDashoffset='0';});setDone(true);return;}
-  const speed=320,lift=50;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
+  const speed=520,lift=0;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
   let start=0,frame=0;
-  const step=(now:number)=>{if(!start)start=now;const t=now-start-200;let tip:DOMPoint|null=null;
+  const step=(now:number)=>{if(!start)start=now;const raw=Math.max(0,Math.min(1,(now-start-120)/total));const eased=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;const t=raw>=1?total+1:eased*total;let tip:DOMPoint|null=null;
    plan.forEach((item,i)=>{const k=Math.max(0,Math.min(1,(t-item.from)/item.dur));els[i].style.strokeDashoffset=`${lengths[i]*(1-k)}`;if(t>=item.from&&t<=item.from+item.dur+lift)tip=els[i].getPointAtLength(lengths[i]*k);});
    if(tip){penEl.style.opacity='1';penEl.style.transform=`translate(${(tip as DOMPoint).x}px,${(tip as DOMPoint).y}px)`;}
    if(t<total)frame=requestAnimationFrame(step);else{penEl.style.opacity='0';setDone(true);}
