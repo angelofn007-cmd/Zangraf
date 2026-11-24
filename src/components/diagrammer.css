@@ -1343,3 +1343,18 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-book.is-closed[data-side=front] .dm-book-half.is-cover{transform-origin:left center;animation:dm-cover-tease 3.2s ease-in-out 1.4s infinite}
 @keyframes dm-cover-tease{0%,78%,100%{transform:none}86%{transform:perspective(1400px) rotateY(-9deg)}}
 @media(prefers-reduced-motion:reduce){.dm-book.is-closed[data-side=front] .dm-book-half.is-cover{animation:none}}
+
+/* ===================== Fotos em colunas empilhadas (estilo Pinterest) ===================== */
+.dm-studio .dm-photos.dm-photos-columns{flex-direction:row;align-items:flex-start;gap:6px}
+.dm-studio .dm-photo-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px}
+.dm-studio .dm-photo-col>.dm-photo{width:100%;min-width:0;animation:dm-photo-in .5s cubic-bezier(.34,1.25,.64,1) var(--d,0ms) both}
+.dm-studio .dm-photos-columns.is-from-right .dm-photo,.dm-studio .dm-photos-columns.is-from-left .dm-photo{animation:none}
+.dm-studio .dm-photos-columns .dm-photo-image{border-radius:12px}
+/* ✓ pequeno no canto de cima, sem anel em volta */
+.dm-studio .dm-photos-columns .dm-photo-check{top:6px;left:auto;right:6px;width:18px;height:18px;border-width:1.5px;box-shadow:0 1px 3px #0000004d}
+.dm-studio .dm-photos-columns .dm-photo-check svg{width:11px;height:11px}
+.dm-studio .dm-photo .dm-photo-check[aria-pressed=true]{outline:none}
+.dm-studio .dm-photos-columns .dm-photo-check:before{inset:-6px}
+.dm-studio .dm-photos-columns .dm-delete-photo{top:6px;right:auto;left:6px}
+.dm-studio .dm-photos-columns .dm-photo.is-checked .dm-photo-image img{opacity:1}
+.dm-studio .dm-photos-columns .dm-delete-photo{width:18px;height:18px}.dm-studio .dm-photos-columns .dm-delete-photo svg{width:10px;height:10px}
