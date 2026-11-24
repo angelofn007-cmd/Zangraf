@@ -1502,3 +1502,17 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-photo-reveal{from{opacity:0;transform:translateY(22px) scale(.88)}}
 @media(prefers-reduced-motion:reduce){.dm-import-finale,.dm-import-finale *{animation:none!important}.dm-import-mask,.dm-import-fill,.dm-import-runner{transition:none}}
 .dm-import-track{clip-path:inset(-14px -14px -14px 0)}
+
+/* ===================== Barra de carregamento como tinta (cores da Zangraf, inspirada nos cartuchos HP) ===================== */
+.dm-import-track{height:12px;border-radius:8px;background:#fff;box-shadow:inset 0 1px 3px #2a2a1e26,0 0 0 1px #e9dd7a}
+.dm-import-mask{border-radius:8px}
+.dm-import-mask>.dm-import-fill{border-radius:8px;background:linear-gradient(90deg,#1aa8e8 0%,#e81aa5 22%,#f5e21a 44%,#e8221e 66%,#19b33a 86%,#1aa8e8 100%);background-size:200% 100%;animation:dm-ink-flow 3s linear infinite}
+@keyframes dm-ink-flow{to{background-position:-200% 0}}
+/* Brilho de tinta molhada por cima e ondinha correndo */
+.dm-import-mask>.dm-import-fill:before{content:'';position:absolute;left:0;right:0;top:1px;height:45%;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#ffffffa6,#ffffff10)}
+.dm-import-mask>.dm-import-fill:after{background:radial-gradient(circle at 6px 50%,#ffffff55 0 3px,transparent 4px) 0 0/22px 100%;animation:dm-ink-bubbles 1.2s linear infinite}
+@keyframes dm-ink-bubbles{to{background-position:22px 0}}
+/* Ponta da barra vira uma gota de tinta */
+.dm-import-runner i{left:-8px;width:16px;height:16px;margin-top:-8px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:radial-gradient(circle at 35% 35%,#fff 0 18%,#1aa8e8 20%,#0d7fb5 100%);box-shadow:0 2px 6px #0d7fb566;animation:dm-ink-drop 1.4s ease-in-out infinite}
+@keyframes dm-ink-drop{0%,100%{transform:rotate(-45deg) scale(1)}50%{transform:rotate(-45deg) scale(1.15)}}
+@media(prefers-reduced-motion:reduce){.dm-import-mask>.dm-import-fill,.dm-import-mask>.dm-import-fill:after,.dm-import-runner i{animation:none}}
