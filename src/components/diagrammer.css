@@ -1410,3 +1410,22 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-upload-main:hover:not(:disabled),.dm-studio .dm-upload-more:hover:not(:disabled){background:linear-gradient(180deg,#f6e33c,#e6cf12);box-shadow:0 1px 2px #8a7a0026}
 .dm-studio .dm-upload-main:active:not(:disabled),.dm-studio .dm-upload-more:active:not(:disabled){background:#e0c90e}
 .dm-studio .dm-select-all.is-on{background:#e0c90e;box-shadow:inset 0 1px 3px #8a7a0040}
+
+/* ===================== Seleção: lixeira aparece ao lado e o Montar automático se acende ===================== */
+.dm-studio .dm-select-all.is-on{animation:dm-sel-pop .4s cubic-bezier(.34,1.8,.64,1)}
+@keyframes dm-sel-pop{40%{transform:scale(.9)}100%{transform:none}}
+.dm-studio .dm-upload-trash{position:relative;flex:0 0 48px;display:grid;place-items:center;width:48px;height:44px;padding:0;border:0;border-radius:10px;background:linear-gradient(180deg,#d9443b,#c2322a);color:#fff;box-shadow:0 4px 12px #c7372f40;cursor:pointer;transform-origin:left center;animation:dm-trash-in .45s cubic-bezier(.34,1.6,.64,1) both;transition:background .2s}
+.dm-studio .dm-upload-trash:hover:not(:disabled){background:linear-gradient(180deg,#c7372f,#a92a23)}
+.dm-studio .dm-upload-trash:hover:not(:disabled) svg{animation:dm-trash-shake .5s ease}
+.dm-studio .dm-upload-trash b{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border:2px solid var(--dm-surface);border-radius:10px;background:#2a2a22;color:#fff;font-size:10.5px;line-height:16px;text-align:center;animation:dm-badge-pop .35s cubic-bezier(.34,1.8,.64,1) .2s both}
+@keyframes dm-trash-in{from{opacity:0;transform:translateX(-14px) scale(.6)}}
+@keyframes dm-trash-shake{25%{transform:rotate(-12deg)}55%{transform:rotate(10deg)}80%{transform:rotate(-4deg)}}
+@keyframes dm-badge-pop{from{transform:scale(0)}}
+/* Montar automático pronto para usar as fotos selecionadas */
+.dm-studio .dm-build-button.is-ready{position:relative;overflow:hidden;border-color:#e4d300;background:#fffbd6;animation:dm-ready-glow 1.8s ease-in-out infinite}
+.dm-studio .dm-build-button.is-ready:after{content:'';position:absolute;top:0;bottom:0;left:-50%;width:35%;background:linear-gradient(100deg,transparent,#ffffffcc,transparent);transform:skewX(-18deg);animation:dm-ready-shine 2.4s ease-in-out .3s infinite;pointer-events:none}
+.dm-studio .dm-build-button.is-ready svg{animation:dm-wand 1.8s ease-in-out infinite}
+@keyframes dm-ready-glow{0%,100%{box-shadow:0 0 0 0 #fdf15300}50%{box-shadow:0 0 0 5px #fdf15399}}
+@keyframes dm-ready-shine{0%,60%{left:-50%}100%{left:130%}}
+@keyframes dm-wand{0%,100%{transform:rotate(0)}30%{transform:rotate(-16deg) scale(1.1)}60%{transform:rotate(8deg)}}
+@media(prefers-reduced-motion:reduce){.dm-studio .dm-upload-trash,.dm-studio .dm-build-button.is-ready,.dm-studio .dm-build-button.is-ready svg,.dm-studio .dm-build-button.is-ready:after{animation:none}}
