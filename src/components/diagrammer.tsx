@@ -73,7 +73,10 @@ function photoBlocks<T>(items: T[], ratioOf: (item: T) => number, width: number,
   while (i < items.length) {
     const left = items.length - i;
     // De vez em quando (sem ritmo fixo) entra uma faixa de 3 menores — só se as colunas fecharem certinho.
-    if (sinceTrio >= nextTrio && left >= 3 && left !== 4 && level()) {
+    // A faixa é opcional: só quando as próximas fotos combinam (deitadas) ou, às vezes, por sorteio.
+    const wantsTrio = sinceTrio >= nextTrio && left >= 3 && left !== 4 && (items.slice(i, i + 3).filter(item => ratioOf(item) >= 1.05).length >= 2 || seedOf(items[i]) < .3);
+    if (sinceTrio >= nextTrio && !wantsTrio) nextTrio = sinceTrio + 3 + Math.floor(seedOf(items[i]) * 5);
+    if (wantsTrio && level()) {
       flush();
       // Faixa com larguras variadas: uma das três pode ser mais larga.
       const trio = items.slice(i, i + 3), wide = Math.floor(seedOf(trio[0]) * 4), h = .82 + seedOf(trio[1]) * .3;
