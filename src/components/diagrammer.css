@@ -1742,3 +1742,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-space-mini .dm-space-ico{display:block;width:18px;min-width:18px}
 .dm-studio .dm-space-mini .dm-space-ico.gap{display:flex}
 .dm-studio .dm-space-mini input[type=range]{width:auto;margin:0}
+/* Layouts: sem a animação de cores ao passar o mouse */
+.dm-studio .dm-layout-print .dm-layout-card:hover .dm-layout-thumb>i,.dm-studio .dm-layout-print .dm-layout-card[aria-pressed=true] .dm-layout-thumb>i{background:#e7e3d8}
+.dm-studio .dm-layout-print .dm-layout-thumb:after{display:none}
