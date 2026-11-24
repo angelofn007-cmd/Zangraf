@@ -38,3 +38,16 @@ test('Superfícies cobrem a área com sangria e são aceitas em layouts salvos',
  assert.equal(p.isReusableSpread({...spread,surface:'marmore-negro'}),true);
  assert.equal(p.isReusableSpread({...spread,surface:'inexistente'}),false);
 });
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {photoLayouts, rankLayoutsForPhotos} = load('src/lib/album-layouts.ts');
+  test('Foto nova bem larga ganha um quadro largo, sem baixar a qualidade das outras', () => {
+    const aspects = [.75, .75, 3];
+    const sizes = [{width: 3000, height: 4000}, {width: 3000, height: 4000}, {width: 6000, height: 2000}];
+    const best = rankLayoutsForPhotos(photoLayouts(3, 2), aspects, 2, {sizes, areaMm: {width: 600, height: 300}, dpi: 300, focus: 2})[0];
+    const frame = best.layout.frames[best.order.indexOf(2)];
+    assert.ok((frame.w * 2) / frame.h > 1.6, 'o quadro da foto larga precisa ser deitado');
+    assert.equal(best.lowResolution, false);
+  });
+}

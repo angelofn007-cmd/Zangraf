@@ -159,7 +159,8 @@ export function photoLayouts(count:number,spreadAspect=2):PhotoLayout[]{
 
 export type LayoutFit={layout:PhotoLayout;order:number[];score:number;lowResolution:boolean};
 type PhotoSize={width?:number;height?:number};
-type RankOptions={sizes?:PhotoSize[];areaMm?:{width:number;height:number};dpi?:number};
+type RankOptions={sizes?:PhotoSize[];areaMm?:{width:number;height:number};dpi?:number;
+ /** Foto recém-acrescentada: o formato dela pesa mais (menos corte nela). */ focus?:number};
 /**
  * Ordena layouts pelo quanto os formatos dos quadros combinam com os formatos das fotos
  * (largura ÷ altura). `order[quadro]` diz qual foto vai em cada quadro.
@@ -180,9 +181,15 @@ export function rankLayoutsForPhotos(layouts:PhotoLayout[],photoAspects:number[]
    const size=options.sizes[photo];if(!size?.width||!size.height)return 0;
    const rect=layout.frames[frame],wMm=rect.w*options.areaMm.width,hMm=rect.h*options.areaMm.height;
    const dpi=25.4*Math.min(size.width/wMm,size.height/hMm);
-   return dpi<target?(1-dpi/target)*2:0;
+   // Perder qualidade pesa muito: um layout que deixa alguma foto abaixo da resolução quase nunca vence.
+   return dpi<target?(1-dpi/target)*6:0;
   };
-  const pair=(frame:number,photo:number)=>Math.abs(frames[frame].log-photos[photo].log)+resolution(frame,photo);
+  // Fotos com mais pixels merecem os quadros maiores (aproveita o máximo de cada foto).
+  const pixels=photoAspects.map((_,i)=>{const size=options.sizes?.[i];return size?.width&&size.height?size.width*size.height:0;});
+  const maxPixels=Math.max(1,...pixels),areas=layout.frames.map(r=>r.w*r.h),maxArea=Math.max(...areas);
+  const sizeFit=(frame:number,photo:number)=>.12*(pixels[photo]/maxPixels)*(1-areas[frame]/maxArea);
+  const weight=(photo:number)=>photo===options.focus?2.5:1;
+  const pair=(frame:number,photo:number)=>Math.abs(frames[frame].log-photos[photo].log)*weight(photo)+resolution(frame,photo)+sizeFit(frame,photo);
   // Começa pareando os formatos ordenados e melhora trocando fotos de lugar enquanto o custo cair.
   const sortedFrames=[...frames].sort((a,b)=>a.log-b.log);
   const order=new Array<number>(frames.length);
@@ -195,7 +202,7 @@ export function rankLayoutsForPhotos(layouts:PhotoLayout[],photoAspects:number[]
    }
   }
   let cost=0,resolutionPenalty=0;
-  order.forEach((photo,frame)=>{cost+=Math.abs(frames[frame].log-photos[photo].log);resolutionPenalty+=resolution(frame,photo);});
+  order.forEach((photo,frame)=>{cost+=Math.abs(frames[frame].log-photos[photo].log)*weight(photo)+sizeFit(frame,photo);resolutionPenalty+=resolution(frame,photo);});
   return {layout,order,score:cost/Math.max(1,frames.length)+resolutionPenalty+position*.012,lowResolution:resolutionPenalty>0,position};
  });
  // Empates mantêm a ordem original da lista de layouts.

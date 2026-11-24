@@ -548,7 +548,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   if(occupied.length>=10){setNotice('Esta lâmina já tem 10 fotos. Troque uma foto ou escolha outra lâmina.');return false;}
   const added=[...occupied,{...emptySlot(),photoId:id}];
   // Layout inteligente: escolhe a composição cujos quadros combinam com fotos em pé e deitadas.
-  const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,rankOptions(added.map(s=>s.photoId)))[0];
+  // A foto nova (última) tem prioridade no formato; as outras não podem perder qualidade.
+  const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,{...rankOptions(added.map(s=>s.photoId)),focus:added.length-1})[0];
   const layout=best?.layout||photoLayouts(added.length,currentRatio)[0];
   const slots=best?best.order.map(i=>added[i]):added;
   const next={...target,layout:'livre' as LayoutName,frames:layout.frames,slots,spacing:target.spacing||{...DEFAULT_SPACING}};
