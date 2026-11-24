@@ -1889,3 +1889,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-build-button:not(:disabled)>svg{animation:none;color:#b8a000;transition:transform .35s cubic-bezier(.34,1.6,.64,1)}
 .dm-studio .dm-build-button:not(:disabled):hover>svg{transform:rotate(-12deg) scale(1.08)}
 .dm-studio .dm-build-button:not(:disabled):hover{box-shadow:0 6px 16px #e4d30033}
+/* Montar: brilho um pouco mais forte */
+.dm-studio .dm-build-button:not(:disabled):before{background:conic-gradient(from 0deg,#ece08a 0deg,#ece08a 220deg,#fdf153 270deg,#fffde6 305deg,#fdf153 340deg,#ece08a 360deg)}
+.dm-studio .dm-build-button:not(:disabled){box-shadow:0 0 14px #fdf15359}
+.dm-studio .dm-build-button:not(:disabled):hover{box-shadow:0 0 20px #fdf15380,0 6px 16px #e4d30033}
