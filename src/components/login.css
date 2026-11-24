@@ -138,3 +138,6 @@ body:has(.auth-shell) .zg-header{display:none}
 }
 @media(max-width:860px){.auth-home{position:static;margin:14px auto 0;width:max-content}}
 @media(prefers-reduced-motion:reduce){.auth-home{animation:none}}
+
+/* Fundo atrás do cartão de login na mesma cor da página (sem mancha) */
+.section:has(>.auth-shell),html[data-theme=dark] .section:has(>.auth-shell){background:none}
