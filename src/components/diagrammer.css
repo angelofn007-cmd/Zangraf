@@ -1919,3 +1919,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(prefers-reduced-motion:reduce){.dm-print-word.is-letters b{animation:none;color:var(--ink)}}
 /* Título Layouts em faixas: vermelho, verde, azul, rosa, amarelo e preto */
 .dm-print-word:after{background:linear-gradient(180deg,#e8221e 0 16.6%,#19b33a 16.6% 33.3%,#00aeef 33.3% 50%,#ec008c 50% 66.6%,#f5c400 66.6% 83.3%,#231f20 83.3%);-webkit-background-clip:text;background-clip:text}
+/* Fotos: uma letra de cada cor, como no título Layouts */
+.dm-photo-word b i{background-image:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink)}
