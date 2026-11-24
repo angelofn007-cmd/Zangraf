@@ -1907,3 +1907,5 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-build-pop{0%{box-shadow:0 0 0 0 #fdf153cc}40%{box-shadow:0 0 0 10px #fdf15355,0 0 30px #fdf153}100%{box-shadow:0 0 0 18px #fdf15300,0 0 12px #fdf15340}}
 @keyframes dm-wand-pop{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.45) rotate(-25deg)}100%{transform:scale(1) rotate(0)}}
 .dm-studio .dm-build-button:not(:disabled):active{transform:scale(.97)}
+/* Título Layouts na ordem dos frascos de tinta HP: ciano, magenta, amarelo e preto */
+.dm-print-word:after{background:linear-gradient(180deg,#00aeef 0 25%,#ec008c 25% 50%,#f5c400 50% 75%,#231f20 75%);-webkit-background-clip:text;background-clip:text}
