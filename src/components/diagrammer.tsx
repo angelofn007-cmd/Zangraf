@@ -321,6 +321,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const seenTabs=useRef(new Set<string>());const viewKey=useRef('');const freshView=useRef(true);
  {const key=panelOpen?panel:'';if(!panelOpen)seenTabs.current.clear();if(viewKey.current!==key){viewKey.current=key;freshView.current=!!key&&!seenTabs.current.has(key);if(key)seenTabs.current.add(key);}}
  const introOn=freshView.current;
+ // Cada vez que o painel abre de novo, o conteúdo é montado de novo (para as animações recomeçarem).
+ const openCount=useRef(0),wasOpen=useRef(false);if(panelOpen&&!wasOpen.current)openCount.current++;wasOpen.current=panelOpen;
  const [iconIntro,setIconIntro]=useState(false);
  useEffect(()=>{if(panel!=='icons'||!introOn)return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),4200);return()=>window.clearTimeout(t);},[panel,introOn]);
  // Fonte do título animado da aba Layouts.
@@ -1007,7 +1009,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   {saveError&&<div className="dm-error" role="alert">{saveError}<button onClick={()=>void persist()}>Tentar novamente</button></div>}
   <div className={`dm-body ${panelOpen?'':'panel-collapsed'}`}>
    <nav className="dm-rail" aria-label="Ferramentas do diagramador">{tabs.map(tab=><button key={tab.id} data-tab={tab.id} aria-pressed={panel===tab.id&&panelOpen} className={panel===tab.id&&panelOpen?'active':''} onClick={()=>{setPanelOpen(panel===tab.id?!panelOpen:true);setPanel(tab.id)}}><tab.icon size={23}/><span>{tab.label}</span></button>)}</nav>
-   <aside className="dm-panel-slot" id="dm-tool-panel" aria-label={tabs.find(t=>t.id===panel)?.label} aria-hidden={!panelOpen} inert={!panelOpen}><div className={'dm-panel'+(introOn?'':' dm-no-intro')} data-tab={panel} key={panel}>
+   <aside className="dm-panel-slot" id="dm-tool-panel" aria-label={tabs.find(t=>t.id===panel)?.label} aria-hidden={!panelOpen} inert={!panelOpen}><div className={'dm-panel'+(introOn?'':' dm-no-intro')} data-tab={panel} key={panel+'-'+openCount.current}>
     {panel==='photos'&&<>
      <h2 className="dm-photo-title" aria-label="Fotos"><span className="dm-photo-cam" aria-hidden="true"><i/></span><span className="dm-photo-word" aria-hidden="true">{Array.from('FOTOS').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--ink' as string]:['#e8221e','#19b33a','#f5c400','#1aa8e8','#e81aa5'][k%5]}}><i>{ch}</i></b>)}</span><span className="dm-photo-flash" aria-hidden="true"/></h2>
      <div className="dm-upload-bar">
