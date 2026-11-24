@@ -142,7 +142,7 @@ const TEXTO_STROKES=[
  * Cada pontinho de tinta da fonte fica ligado ao trecho do risco mais próximo e só aparece
  * quando a ponta da caneta passa por ali — nada aparece antes, nada fica para trás.
  */
-function HandwrittenTitle(){
+function HandwrittenTitle({instant=false}:{instant?:boolean}){
  const canvas=useRef<HTMLCanvasElement>(null),glow=useRef<HTMLCanvasElement>(null),svg=useRef<SVGSVGElement>(null),pen=useRef<HTMLSpanElement>(null),[done,setDone]=useState(false);
  useEffect(()=>{
   let alive=true,frame=0;
@@ -168,7 +168,7 @@ function HandwrittenTitle(){
     for(const p of samples){const dx=p.x-x,dy=p.y-y,d=dx*dx+dy*dy;if(d<best){best=d;bt=p.t;}}
     when[i]=bt;ink.push(i);}
    const out=ctx.createImageData(W*S,H*S);
-   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ctx.putImageData(glyph,0,0);setDone(true);return;}
+   if(instant||window.matchMedia('(prefers-reduced-motion: reduce)').matches){ctx.putImageData(glyph,0,0);setDone(true);return;}
    let begin=0;
    const step=(now:number)=>{if(!alive)return;if(!begin)begin=now;const t=now-begin-200;
     for(const i of ink){if(when[i]<=t&&out.data[i*4+3]===0){out.data[i*4]=glyph.data[i*4];out.data[i*4+1]=glyph.data[i*4+1];out.data[i*4+2]=glyph.data[i*4+2];out.data[i*4+3]=glyph.data[i*4+3];}}
@@ -316,8 +316,13 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [toneIntro,setToneIntro]=useState(false);
  useEffect(()=>{if(panel!=='tone')return;setToneIntro(true);const t=window.setTimeout(()=>setToneIntro(false),2600);void ensureFont('Bebas Neue');return()=>window.clearTimeout(t);},[panel]);
  // Abertura da aba Ícones: a impressora só faz a abertura completa na primeira vez que a aba abre.
+ /** Animações de abertura das ferramentas: cada aba anima só na primeira vez que aparece desde que o painel foi aberto.
+  *  Recolher o painel por completo e abrir de novo libera as animações outra vez. */
+ const seenTabs=useRef(new Set<string>());const viewKey=useRef('');const freshView=useRef(true);
+ {const key=panelOpen?panel:'';if(!panelOpen)seenTabs.current.clear();if(viewKey.current!==key){viewKey.current=key;freshView.current=!!key&&!seenTabs.current.has(key);if(key)seenTabs.current.add(key);}}
+ const introOn=freshView.current;
  const [iconIntro,setIconIntro]=useState(false);
- useEffect(()=>{if(panel!=='icons')return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),4200);return()=>window.clearTimeout(t);},[panel]);
+ useEffect(()=>{if(panel!=='icons'||!introOn)return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),4200);return()=>window.clearTimeout(t);},[panel,introOn]);
  // Fonte do título animado da aba Layouts.
  useEffect(()=>{if(panel==='layouts'||panel==='photos'||panel==='background')void ensureFont('Bebas Neue');if(panel==='text')void ensureFont('Dancing Script');},[panel]);
  // Carrega as fontes dos temas para as capas prontas aparecerem certas.
@@ -1000,7 +1005,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   {saveError&&<div className="dm-error" role="alert">{saveError}<button onClick={()=>void persist()}>Tentar novamente</button></div>}
   <div className={`dm-body ${panelOpen?'':'panel-collapsed'}`}>
    <nav className="dm-rail" aria-label="Ferramentas do diagramador">{tabs.map(tab=><button key={tab.id} data-tab={tab.id} aria-pressed={panel===tab.id&&panelOpen} className={panel===tab.id&&panelOpen?'active':''} onClick={()=>{setPanelOpen(panel===tab.id?!panelOpen:true);setPanel(tab.id)}}><tab.icon size={23}/><span>{tab.label}</span></button>)}</nav>
-   <aside className="dm-panel-slot" id="dm-tool-panel" aria-label={tabs.find(t=>t.id===panel)?.label} aria-hidden={!panelOpen} inert={!panelOpen}><div className="dm-panel" data-tab={panel} key={panel}>
+   <aside className="dm-panel-slot" id="dm-tool-panel" aria-label={tabs.find(t=>t.id===panel)?.label} aria-hidden={!panelOpen} inert={!panelOpen}><div className={'dm-panel'+(introOn?'':' dm-no-intro')} data-tab={panel} key={panel}>
     {panel==='photos'&&<>
      <h2 className="dm-photo-title" aria-label="Fotos"><span className="dm-photo-cam" aria-hidden="true"><i/></span><span className="dm-photo-word" aria-hidden="true">{Array.from('FOTOS').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--ink' as string]:['#e8221e','#19b33a','#f5c400','#1aa8e8','#e81aa5'][k%5]}}><i>{ch}</i></b>)}</span><span className="dm-photo-flash" aria-hidden="true"/></h2>
      <div className="dm-upload-bar">
@@ -1096,7 +1101,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='text'&&(()=>{
      const pickFont=(family:AlbumFont)=>{if(selectedText)updateText(selectedText.id,{fontFamily:family});else addText('title',family);};
      const fontButton=(font:typeof ALBUM_FONTS[number])=><button key={font.family} type="button" aria-pressed={selectedText?.fontFamily===font.family} disabled={busy||(!selectedText&&texts.length>=20)} title={selectedText?`Usar ${font.family} no texto selecionado`:`Adicionar texto em ${font.family}`} onClick={()=>pickFont(font.family)}><span style={{fontFamily:`"${font.family}"`}}>{font.label}</span><small>{font.style} · {font.family}</small></button>;
-     return <><HandwrittenTitle/>
+     return <><HandwrittenTitle instant={!introOn}/>
       <button className="dm-button primary full" disabled={busy||texts.length>=20} onClick={()=>addText()}><Plus size={18}/>Adicionar texto</button>
       {selectedText?<label>Seu texto<textarea autoFocus rows={3} maxLength={600} value={selectedText.text} onChange={e=>updateText(selectedText.id,{text:e.target.value})}/></label>:null}
       {texts.length>1&&<><h3 className="dm-tone-heading">Textos nesta {activePage<0?'capa':'lâmina'}</h3>{texts.map(t=><button className={'dm-text-list '+(textId===t.id?'active':'')} key={t.id} onClick={()=>setTextId(t.id)}><Type size={14}/>{t.text||'Texto vazio'}</button>)}</>}

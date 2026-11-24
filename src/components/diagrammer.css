@@ -2058,3 +2058,11 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @media(prefers-reduced-motion:reduce){.dm-tone-splash{display:none}.dm-tone-title b{animation:none;opacity:1}}
 @keyframes dm-splat-fly{0%{left:50%;top:-8%;transform:scale(.15) rotate(0)}70%{left:var(--x);top:var(--y);transform:scale(1.18,.82) rotate(var(--r))}100%{left:var(--x);top:var(--y);transform:scale(1) rotate(var(--r))}}
 .dm-studio .dm-tone-title{font:400 40px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.03em}
+
+/* Aba já vista nesta abertura do painel: títulos e aberturas aparecem prontos, sem animar de novo */
+.dm-no-intro :is(.dm-photo-title,.dm-print-title,.dm-bg-title,.dm-tone-title,.dm-icon-tabs,.dm-icon-press,.dm-icon-search,.dm-ink-swatches,.dm-surface-grid,.dm-layout-print,.dm-film-count,.dm-space-mini,.dm-theme-list) *,
+.dm-no-intro :is(.dm-photo-title,.dm-print-title,.dm-bg-title,.dm-tone-title,.dm-icon-search,.dm-space-mini),
+.dm-no-intro :is(.dm-photo-title,.dm-print-title,.dm-bg-title,.dm-icon-tabs>button,.dm-icon-press .dm-icon-grid>button) :is(*,::before,::after),
+.dm-no-intro :is(.dm-print-title,.dm-bg-title,.dm-icon-tabs>button,.dm-icon-press .dm-icon-grid>button)::before,
+.dm-no-intro :is(.dm-print-title,.dm-bg-title,.dm-icon-tabs>button,.dm-icon-press .dm-icon-grid>button)::after{animation-delay:0s!important;animation-duration:1ms!important;animation-iteration-count:1!important}
+.dm-no-intro :is(.dm-roller,.dm-print-head,.dm-photo-flash,.dm-ink-intro,.dm-press-head,.dm-pen,.dm-pen2){display:none!important}
