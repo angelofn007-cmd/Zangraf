@@ -810,17 +810,32 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const trash=document.querySelector<HTMLElement>('.dm-upload-trash');
   const target=trash?.getBoundingClientRect();
   const tiles=ids.map(id=>document.querySelector<HTMLElement>(`.dm-photo[data-photo="${CSS.escape(id)}"]`)).filter((el):el is HTMLElement=>!!el);
-  const runs=tiles.map((el,i)=>{
-   const box=el.getBoundingClientRect();
-   const delay=Math.min(i,16)*30;
-   if(!target)return el.animate([{transform:'none',opacity:1},{transform:'scale(1.06)',opacity:1,offset:.3},{transform:'scale(.2) rotate(-8deg)',opacity:0}],{duration:420,delay,easing:'cubic-bezier(.5,0,.75,0)',fill:'forwards'}).finished;
+  // As fotos voam numa camada por cima da tela (o painel corta o que sai dele).
+  const layer=document.createElement('div');layer.className='dm-fly-layer';document.body.appendChild(layer);
+  const visible=tiles.filter(el=>{const r=el.getBoundingClientRect();return r.bottom>0&&r.top<window.innerHeight;}).slice(0,24);
+  const runs=visible.map((el,i)=>{
+   const box=el.getBoundingClientRect(),img=el.querySelector('img');
+   const ghost=document.createElement('div');ghost.className='dm-fly-ghost';
+   Object.assign(ghost.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});
+   if(img){const copy=document.createElement('img');copy.src=img.src;ghost.appendChild(copy);}
+   layer.appendChild(ghost);el.style.visibility='hidden';
+   const delay=i*35;
+   if(!target)return ghost.animate([{transform:'none',opacity:1},{transform:'scale(1.06)',offset:.3},{transform:'scale(.2) rotate(-8deg)',opacity:0}],{duration:420,delay,easing:'cubic-bezier(.5,0,.75,0)',fill:'forwards'}).finished;
    const dx=target.left+target.width/2-(box.left+box.width/2),dy=target.top+target.height/2-(box.top+box.height/2);
-   return el.animate([{transform:'none',opacity:1},{transform:`translate(${dx*.25}px,${dy*.25-30}px) scale(.7) rotate(-6deg)`,opacity:1,offset:.45},{transform:`translate(${dx}px,${dy}px) scale(.08) rotate(18deg)`,opacity:.3}],{duration:640,delay,easing:'cubic-bezier(.45,0,.6,1)',fill:'forwards'}).finished;
+   const shrink=Math.max(.06,Math.min(.3,24/box.width));
+   return ghost.animate([
+    {transform:'translate(0,0) scale(1) rotate(0)',opacity:1},
+    {transform:`translate(${dx*.35}px,${dy*.35-60}px) scale(.6) rotate(-10deg)`,opacity:1,offset:.45},
+    {transform:`translate(${dx}px,${dy}px) scale(${shrink}) rotate(20deg)`,opacity:.15}
+   ],{duration:700,delay,easing:'cubic-bezier(.4,0,.6,1)',fill:'forwards'}).finished;
   });
+  tiles.filter(el=>!visible.includes(el)).forEach(el=>{el.style.visibility='hidden';});
   await Promise.all(runs).catch(()=>undefined);
-  trash?.animate([{transform:'scale(1)'},{transform:'scale(1.25) rotate(-8deg)'},{transform:'scale(.92) rotate(5deg)'},{transform:'scale(1)'}],{duration:450,easing:'cubic-bezier(.34,1.6,.64,1)'});
-  await new Promise(resolve=>window.setTimeout(resolve,180));
+  layer.remove();
+  trash?.animate([{transform:'scale(1)'},{transform:'scale(1.22) rotate(-9deg)'},{transform:'scale(.92) rotate(6deg)'},{transform:'scale(1)'}],{duration:450,easing:'cubic-bezier(.34,1.6,.64,1)'});
+  await new Promise(resolve=>window.setTimeout(resolve,200));
  }
+
  /** Muda a tonalidade da foto selecionada; `null` volta ao original. */
  function setAdjust(patch:Partial<PhotoAdjust>|null){
   if(!slot?.photoId)return;
@@ -867,8 +882,13 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      </div>
      {importing&&!importing.finished&&(()=>{const pct=importing.total?Math.min(1,importing.done/importing.total):0;
       return <div className="dm-import" role="status" aria-live="polite" aria-label={`Carregando ${importing.done} de ${importing.total} fotos`}>
-      <div className="dm-import-stack" aria-hidden="true">{importing.done>0&&<span className="dm-import-flash" key={importing.done}/>}{importing.thumbs.length?importing.thumbs.map((url,k)=><img key={url} src={url} alt="" style={{['--r' as string]:`${[-10,6,-4,11][k%4]}deg`,['--x' as string]:`${[-4,3,-2,5][k%4]}px`}}/>):<span className="dm-import-empty"><ImagePlus size={22}/></span>}</div>
-      <div className="dm-import-copy"><div className="dm-import-line"><strong><b key={importing.done}>{importing.done}</b> de {importing.total} fotos</strong></div>
+      {/* Mini impressora da Zangraf: cada foto carregada sai impressa pela frente, com a faixa das cinco cores. */}
+      <div className="dm-printer" aria-hidden="true">
+       <span className="dm-printer-paper">{importing.thumbs.slice(-1).map(url=><img key={url} src={url} alt=""/>)}</span>
+       <span className="dm-printer-body"><span className="dm-printer-stripe"><i/><i/><i/><i/><i/></span><span className="dm-printer-led" key={importing.done}/></span>
+       <span className="dm-printer-tray">{importing.thumbs.slice(0,-1).map((url,k)=><img key={url} src={url} alt="" style={{['--r' as string]:`${[-7,5,-3][k%3]}deg`}}/>)}</span>
+      </div>
+      <div className="dm-import-copy"><div className="dm-import-line"><strong>Imprimindo <b key={importing.done}>{importing.done}</b> de {importing.total}</strong></div>
        {/* Barra movida só com transform: anda mesmo com o navegador ocupado lendo as fotos. */}
        <span className="dm-import-track"><span className="dm-import-mask" style={{transform:`translateX(${(pct-1)*100}%)`}}><span className="dm-import-fill" style={{transform:`translateX(${(1-pct)*100}%)`}}/></span><span className="dm-import-runner" style={{transform:`translateX(${pct*100}%)`}}><i/></span></span></div>
      </div>})()}
