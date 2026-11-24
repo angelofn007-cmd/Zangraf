@@ -136,7 +136,7 @@ const TEXTO_STROKES=[
  * quando a ponta da caneta passa por ali — nada aparece antes, nada fica para trás.
  */
 function HandwrittenTitle(){
- const canvas=useRef<HTMLCanvasElement>(null),svg=useRef<SVGSVGElement>(null),pen=useRef<HTMLSpanElement>(null),[done,setDone]=useState(false);
+ const canvas=useRef<HTMLCanvasElement>(null),glow=useRef<HTMLCanvasElement>(null),svg=useRef<SVGSVGElement>(null),pen=useRef<HTMLSpanElement>(null),[done,setDone]=useState(false);
  useEffect(()=>{
   let alive=true,frame=0;
   const W=170,H=70,S=3;
@@ -148,6 +148,8 @@ function HandwrittenTitle(){
    const off=document.createElement('canvas');off.width=W*S;off.height=H*S;const o=off.getContext('2d')!;
    o.scale(S,S);o.fillStyle='#1d1e20';o.font="700 54px 'Dancing Script'";o.fillText('Texto',6,50);
    const glyph=o.getImageData(0,0,W*S,H*S);
+   // Brilho amarelo no formato da palavra, já aceso antes da caneta começar.
+   const g=glow.current?.getContext('2d');if(g){g.setTransform(S,0,0,S,0,0);g.fillStyle='#fdf153';g.font="700 54px 'Dancing Script'";g.fillText('Texto',6,50);glow.current!.classList.add('is-on');}
    // 2) Linha do tempo: cada risco na velocidade da caneta, com uma pausinha entre um e outro.
    const speed=150,lift=160;const samples:{x:number;y:number;t:number}[]=[];const plan:{from:number;dur:number;len:number}[]=[];let total=0;
    els.forEach(el=>{const len=el.getTotalLength(),dur=len/speed*1000;plan.push({from:total,dur,len});
@@ -173,6 +175,7 @@ function HandwrittenTitle(){
   return()=>{alive=false;cancelAnimationFrame(frame);};
  },[]);
  return <h2 className={'dm-hand-title'+(done?' is-done':'')} aria-label="Texto">
+  <canvas ref={glow} className="dm-hand-glow" width={510} height={210} style={{width:170,height:70}} aria-hidden="true"/>
   <canvas ref={canvas} width={510} height={210} style={{width:170,height:70}} aria-hidden="true"/>
   <svg ref={svg} viewBox="0 0 170 70" width="170" height="70" aria-hidden="true" className="dm-hand-guide">{TEXTO_STROKES.map((d,i)=><path key={i} d={d}/>)}</svg>
   <span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
