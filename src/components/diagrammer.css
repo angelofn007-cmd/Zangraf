@@ -1921,3 +1921,25 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-print-word:after{background:linear-gradient(180deg,#e8221e 0 16.6%,#19b33a 16.6% 33.3%,#00aeef 33.3% 50%,#ec008c 50% 66.6%,#f5c400 66.6% 83.3%,#231f20 83.3%);-webkit-background-clip:text;background-clip:text}
 /* Fotos: uma letra de cada cor, como no título Layouts */
 .dm-photo-word b i{background-image:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink)}
+
+/* ===================== Título "Fundo": rolo de pintura passando e deixando textura ===================== */
+.dm-bg-title{position:relative;display:flex;align-items:center;height:50px;margin:0 0 10px;overflow:visible}
+.dm-bg-word{display:inline-flex;gap:2px}
+/* Cada letra: cor da faixa Zangraf + trama de linho por cima (textura) */
+.dm-bg-word b{font:400 40px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.04em;color:transparent;background:
+  repeating-linear-gradient(45deg,#ffffff40 0 1.5px,transparent 1.5px 4px),
+  repeating-linear-gradient(-45deg,#0000001f 0 1px,transparent 1px 4px),var(--ink);
+  -webkit-background-clip:text;background-clip:text;clip-path:inset(0 100% 0 0);animation:dm-roll-paint .32s ease-out calc(.35s + var(--k) * .2s) forwards}
+@keyframes dm-roll-paint{to{clip-path:inset(0 0 0 0)}}
+/* O rolo: cabo + cilindro com as cinco cores, rolando da esquerda para a direita */
+.dm-roller{position:absolute;left:-10px;top:-2px;width:30px;height:54px;pointer-events:none;animation:dm-roller-go 1.5s cubic-bezier(.45,.05,.4,1) .2s both}
+.dm-roller:before{content:'';position:absolute;left:3px;top:4px;width:12px;height:44px;border-radius:6px;background:linear-gradient(180deg,#e8221e,#19b33a 25%,#f5c400 50%,#1aa8e8 75%,#e81aa5);box-shadow:inset 2px 0 3px #ffffff80,inset -2px 0 3px #0000002e,0 3px 8px #2a2a1e40;animation:dm-roller-spin .3s linear infinite}
+.dm-roller:after{content:'';position:absolute;left:14px;top:22px;width:16px;height:3px;border-radius:2px;background:#8b8a80}
+.dm-roller i{position:absolute;left:28px;top:20px;width:6px;height:30px;border-radius:3px;background:linear-gradient(180deg,#2c2d27,#55564c);transform:rotate(-10deg);transform-origin:top}
+@keyframes dm-roller-go{0%{transform:translateX(0);opacity:0}8%{opacity:1}88%{transform:translateX(150px);opacity:1}100%{transform:translateX(175px) translateY(-14px) rotate(14deg);opacity:0}}
+@keyframes dm-roller-spin{to{background-position:0 54px}}
+/* Brilho de tinta fresca que passa uma vez depois de pintar */
+.dm-bg-title:after{content:'';position:absolute;left:0;top:4px;width:40px;height:42px;background:linear-gradient(100deg,transparent,#ffffffb0,transparent);transform:skewX(-14deg);opacity:0;pointer-events:none;animation:dm-wet-shine .9s ease-in-out 1.7s both}
+@keyframes dm-wet-shine{0%{opacity:0;transform:translateX(-20px) skewX(-14deg)}20%{opacity:1}100%{opacity:0;transform:translateX(140px) skewX(-14deg)}}
+@media(prefers-reduced-motion:reduce){.dm-bg-word b{animation:none;clip-path:none}.dm-roller,.dm-bg-title:after{display:none}}
+@keyframes dm-roller-go{0%{transform:translateX(0);opacity:0}8%{opacity:1}88%{transform:translateX(100px);opacity:1}100%{transform:translateX(118px) translateY(-14px) rotate(14deg);opacity:0}}
