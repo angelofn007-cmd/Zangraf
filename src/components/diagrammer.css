@@ -1367,3 +1367,11 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-photo-trio>.dm-photo{flex:1 1 0;min-width:0;animation:dm-photo-in .5s cubic-bezier(.34,1.25,.64,1) var(--d,0ms) both}
 .dm-studio .dm-photos-columns.is-from-right .dm-photo-trio>.dm-photo,.dm-studio .dm-photos-columns.is-from-left .dm-photo-trio>.dm-photo{animation:none}
 .dm-studio .dm-photos-columns{gap:6px!important}
+/* A proporção do quadro manda na altura (a imagem não pode esticar o quadro) */
+.dm-studio .dm-photos-columns .dm-photo{position:relative;min-height:0;height:auto}
+.dm-studio .dm-photos-columns .dm-photo-image{position:absolute;inset:0;width:100%;height:100%}
+.dm-studio .dm-photos-columns .dm-photo-col{display:block}
+.dm-studio .dm-photos-columns .dm-photo-col>.dm-photo{display:block;margin:0 0 6px}
+.dm-studio .dm-photos-columns .dm-photo-col>.dm-photo:last-child{margin-bottom:0}
+.dm-studio .dm-photos-columns .dm-photo-trio>.dm-photo{display:block}
+.dm-studio .dm-photos.dm-photos-columns{align-items:stretch}.dm-studio .dm-photo-pair,.dm-studio .dm-photo-trio{width:100%}
