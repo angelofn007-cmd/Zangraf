@@ -128,16 +128,28 @@ function HandwrittenTitle(){
  // 1) Depois que a fonte carrega, monta um traço de escrita para cada letra (sobe e desce dentro da letra).
  useEffect(()=>{let alive=true;void ensureFont('Dancing Script').then(()=>document.fonts.ready).then(()=>{
   const text=svg.current?.querySelector<SVGTextElement>('text.dm-hand-word');if(!alive||!text)return;
-  const n=text.getNumberOfChars();const list:string[]=[];
-  for(let i=0;i<n;i++){const r=text.getExtentOfChar(i);const x=r.x,y=r.y,w=r.width,h=r.height;
-   list.push(`M${x-2} ${y+h*.72} C ${x+w*.15} ${y+h*.05}, ${x+w*.3} ${y}, ${x+w*.38} ${y+h*.5} S ${x+w*.55} ${y+h*1.02}, ${x+w*.66} ${y+h*.45} S ${x+w*.9} ${y+h*.05}, ${x+w+2} ${y+h*.7}`);}
+  // Traços na ordem e no sentido marcados: 1 haste do T (de baixo para cima), 2 barra do T (esquerda→direita),
+  // 3–4 o "e", 5–6 as duas pernas do "x", 7 o "t" (subindo) e 8 o "o" terminando com a saída para a direita.
+  const box=(i:number)=>{const r=text.getExtentOfChar(i);return {x:r.x,y:r.y,w:r.width,h:r.height};};
+  const P=(b:{x:number;y:number;w:number;h:number},fx:number,fy:number)=>`${(b.x+b.w*fx).toFixed(1)} ${(b.y+b.h*fy).toFixed(1)}`;
+  const T=box(0),e=box(1),x=box(2),t=box(3),o=box(4);
+  const list:string[]=[
+   `M${P(T,.28,.98)} C ${P(T,.32,.7)}, ${P(T,.42,.4)}, ${P(T,.52,.12)}`,
+   `M${P(T,.0,.2)} C ${P(T,.3,.08)}, ${P(T,.7,.06)}, ${P(T,1.05,.1)}`,
+   `M${P(e,-.05,.8)} C ${P(e,.35,.75)}, ${P(e,.85,.55)}, ${P(e,.7,.4)} C ${P(e,.55,.25)}, ${P(e,.15,.45)}, ${P(e,.15,.75)}`,
+   `M${P(e,.15,.75)} C ${P(e,.15,1.0)}, ${P(e,.65,1.02)}, ${P(e,1.05,.82)}`,
+   `M${P(x,.05,.45)} C ${P(x,.35,.55)}, ${P(x,.6,.85)}, ${P(x,.95,1.0)}`,
+   `M${P(x,.95,.45)} C ${P(x,.65,.6)}, ${P(x,.35,.85)}, ${P(x,.05,1.0)}`,
+   `M${P(t,.3,.98)} C ${P(t,.38,.7)}, ${P(t,.5,.4)}, ${P(t,.68,.12)} M${P(t,.05,.42)} C ${P(t,.4,.38)}, ${P(t,.7,.38)}, ${P(t,1.0,.4)}`,
+   `M${P(o,.55,.45)} C ${P(o,.15,.4)}, ${P(o,.0,.95)}, ${P(o,.4,1.0)} C ${P(o,.8,1.0)}, ${P(o,.9,.5)}, ${P(o,.55,.45)} C ${P(o,.75,.5)}, ${P(o,.95,.4)}, ${P(o,1.15,.3)}`,
+  ];
   setPaths(list);});return()=>{alive=false};},[]);
  // 2) A caneta percorre os traços; a máscara revela a fonte exatamente onde ela passou.
  useEffect(()=>{
   if(!paths.length)return;const els=Array.from(svg.current?.querySelectorAll<SVGPathElement>('path.dm-hand-mask')||[]);const penEl=pen.current;if(!els.length||!penEl)return;
   const lengths=els.map(p=>p.getTotalLength());els.forEach((p,i)=>{p.style.strokeDasharray=`${lengths[i]}`;p.style.strokeDashoffset=`${lengths[i]}`;});
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(p=>{p.style.strokeDashoffset='0';});setDone(true);return;}
-  const speed=520,lift=0;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
+  const speed=400,lift=40;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
   let start=0,frame=0;
   const step=(now:number)=>{if(!start)start=now;const raw=Math.max(0,Math.min(1,(now-start-120)/total));const eased=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;const t=raw>=1?total+1:eased*total;let tip:DOMPoint|null=null;
    plan.forEach((item,i)=>{const k=Math.max(0,Math.min(1,(t-item.from)/item.dur));els[i].style.strokeDashoffset=`${lengths[i]*(1-k)}`;if(t>=item.from&&t<=item.from+item.dur+lift)tip=els[i].getPointAtLength(lengths[i]*k);});

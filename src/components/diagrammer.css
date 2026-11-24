@@ -2020,3 +2020,4 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-hand-mask{fill:none;stroke:#fff;stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
 .dm-hand-title svg{transition:filter .8s ease}
 .dm-hand-title.is-done svg{filter:drop-shadow(0 0 5px #fdf15399) drop-shadow(0 0 1px #fdf15366)}
+.dm-hand-mask{stroke-width:20}
