@@ -1804,3 +1804,33 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-photo-word b{width:34px;height:44px}
 .dm-photo-word b i{font-size:31px;background-size:100% 66%}
 .dm-photo-title:hover .dm-photo-word b{animation:dm-letter-print .6s cubic-bezier(.34,1.5,.64,1) calc(.55s + var(--k) * 110ms) both}
+
+/* ===================== Ícones: bola de tinta que estoura e pinta as cinco faixas ===================== */
+.dm-studio .dm-icon-tabs{position:relative}
+.dm-ink-intro{position:absolute;left:0;right:0;top:-40px;height:46px;pointer-events:none;z-index:3}
+/* A bola: as cinco tintas girando juntas, cai, quica e estoura */
+.dm-ink-ball{position:absolute;left:50%;top:0;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:conic-gradient(var(--zg-red),var(--zg-green),var(--zg-yellow),var(--zg-blue),var(--zg-magenta),var(--zg-red));box-shadow:inset -4px -5px 8px #0000002e,inset 3px 3px 5px #ffffff80,0 4px 10px #2a2a1e40;animation:dm-ink-ball 1s cubic-bezier(.5,0,.5,1) both}
+@keyframes dm-ink-ball{
+ 0%{transform:translateY(-30px) scale(.4) rotate(0);opacity:0}
+ 25%{transform:translateY(0) scale(1) rotate(180deg);opacity:1}
+ 45%{transform:translateY(30px) scale(1.1,.8) rotate(300deg)}
+ 60%{transform:translateY(8px) scale(.95,1.05) rotate(420deg)}
+ 75%{transform:translateY(30px) scale(1.25,.7) rotate(500deg);opacity:1}
+ 100%{transform:translateY(30px) scale(2.4,.2) rotate(540deg);opacity:0}}
+/* As gotas: uma de cada cor voa até a sua faixa */
+.dm-ink-drop2{position:absolute;left:50%;top:34px;width:11px;height:11px;margin:-5.5px;border-radius:50% 50% 50% 0;background:var(--c);opacity:0;animation:dm-ink-fly .55s cubic-bezier(.3,.6,.4,1) calc(.75s + var(--i) * 40ms) both}
+@keyframes dm-ink-fly{0%{opacity:1;left:50%;transform:translateY(0) rotate(-45deg) scale(.6)}50%{transform:translateY(-22px) rotate(-45deg) scale(1)}100%{opacity:1;left:var(--x);transform:translateY(8px) rotate(-45deg) scale(.5)}}
+/* As faixas: começam vazias e são pintadas por um respingo que se espalha */
+.dm-studio .dm-icon-tabs>button>i{clip-path:circle(0 at 50% 50%);animation:dm-bar-splat .55s cubic-bezier(.3,1.4,.5,1) calc(1.2s + var(--ci,0) * 50ms) forwards}
+.dm-studio .dm-icon-tabs>button[data-color="1"]>i{--ci:1}.dm-studio .dm-icon-tabs>button[data-color="2"]>i{--ci:2}.dm-studio .dm-icon-tabs>button[data-color="3"]>i{--ci:3}.dm-studio .dm-icon-tabs>button[data-color="4"]>i{--ci:4}
+@keyframes dm-bar-splat{0%{clip-path:circle(0 at 50% 50%);transform:scaleY(2.4)}60%{transform:scaleY(.8)}100%{clip-path:circle(120% at 50% 50%);transform:none}}
+/* Respingos de tinta em volta de cada faixa na hora que pinta */
+.dm-studio .dm-icon-tabs>button{position:relative}
+.dm-studio .dm-icon-tabs>button:before{content:'';position:absolute;left:50%;top:0;width:28px;height:12px;margin-left:-14px;border-radius:50%;background:radial-gradient(circle at 20% 50%,var(--tab) 0 2px,transparent 3px),radial-gradient(circle at 80% 40%,var(--tab) 0 1.5px,transparent 2.5px),radial-gradient(circle at 50% 90%,var(--tab) 0 1.5px,transparent 2.5px),radial-gradient(circle at 35% 10%,var(--tab) 0 1px,transparent 2px);opacity:0;pointer-events:none;animation:dm-splat-dots .6s ease-out calc(1.2s + var(--ci,0) * 50ms) both}
+.dm-studio .dm-icon-tabs>button[data-color="1"]:before{--ci:1}.dm-studio .dm-icon-tabs>button[data-color="2"]:before{--ci:2}.dm-studio .dm-icon-tabs>button[data-color="3"]:before{--ci:3}.dm-studio .dm-icon-tabs>button[data-color="4"]:before{--ci:4}
+@keyframes dm-splat-dots{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
+.dm-ink-intro{animation:dm-intro-gone 0s linear 2s forwards}
+@keyframes dm-intro-gone{to{visibility:hidden}}
+@media(prefers-reduced-motion:reduce){.dm-ink-intro{display:none}.dm-studio .dm-icon-tabs>button>i{animation:none;clip-path:none}.dm-studio .dm-icon-tabs>button:before{display:none}}
+.dm-studio .dm-icon-tabs{margin-top:34px}
+@keyframes dm-splat-dots{0%{opacity:0;transform:scale(.4)}1%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
