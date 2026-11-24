@@ -104,3 +104,14 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
  }
  assert.deepEqual(result.spreads[0].texts,[{id:'t'}],'textos da lâmina são mantidos');
 });
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {pickLayout} = load('src/lib/auto-album.ts');
+  test('Montagem automática: 1 foto na lâmina inteira, 2 meio a meio, 3+ cobrindo a lâmina', () => {
+    assert.equal(pickLayout([.75], 2.8).layout.id, 'full-1');
+    assert.equal(pickLayout([.75, 1.5], 2.8).layout.id, 'pages-2');
+    const three = pickLayout([.75, 1.5, 1], 2.8).layout;
+    assert.ok(Math.abs(three.frames.reduce((s, f) => s + f.w * f.h, 0) - 1) < 1e-6);
+  });
+}

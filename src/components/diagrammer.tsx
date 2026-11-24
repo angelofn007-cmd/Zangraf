@@ -550,7 +550,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   // A foto nova (última) tem prioridade no formato; as outras não podem perder qualidade.
   const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,{...rankOptions(added.map(s=>s.photoId)),focus:added.length-1})[0];
   // A primeira foto da lâmina ocupa a lâmina inteira; só a partir da segunda o layout divide.
-  const full=added.length===1?photoLayouts(1,currentRatio).find(l=>l.id==='full-1'):undefined;
+  const full=added.length===1?photoLayouts(1,currentRatio).find(l=>l.id==='full-1'):added.length===2?photoLayouts(2,currentRatio).find(l=>l.id==='pages-2'):undefined;
   const layout=full||best?.layout||photoLayouts(added.length,currentRatio)[0];
   const slots=full?added:best?best.order.map(i=>added[i]):added;
   const next={...target,layout:'livre' as LayoutName,frames:layout.frames,slots,spacing:target.spacing||{...DEFAULT_SPACING}};

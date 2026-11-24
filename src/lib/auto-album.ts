@@ -137,7 +137,13 @@ export function planAlbum(photos:AlbumPhoto[],spreadCount:number):AlbumPlan{
  * evita repetir a composição da lâmina anterior quando há outra quase tão boa.
  */
 export function pickLayout(aspects:number[],spreadAspect:number,previousName?:string){
- const ranked=rankLayoutsForPhotos(photoLayouts(aspects.length,spreadAspect),aspects,spreadAspect);
+ const all=photoLayouts(aspects.length,spreadAspect);
+ // 1 foto = lâmina inteira; 2 fotos = meio a meio (uma por página).
+ const fixed=aspects.length===1?all.find(l=>l.id==='full-1'):aspects.length===2?all.find(l=>l.id==='pages-2'):undefined;
+ if(fixed)return rankLayoutsForPhotos([fixed],aspects,spreadAspect)[0];
+ // Da 3ª em diante: mosaicos que cobrem a lâmina toda (sem área vazia), escolhidos pelo formato das fotos.
+ const covering=all.filter(l=>Math.abs(l.frames.reduce((sum,f)=>sum+f.w*f.h,0)-1)<1e-6);
+ const ranked=rankLayoutsForPhotos(covering.length?covering:all,aspects,spreadAspect);
  const best=ranked[0];if(!best)return undefined;
  if(best.layout.name!==previousName)return best;
  return ranked.find(fit=>fit.layout.name!==previousName&&fit.score<=best.score+.08)||best;
