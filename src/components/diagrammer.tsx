@@ -51,40 +51,42 @@ const PHOTO_LIMIT = MAX_PHOTO_BYTES;
 function photoSeed(id: string) { let h = 2166136261; for (let k = 0; k < id.length; k++) { h ^= id.charCodeAt(k); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10007) / 10007; }
 
 type PhotoTile<T> = {item: T; ratio: number};
-type PhotoBlock<T> = {kind: 'pair'; columns: PhotoTile<T>[][]} | {kind: 'trio'; items: PhotoTile<T>[]};
+type PhotoBlock<T> = {kind: 'pair'; columns: PhotoTile<T>[][]; widths: number[]} | {kind: 'trio'; items: PhotoTile<T>[]};
 /**
- * Painel de fotos: blocos de 2 colunas empilhadas (cada foto vai para a coluna mais baixa e,
- * no fim do bloco, as colunas são igualadas) intercalados com faixas de 3 fotos menores.
+ * Painel de fotos sem cortar nenhuma foto: blocos de 2 colunas (cada foto no formato real).
+ * As colunas têm larguras um pouco diferentes em cada bloco, o que desencontra as fotos sem recorte.
+ * Antes de uma faixa de 3, a divisão das colunas é calculada para as duas terminarem na mesma altura.
  */
 function photoBlocks<T>(items: T[], ratioOf: (item: T) => number, width: number, gap: number, seedOf: (item: T) => number = () => .5): PhotoBlock<T>[] {
   if (!items.length || width <= 0) return [];
-  const colW = (width - gap) / 2, minH = colW / 1.6, maxH = colW / .62, blocks: PhotoBlock<T>[] = [];
-  let columns: PhotoTile<T>[][] = [[], []], heights = [0, 0], sinceTrio = 0, i = 0, nextTrio = 4 + Math.floor(seedOf(items[0]) * 5);
-  const flush = () => { if (columns[0].length || columns[1].length) blocks.push({kind: 'pair', columns}); columns = [[], []]; heights = [0, 0]; sinceTrio = 0; nextTrio = 4 + Math.floor(seedOf(items[Math.min(i, items.length - 1)]) * 6); };
-  /** Ajusta a última foto de cada coluna para as duas terminarem juntas; devolve false se não der sem distorcer demais. */
+  const inner = width - gap, blocks: PhotoBlock<T>[] = [];
+  const newSplit = (item: T) => .43 + seedOf(item) * .14;
+  let columns: PhotoTile<T>[][] = [[], []], split = newSplit(items[0]), sinceTrio = 0, i = 0, nextTrio = 4 + Math.floor(seedOf(items[0]) * 5);
+  const widths = () => [inner * split, inner * (1 - split)];
+  const heightOf = (c: number, w: number) => columns[c].reduce((sum, tile) => sum + w / tile.ratio + gap, 0);
+  const flush = () => {
+    if (columns[0].length || columns[1].length) blocks.push({kind: 'pair', columns, widths: widths()});
+    const next = items[Math.min(i, items.length - 1)];
+    columns = [[], []]; sinceTrio = 0; split = newSplit(next); nextTrio = 4 + Math.floor(seedOf(next) * 6);
+  };
+  /** Acha a divisão das colunas que faz as duas terminarem juntas, sem cortar foto. */
   const level = () => {
     if (!columns[0].length || !columns[1].length) return false;
-    const rest = columns.map(col => col.slice(0, -1).reduce((sum, tile) => sum + colW / tile.ratio + gap, 0));
-    const lo = Math.max(rest[0], rest[1]) + minH, hi = Math.min(rest[0], rest[1]) + maxH;
-    if (lo > hi) return false;
-    const target = Math.min(hi, Math.max(lo, (heights[0] + heights[1]) / 2 - gap));
-    columns.forEach((col, c) => { col[col.length - 1].ratio = colW / (target - rest[c]); });
-    return true;
+    const s0 = columns[0].reduce((sum, t) => sum + 1 / t.ratio, 0), s1 = columns[1].reduce((sum, t) => sum + 1 / t.ratio, 0);
+    const w0 = (inner * s1 + (columns[1].length - columns[0].length) * gap) / (s0 + s1);
+    if (w0 < inner * .34 || w0 > inner * .66) return false;
+    split = w0 / inner; return true;
   };
   while (i < items.length) {
-    const left = items.length - i;
-    // De vez em quando (sem ritmo fixo) entra uma faixa de 3 menores — só se as colunas fecharem certinho.
-    // A faixa é opcional: só quando as próximas fotos combinam (deitadas) ou, às vezes, por sorteio.
-    const wantsTrio = sinceTrio >= nextTrio && left >= 3 && left !== 4 && (items.slice(i, i + 3).filter(item => ratioOf(item) >= 1.05).length >= 2 || seedOf(items[i]) < .3);
+    const left = items.length - i, trio = items.slice(i, i + 3);
+    // Faixa de 3 (opcional): só com fotos deitadas ou às vezes, numa altura boa, e se as colunas fecharem juntas.
+    const rowHeight = trio.length === 3 ? (width - gap * 2) / trio.reduce((sum, item) => sum + ratioOf(item), 0) : 0;
+    const wantsTrio = sinceTrio >= nextTrio && left >= 3 && left !== 4 && rowHeight >= width * .2 && rowHeight <= width * .42
+      && (trio.filter(item => ratioOf(item) >= 1.05).length >= 2 || seedOf(items[i]) < .3);
     if (sinceTrio >= nextTrio && !wantsTrio) nextTrio = sinceTrio + 3 + Math.floor(seedOf(items[i]) * 5);
-    if (wantsTrio && level()) {
-      flush();
-      // Faixa com larguras variadas: uma das três pode ser mais larga.
-      const trio = items.slice(i, i + 3), wide = Math.floor(seedOf(trio[0]) * 4), h = .82 + seedOf(trio[1]) * .3;
-      blocks.push({kind: 'trio', items: trio.map((item, k) => ({item, ratio: (k === wide ? 1.7 : 1) * h}))}); i += 3; continue;
-    }
-    const item = items[i], close = Math.abs(heights[0] - heights[1]) < colW * .35, c = close ? (seedOf(item) < .5 ? 0 : 1) : heights[0] < heights[1] ? 0 : 1, ratio = Math.max(.62, Math.min(1.6, ratioOf(item)));
-    columns[c].push({item, ratio}); heights[c] += colW / ratio + gap; sinceTrio++; i++;
+    if (wantsTrio && level()) { flush(); blocks.push({kind: 'trio', items: trio.map(item => ({item, ratio: ratioOf(item)}))}); i += 3; continue; }
+    const [w0, w1] = widths(), c = heightOf(0, w0) <= heightOf(1, w1) ? 0 : 1;
+    columns[c].push({item: items[i], ratio: ratioOf(items[i])}); sinceTrio++; i++;
   }
   flush();
   return blocks;
@@ -857,8 +859,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        <button type="button" role="tab" aria-selected={filterUnused} onClick={()=>setFilterUnused(true)}>Não usadas{!!unusedCount&&<span>{unusedCount}</span>}</button>
        {selectPhotos&&<button type="button" className="dm-photo-tabs-done" onClick={()=>{setSelectPhotos(false);setPickedPhotos([])}}><Check size={14}/>Pronto</button>}
       </div>
-      <div ref={photoGridRef} className="dm-photo-viewport"><div key={filterUnused?'unused':'all'} className={'dm-photos dm-photos-rows dm-photos-columns'+(tabSlide?' is-'+tabSlide:'')}>{photoGridWidth>0&&(()=>{let order=0;const ratioOf=(photo:Photo)=>{const base=photo.width&&photo.height?photo.width/photo.height:1.33;return Math.max(.5,Math.min(2.2,base*(.8+photoSeed(photo.id)*.42)))};
-       // Duas colunas empilhadas (alturas variadas); de vez em quando uma faixa com 3 fotos menores.
+      <div ref={photoGridRef} className="dm-photo-viewport"><div key={filterUnused?'unused':'all'} className={'dm-photos dm-photos-rows dm-photos-columns'+(tabSlide?' is-'+tabSlide:'')}>{photoGridWidth>0&&(()=>{let order=0;const ratioOf=(photo:Photo)=>photo.width&&photo.height?photo.width/photo.height:1.33;
+       // Duas colunas (larguras variadas, fotos inteiras, sem corte); às vezes uma faixa com 3 fotos menores.
        const tile=({item:photo,ratio}:{item:Photo;ratio:number})=>{order++;
        const used=usedIds.has(photo.id);const picked=pickedPhotos.includes(photo.id);
        const checked=selectPhotos?picked:used;
@@ -867,7 +869,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
         <button type="button" className="dm-photo-check" aria-pressed={checked} disabled={busy} aria-label={selectPhotos?(picked?'Desmarcar foto':'Marcar foto'):used?'Tirar do álbum':'Colocar no álbum'} title={selectPhotos?(picked?'Desmarcar':'Marcar'):used?'Tirar do álbum':'Colocar no álbum'} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else if(used)unusePhoto(photo.id);else{placePhoto(photo.id);setTextId(undefined)}}}>{checked&&<Check size={13} strokeWidth={3}/>}</button>
         {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))edit(removePhoto(project,photo.id))}}><X size={12}/></button>}
        </div>;};
-       return photoBlocks(visiblePhotos,ratioOf,photoGridWidth,6,photo=>photoSeed(photo.id+'*')).map((block,b)=>block.kind==='trio'?<div className="dm-photo-trio" key={b}>{block.items.map(tile)}</div>:<div className="dm-photo-pair" key={b}>{block.columns.map((column,c)=><div className="dm-photo-col" key={c}>{column.map(tile)}</div>)}</div>)})()}</div></div>
+       return photoBlocks(visiblePhotos,ratioOf,photoGridWidth,6,photo=>photoSeed(photo.id+'*')).map((block,b)=>block.kind==='trio'?<div className="dm-photo-trio" key={b}>{block.items.map(tile)}</div>:<div className="dm-photo-pair" key={b}>{block.columns.map((column,c)=><div className="dm-photo-col" key={c} style={{flex:`0 0 ${block.widths[c]}px`}}>{column.map(tile)}</div>)}</div>)})()}</div></div>
       {!visiblePhotos.length&&<p className="dm-photos-empty">{filterUnused?'Todas já estão no álbum ✓':''}</p>}
      </>}</>}
     {panel==='tone'&&(()=>{const adjust=slot?.adjust||{};const thumb=selectedPhoto?thumbUrls[selectedPhoto.id]:undefined;
