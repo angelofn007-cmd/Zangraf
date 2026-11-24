@@ -1008,7 +1008,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      </button>;
      const marginCm=(spread?.spacing?.marginMm||0)/10,gapCm=(spread?.spacing?.gapMm??2)/10;
      return <div className="dm-layouts-v2">
-      <h2 className="dm-print-title" aria-label="Layouts"><span className="dm-print-word" data-text="Layouts" aria-hidden="true">Layouts</span><span className="dm-print-head" aria-hidden="true"><i/></span><span className="dm-print-marks" aria-hidden="true"/></h2>
+      <h2 className="dm-print-title" aria-label="Layouts"><span className="dm-print-word is-letters" aria-hidden="true">{Array.from('LAYOUTS').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--ink' as string]:['#00aeef','#ec008c','#f5c400','#231f20'][k%4]}}>{ch}</b>)}</span><span className="dm-print-head" aria-hidden="true"><i/></span><span className="dm-print-marks" aria-hidden="true"/></h2>
       {/* Quantas fotos: quadros de um filme fotográfico */}
       <div className="dm-film-count" role="group" aria-label={`Fotos nesta ${activePage<0?'capa':'lâmina'} · álbum ${shape}`}>{Array.from({length:10},(_,i)=>i+1).map(n=><button key={n} type="button" aria-pressed={layoutCount===n} className={photosHere===n?'is-here':''} title={photosHere===n?`${n} ${n===1?'foto':'fotos'} nesta página`:`${n} ${n===1?'foto':'fotos'}`} onClick={()=>{setLayoutCount(n);if(pickedPhotos.length&&n<pickedPhotos.length)setPickedPhotos([])}}><span>{n}</span></button>)}</div>
       <span className="dm-section-label">Ajustar margem entre fotos</span>

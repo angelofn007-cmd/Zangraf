@@ -1909,3 +1909,11 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-build-button:not(:disabled):active{transform:scale(.97)}
 /* Título Layouts na ordem dos frascos de tinta HP: ciano, magenta, amarelo e preto */
 .dm-print-word:after{background:linear-gradient(180deg,#00aeef 0 25%,#ec008c 25% 50%,#f5c400 50% 75%,#231f20 75%);-webkit-background-clip:text;background-clip:text}
+/* Layouts: cada letra na cor de um frasco de tinta (ciano, magenta, amarelo, preto), impressa quando a cabeça passa */
+.dm-print-word.is-letters{color:inherit}
+.dm-print-word.is-letters:after{display:none}
+.dm-print-word.is-letters b{display:inline-block;font-weight:400;color:#ece8dd;animation:dm-letter-ink .35s ease-out calc(.25s + var(--k) * .17s) forwards}
+@keyframes dm-letter-ink{0%{color:#ece8dd;transform:translateY(0)}50%{color:var(--ink);transform:translateY(-2px) scale(1.06)}100%{color:var(--ink);transform:none}}
+.dm-print-word.is-letters b:nth-child(4n){text-shadow:0 1px 0 #0000001a}
+.dm-print-title:hover .dm-print-word.is-letters b{animation:dm-letter-ink .35s ease-out calc(var(--k) * .12s) forwards}
+@media(prefers-reduced-motion:reduce){.dm-print-word.is-letters b{animation:none;color:var(--ink)}}
