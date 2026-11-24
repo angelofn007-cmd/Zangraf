@@ -820,10 +820,15 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      <div className="dm-upload-bar">
       <button type="button" className="dm-upload-main" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><Upload size={18}/>{busy?'Carregando…':'Adicionar fotos'}</button>
       {!!project.photos.length&&<div className="dm-photo-more"><button type="button" className="dm-upload-more" aria-label="Mais opções de fotos" aria-haspopup="menu" aria-expanded={photoMenu} onClick={()=>setPhotoMenu(v=>!v)}><Ellipsis size={20}/></button>
-       {photoMenu&&<div className="dm-photo-menu" role="menu" onMouseLeave={()=>setPhotoMenu(false)}>
-        <button type="button" role="menuitem" onClick={()=>{setSelectPhotos(true);setPickedPhotos([]);setPhotoMenu(false)}}><Check size={15}/>Selecionar fotos</button>
+       {photoMenu&&<div className="dm-photo-menu" role="menu" onKeyDown={e=>{if(e.key==='Escape')setPhotoMenu(false)}}>
+        <button type="button" role="menuitem" onClick={()=>{setSelectPhotos(true);setPickedPhotos([]);setPhotoMenu(false)}}><MousePointer2 size={15}/>Selecionar fotos</button>
+        <button type="button" role="menuitem" onClick={()=>{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id));setPhotoMenu(false)}}><CircleCheck size={15}/>Selecionar todas</button>
+        <i className="dm-photo-menu-line" aria-hidden="true"/>
         <button type="button" role="menuitem" disabled={busy||!unusedCount||!emptyCount} onClick={()=>{autoFill();setPhotoMenu(false)}}><LayoutTemplate size={15}/>Preencher quadros vazios</button>
-        <button type="button" role="menuitem" disabled={busy||!unusedCount} onClick={()=>{setFilterUnused(true);setPhotoMenu(false)}}><ImagePlus size={15}/>Ver só as não usadas</button>
+        <button type="button" role="menuitem" onClick={()=>{setFilterUnused(!filterUnused);setPhotoMenu(false)}}><Images size={15}/>{filterUnused?'Ver todas as fotos':'Ver só as não usadas'}</button>
+        <i className="dm-photo-menu-line" aria-hidden="true"/>
+        <button type="button" role="menuitem" className="danger" disabled={busy||!unusedCount} onClick={()=>{setPhotoMenu(false);const ids=project.photos.filter(p=>!usedIds.has(p.id)).map(p=>p.id);if(!window.confirm(`Excluir as ${ids.length} fotos que não estão no álbum? Você pode desfazer.`))return;let next=project;for(const id of ids)next=removePhoto(next,id);edit(next);setNotice(`${ids.length} ${ids.length===1?'foto excluída':'fotos excluídas'}. Desfazer volta.`)}}><ImageOff size={15}/>Excluir as não usadas</button>
+        <button type="button" role="menuitem" className="danger" disabled={busy} onClick={()=>{setPhotoMenu(false);if(!window.confirm(`Excluir todas as ${project.photos.length} fotos? Elas saem também do álbum. Você pode desfazer.`))return;let next=project;for(const p of project.photos)next=removePhoto(next,p.id);edit(next);setSelectPhotos(false);setPickedPhotos([]);setNotice('Todas as fotos foram excluídas. Desfazer volta.')}}><Trash2 size={15}/>Excluir todas</button>
        </div>}
       </div>}
      </div>
