@@ -99,6 +99,23 @@ async function makePhotoPreview(bitmap:ImageBitmap,maxEdge:number):Promise<Blob>
  finally{canvas.width=1;canvas.height=1;}
 }
 
+/** Copia um arquivo para a memória (deixa de depender do armazenamento do navegador). */
+async function copyBlob(blob:Blob){return new Blob([await blob.arrayBuffer()],{type:blob.type||'image/jpeg'});}
+/**
+ * No Safari, as fotos lidas do armazenamento (IndexedDB) podem deixar de abrir depois de um
+ * salvamento automático. As prévias usadas na tela passam a ficar na memória logo ao abrir o projeto.
+ */
+async function keepPreviewsInMemory(project:LayoutProject):Promise<LayoutProject>{
+ const photos=await Promise.all(project.photos.map(async photo=>{
+  try{
+   let preview=photo.preview?await copyBlob(photo.preview):undefined,thumbnail=photo.thumbnail?await copyBlob(photo.thumbnail):undefined;
+   if(!preview||!thumbnail){const bitmap=await createImageBitmap(photo.blob);try{preview??=await makePhotoPreview(bitmap,1600);thumbnail??=await makePhotoPreview(bitmap,240);}finally{bitmap.close();}}
+   return {...photo,preview,thumbnail};
+  }catch{return photo;}
+ }));
+ return {...project,photos};
+}
+
 export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }: { projectId?: string; cartItemId?: string; requireLoginToSave?: boolean }) {
  const [project, setProject] = useState<LayoutProject | null>(null);
  const [activePage, setActivePage] = useState(-1);
@@ -320,6 +337,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      }
      if(active)setFormatLocked(true);
     }else if(active)setFormatLocked(false);
+    if (active&&!isNew) loaded = await keepPreviewsInMemory(loaded);
     if (active) {
      projectRef.current = loaded; dirtyRef.current = isNew; setProject(loaded);
      setActivePage(projectPageIndices(loaded)[0]);setPreviewPage(projectPageIndices(loaded)[0]);
@@ -353,6 +371,9 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     if(!source)continue;
     try{const copy=new Blob([await source.arrayBuffer()],{type:source.type||'image/jpeg'});const url=URL.createObjectURL(copy);setUrls(u=>({...u,[id]:url}));setThumbUrls(u=>({...u,[id]:url}));return;}catch{/* tenta a próxima versão da foto */}
    }
+   // Último recurso: lê de novo do armazenamento do navegador (arquivos novos e válidos).
+   try{const stored=await loadProject(projectRef.current!.id);const fresh=stored?.photos.find(p=>p.id===id);const source=fresh?.preview??fresh?.blob;
+    if(source){const url=URL.createObjectURL(await copyBlob(source));setUrls(u=>({...u,[id]:url}));setThumbUrls(u=>({...u,[id]:url}));return;}}catch{/* segue para o aviso */}
    setNotice(`Não foi possível abrir “${photo.name}”. Exclua e envie essa foto de novo.`);
   };
   window.addEventListener('zangraf-photo-error',repair);return()=>window.removeEventListener('zangraf-photo-error',repair);

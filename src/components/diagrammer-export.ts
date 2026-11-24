@@ -1,7 +1,7 @@
 import {ensureProjectFonts} from '@/lib/album-fonts';
 import {drawIcons,drawTexture,surfaceFit,surfaceUrl} from '@/lib/album-decorations';
 import {coverPageIndices} from '@/lib/cover-production';
-import { cropRectangle, defaultCover, defaultBackCover, defaultPrintSpec, spreadRectangles, projectSpec, frameGeometry, printDimensions, validateProjectForPrint, type LayoutProject, type Slot, projectPageIndices } from '@/lib/layout-projects';
+import { cropRectangle, defaultCover, defaultBackCover, defaultPrintSpec, spreadRectangles, projectSpec, frameGeometry, printDimensions, validateProjectForPrint, type LayoutProject, type Slot, loadProject, projectPageIndices } from '@/lib/layout-projects';
 import {drawCoverText,drawAlbumTexts} from './diagrammer-text';
 import {applyPhotoAdjust,isNeutralAdjust,photoWarmthLayer} from '@/lib/photo-adjust';
 
@@ -24,9 +24,18 @@ function adjustedPhoto(ctx:CanvasRenderingContext2D,bitmap:ImageBitmap,crop:{x:n
 
  return piece;
 }
+/** Abre a foto original; se o navegador perdeu o arquivo (Safari), lê de novo do armazenamento. */
+async function openPhoto(project:LayoutProject,photo:LayoutProject['photos'][number]):Promise<ImageBitmap>{
+ try{return await createImageBitmap(photo.blob);}catch(first){
+  const stored=(await loadProject(project.id).catch(()=>undefined))?.photos.find(p=>p.id===photo.id);
+  if(stored){try{return await createImageBitmap(new Blob([await stored.blob.arrayBuffer()],{type:stored.blob.type||'image/jpeg'}));}catch{/* segue para o erro */}}
+  // Nunca troca pela prévia: a impressão sairia em baixa resolução.
+  throw new Error(`Não foi possível abrir a foto “${photo.name}”. Recarregue a página e tente de novo; se continuar, envie essa foto outra vez.`,{cause:first});
+ }
+}
 async function drawPhoto(ctx:CanvasRenderingContext2D,project:LayoutProject,slot:Slot,x:number,y:number,width:number,height:number){
  const photo=project.photos.find(p=>p.id===slot.photoId);if(!photo)return;
- const bitmap=await createImageBitmap(photo.blob);
+ const bitmap=await openPhoto(project,photo);
  try{const crop=cropRectangle(bitmap.width,bitmap.height,width,height,slot);ctx.save();ctx.translate(x+(slot.flipX?width:0),y+(slot.flipY?height:0));ctx.scale(slot.flipX?-1:1,slot.flipY?-1:1);const piece=isNeutralAdjust(slot.adjust)?undefined:adjustedPhoto(ctx,bitmap,crop,width,height,slot);if(piece){ctx.drawImage(piece,0,0,width,height);piece.width=1;piece.height=1;}else ctx.drawImage(bitmap,crop.x,crop.y,crop.width,crop.height,0,0,width,height);ctx.restore();}finally{bitmap.close();}
 }
 const surfaces=new Map<string,Promise<ImageBitmap>>();
