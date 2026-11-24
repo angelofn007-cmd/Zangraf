@@ -1973,3 +1973,23 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-text-title svg{width:220px}
 @keyframes dm-pen-move{0%{opacity:0;transform:translate(0,14px)}8%{opacity:1}90%{opacity:1;transform:translate(122px,10px)}100%{opacity:0;transform:translate(138px,-8px) rotate(10deg)}}
 .dm-text-title:after{left:140px}
+
+/* ===================== Texto v2: tinta preta com brilho amarelo; a caneta revela exatamente onde escreve ===================== */
+.dm-text-title{--x0:6px;--x1:150px;--dur:1.8s}
+.dm-text-title svg{width:220px;height:70px;clip-path:inset(0 100% 0 0)}
+.dm-write{fill:#1d1e20;fill-opacity:1;stroke:none;stroke-dasharray:none;animation:none;filter:drop-shadow(0 0 6px #fdf153cc) drop-shadow(0 0 2px #fdf153)}
+.dm-text-title.is-ready svg{animation:dm-reveal-write var(--dur) linear .25s forwards}
+@keyframes dm-reveal-write{from{clip-path:inset(0 calc(100% - var(--x0)) 0 0)}to{clip-path:inset(0 calc(100% - var(--x1) - 8px) 0 0)}}
+/* Ponta da caneta sempre na borda do que está aparecendo */
+.dm-pen{left:0;top:0;width:0;height:0;opacity:0;animation:none}
+.dm-text-title.is-ready .dm-pen{animation:dm-pen-follow var(--dur) linear .25s both,dm-pen-leave .45s ease-in calc(var(--dur) + .3s) forwards}
+.dm-pen i{left:0;bottom:auto;top:0;transform-origin:0 0;transform:translate(-1px,-2px) rotate(215deg);animation:dm-pen-script .16s ease-in-out .25s 11 alternate}
+.dm-pen i:before{top:-9px;bottom:auto;border-top:none;border-bottom:10px solid #d4b45a}
+@keyframes dm-pen-follow{0%{opacity:1;transform:translate(var(--x0),40px)}100%{opacity:1;transform:translate(var(--x1),40px)}}
+@keyframes dm-pen-leave{to{opacity:0;transform:translate(calc(var(--x1) + 18px),18px)}}
+@keyframes dm-pen-script{from{transform:translate(-1px,-2px) rotate(215deg)}to{transform:translate(-1px,-22px) rotate(212deg)}}
+/* Brilho amarelo passando depois de escrito */
+.dm-text-title:after{left:0;top:6px;width:30px;height:56px;border-radius:0;background:linear-gradient(100deg,transparent,#fff7a0aa,transparent);opacity:0;animation:none}
+.dm-text-title.is-ready:after{animation:dm-text-shine 1s ease-in-out calc(var(--dur) + .5s) both}
+@keyframes dm-text-shine{0%{opacity:0;transform:translateX(0)}20%{opacity:1}100%{opacity:0;transform:translateX(var(--x1))}}
+@media(prefers-reduced-motion:reduce){.dm-text-title svg{clip-path:none;animation:none!important}.dm-pen{display:none}}
