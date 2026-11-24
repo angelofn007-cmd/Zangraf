@@ -2039,3 +2039,22 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-hand-title canvas.dm-hand-glow{position:absolute;left:0;top:0;z-index:0;filter:blur(5px);opacity:0;transition:opacity .5s ease}
 .dm-hand-title canvas.dm-hand-glow.is-on{opacity:.75}
 .dm-hand-title.is-done canvas:not(.dm-hand-glow){filter:none}
+
+/* ===================== Tonalidade: tintas preta e branca voando pela aba, título indo da cor ao preto e branco ===================== */
+.dm-tone-splash{position:absolute;inset:0;z-index:40;overflow:hidden;pointer-events:none;animation:dm-splash-out .5s ease 2.1s forwards}
+@keyframes dm-splash-out{to{opacity:0}}
+.dm-tone-splash i{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);margin:calc(var(--s) / -2);background:var(--c);border-radius:58% 42% 63% 37% / 41% 55% 45% 59%;box-shadow:0 6px 18px #0000002a,inset 0 0 0 1px #00000010;transform:scale(0);animation:dm-splat-fly .75s cubic-bezier(.2,.9,.3,1.25) var(--d) forwards}
+/* Cada mancha voa a partir do topo da aba e "esborracha" no lugar */
+@keyframes dm-splat-fly{0%{transform:translate(calc(50vw * 0 + (50% - var(--x)) * 2),-120px) scale(.15) rotate(0)}70%{transform:translate(0,0) scale(1.15,.85) rotate(var(--r))}100%{transform:translate(0,0) scale(1) rotate(var(--r))}}
+/* Respingos em volta de cada mancha */
+.dm-tone-splash i:before,.dm-tone-splash i:after{content:'';position:absolute;border-radius:50%;background:inherit}
+.dm-tone-splash i:before{width:22%;height:22%;right:-18%;top:12%}
+.dm-tone-splash i:after{width:14%;height:14%;left:-12%;bottom:4%}
+/* Título: as letras chegam coloridas e "perdem a cor", virando uma escala de cinza (preto → cinza) */
+.dm-tone-title{display:flex;gap:1px;margin:2px 0 16px;font:400 40px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.03em}
+.dm-tone-title b{display:inline-block;font-weight:400;color:var(--tone);opacity:0;animation:dm-tone-letter 1.4s cubic-bezier(.3,.9,.3,1) calc(.95s + var(--k) * 55ms) forwards}
+@keyframes dm-tone-letter{0%{opacity:0;transform:translateY(-16px) scale(.6);color:var(--hue)}30%{opacity:1;transform:translateY(2px) scale(1.08);color:var(--hue)}60%{color:var(--hue);transform:none}100%{opacity:1;color:var(--tone);transform:none}}
+.dm-tone-title b:last-child{position:relative}
+@media(prefers-reduced-motion:reduce){.dm-tone-splash{display:none}.dm-tone-title b{animation:none;opacity:1}}
+@keyframes dm-splat-fly{0%{left:50%;top:-8%;transform:scale(.15) rotate(0)}70%{left:var(--x);top:var(--y);transform:scale(1.18,.82) rotate(var(--r))}100%{left:var(--x);top:var(--y);transform:scale(1) rotate(var(--r))}}
+.dm-studio .dm-tone-title{font:400 40px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.03em}

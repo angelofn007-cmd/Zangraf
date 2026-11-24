@@ -119,6 +119,13 @@ async function keepPreviewsInMemory(project:LayoutProject):Promise<LayoutProject
  return {...project,photos};
 }
 
+/** Manchas de tinta da abertura da aba Tonalidade: [x %, y %, tamanho px, giro, atraso ms, cor]. */
+const TONE_SPLATS:[number,number,number,number,number,string][]=[
+ [12,18,70,-20,0,'#1d1e20'],[78,12,54,30,60,'#f4f4f2'],[42,34,90,10,40,'#2c2d29'],[88,42,46,-40,120,'#e9e9e6'],
+ [20,58,64,50,90,'#f6f6f4'],[64,62,80,-10,30,'#151614'],[34,82,50,70,150,'#3a3b37'],[82,80,72,-60,80,'#f2f2ef'],
+ [52,10,36,15,170,'#8a8b86'],[6,86,40,-25,110,'#c9cac5'],[94,64,30,40,200,'#5a5b56'],[48,52,28,0,220,'#bdbdb8'],
+];
+
 /** Os 8 riscos da palavra "Texto", na ordem e no sentido em que se escreve (desenhados por cima da fonte). */
 const TEXTO_STROKES=[
  'M11.7 51.1 C 12.3 49.1, 14.2 42.9, 15.4 38.9 C 16.6 34.9, 17.8 30.7, 18.8 27.4 C 19.8 24.1, 21.1 20.5, 21.6 19.1',
@@ -305,6 +312,9 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const fileInput = useRef<HTMLInputElement>(null);
  const bgInput = useRef<HTMLInputElement>(null);
  const [themeOpen, setThemeOpen] = useState<string|null>(null);
+ // Abertura da aba Tonalidade: tintas preta e branca espalhando pela aba.
+ const [toneIntro,setToneIntro]=useState(false);
+ useEffect(()=>{if(panel!=='tone')return;setToneIntro(true);const t=window.setTimeout(()=>setToneIntro(false),2600);void ensureFont('Bebas Neue');return()=>window.clearTimeout(t);},[panel]);
  // Abertura da aba Ícones: a impressora só faz a abertura completa na primeira vez que a aba abre.
  const [iconIntro,setIconIntro]=useState(false);
  useEffect(()=>{if(panel!=='icons')return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),4200);return()=>window.clearTimeout(t);},[panel]);
@@ -1040,7 +1050,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      </>}</>}
     {panel==='tone'&&(()=>{const adjust=slot?.adjust||{};const thumb=selectedPhoto?thumbUrls[selectedPhoto.id]:undefined;
      const sliders=[{key:'brightness',label:'Brilho',low:'Mais escuro',high:'Mais claro'},{key:'contrast',label:'Contraste',low:'Suave',high:'Marcado'},{key:'saturation',label:'Cores',low:'Apagadas',high:'Intensas'},{key:'warmth',label:'Temperatura',low:'Fria',high:'Quente'}] as const;
-     return <><div className="dm-panel-title"><h2>Tonalidade das fotos</h2><SunMoon size={18}/></div>
+     return <>{toneIntro&&<div className="dm-tone-splash" aria-hidden="true">{TONE_SPLATS.map((b,i)=><i key={i} style={{['--x' as string]:`${b[0]}%`,['--y' as string]:`${b[1]}%`,['--s' as string]:`${b[2]}px`,['--r' as string]:`${b[3]}deg`,['--d' as string]:`${b[4]}ms`,['--c' as string]:b[5]}}/>)}</div>}
+      <h2 className="dm-tone-title" aria-label="Tonalidade">{Array.from('TONALIDADE').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--hue' as string]:['#e8221e','#f08a12','#f5c400','#19b33a','#1aa8e8','#2b5bd7','#7d2a86','#e81aa5','#e8221e','#19b33a'][k],['--tone' as string]:`hsl(0 0% ${12+k*6}%)`}}>{ch}</b>)}</h2>
      {!selectedPhoto?<div className="dm-empty"><SunMoon size={32}/><p>Clique numa foto da lâmina<br/>para ajustar brilho, cores e efeitos.</p></div>:<>
       
       <h3 className="dm-tone-heading">Efeitos</h3>
