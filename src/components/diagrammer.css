@@ -1632,3 +1632,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-drop-fall{0%{opacity:0;transform:translateY(-14px) rotate(-45deg) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translateY(16px) rotate(-45deg) scale(1)}}
 .dm-studio[data-night=true] .dm-ink-tabs{background:var(--dm-control)}
 @media(prefers-reduced-motion:reduce){.dm-cart-ink:before,.dm-ink-drop,.dm-ink-tabs>button[aria-selected=true] .dm-cart-ink{animation:none}}
+/* Ícones: barra simples nas cinco cores, nomes numa linha só */
+.dm-studio .dm-icon-tabs{margin-top:4px}
+.dm-studio .dm-icon-tabs>button>span{font-size:11.5px;white-space:nowrap}
