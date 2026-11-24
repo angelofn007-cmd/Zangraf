@@ -907,7 +907,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   edit(next);
   
  }
- const palette=['#fffdf8','#ffffff','#f1e8dc','#e1d5c4','#fdf153','#c8d1c1','#9ba9a0','#dfb4a3','#393e3b','#1e2023'];
+ const palette=['#ffffff','#fbf8f2','#f6f0e6','#efe6d8','#e7dccb','#ddd0bd','#d2c4af','#c6b7a0','#b9a991','#ab9a82'];
  const tabs=[{id:'photos',label:'Fotos',icon:ImagePlus},{id:'layouts',label:'Layouts',icon:LayoutTemplate},{id:'background',label:'Fundo',icon:Palette},{id:'text',label:'Texto',icon:Type},{id:'icons',label:'Ícones',icon:Sparkles},{id:'tone',label:'Tonalidade',icon:SunMoon}] as const;
  const title=activePage===-1?(wrapMode?'Capa inteira':'Capa frente'):backMode?'Capa verso':`Lâmina ${activePage+1}`;
  const textProps={selectedText:textId,onTextSelect:(id:string)=>{setIconId(undefined);setTextId(id);setPanel('text');setPanelOpen(true)},onTextChange:updateText,selectedIcon:iconId,onIconSelect:(id:string)=>{setIconId(id);setTextId(undefined);setPanel('icons');setPanelOpen(true)},onIconChange:updateIcon};
