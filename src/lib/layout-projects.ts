@@ -35,8 +35,8 @@ export const LAYOUTS: { id: LayoutName; name: string; description: string }[] = 
 ];
 export const emptySlot = (): Slot => ({ photoId: null, x: 50, y: 50, zoom: 1 });
 export const defaultPrintSpec = (): PrintSpec => ({ widthMm: 300, heightMm: 300, bleedMm: 3, dpi: 300, exportMode: 'page' });
-export const defaultBackCover = (): Cover => ({ title: '', subtitle: 'Memórias que ficam.', color: '#e7dfd1', textColor: '#292823', photo: emptySlot() });
-export const defaultCover = (): Cover => ({ title: 'Uma história para guardar', subtitle: 'Nosso álbum de memórias', color: '#e7dfd1', textColor: '#292823', photo: emptySlot() });
+export const defaultBackCover = (): Cover => ({ title: '', subtitle: 'Memórias que ficam.', color: '#ffffff', textColor: '#292823', photo: emptySlot() });
+export const defaultCover = (): Cover => ({ title: 'Uma história para guardar', subtitle: 'Nosso álbum de memórias', color: '#ffffff', textColor: '#292823', photo: emptySlot() });
 export function rectangles(layout: LayoutName) {
  if (layout === 'inteira') return [{x:0,y:0,w:1,h:1}];
  if (layout === 'respiro') return [{x:.12,y:.15,w:.76,h:.7}];

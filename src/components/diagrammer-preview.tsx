@@ -74,7 +74,7 @@ export function AlbumSpread({spread,urls,selected,onSelect,onPhotoDrop,ratio=2,s
   else if(d.slot.photoId){d.nextSlot={...d.slot,x:d.overflowX>1?clamp(d.slot.x-(event.clientX-d.px)/d.overflowX*100*(d.slot.flipX?-1:1),0,100):d.slot.x,y:d.overflowY>1?clamp(d.slot.y-(event.clientY-d.py)/d.overflowY*100*(d.slot.flipY?-1:1),0,100):d.slot.y};setDraft({index:d.index,slot:d.nextSlot});}
  }
  function end(){const d=drag.current;drag.current=null;setDraft(null);if(d?.nextRect)onFrameChange?.(d.index,d.nextRect);else if(d?.nextSlot)onSlotChange?.(d.index,d.nextSlot);}
- return <div ref={stage} className="zg-spread" aria-label="Lâmina do álbum" style={{aspectRatio:ratio,background:spread.background||'#fffdf8'}}>
+ return <div ref={stage} className="zg-spread" aria-label="Lâmina do álbum" style={{aspectRatio:ratio,background:spread.background||'#ffffff'}}>
   <SurfaceLayer surface={spread.surface} width={physical.widthMm*2} height={physical.heightMm} bleed={physical.bleedMm} compact={compact}/>
   {spread.rightBackground&&<div className="zg-right-background" style={{background:spread.rightBackground}}/>}
   <TextureLayer texture={spread.texture} width={physical.widthMm*2} height={physical.heightMm} compact={compact}/>

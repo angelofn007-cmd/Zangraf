@@ -74,7 +74,7 @@ async function drawComposition(ctx:CanvasRenderingContext2D,project:LayoutProjec
   drawIcons(ctx,cover.icons||[],spec.widthMm,spec.heightMm);
  }else{
   const spread=project.spreads[index];if(!spread)throw new Error('A lâmina solicitada não existe.');
-  ctx.fillStyle=spread.background||'#fffdf8';ctx.fillRect(-spec.bleedMm,-spec.bleedMm,spec.widthMm*2+spec.bleedMm*2,spec.heightMm+spec.bleedMm*2);
+  ctx.fillStyle=spread.background||'#ffffff';ctx.fillRect(-spec.bleedMm,-spec.bleedMm,spec.widthMm*2+spec.bleedMm*2,spec.heightMm+spec.bleedMm*2);
   await drawSurface(ctx,spread.surface,spec.widthMm*2,spec.heightMm,spec.bleedMm);
   if(spread.rightBackground){ctx.fillStyle=spread.rightBackground;ctx.fillRect(spec.widthMm,-spec.bleedMm,spec.widthMm+spec.bleedMm,spec.heightMm+spec.bleedMm*2);}
   drawTexture(ctx,spread.texture,spec.widthMm*2,spec.heightMm,spec.bleedMm);
@@ -92,7 +92,7 @@ export async function renderPage(project:LayoutProject,index:number):Promise<HTM
  const physicalWidth=spec.widthMm*(index<0?1:2),scale=canvas.width/physicalWidth;
  canvas.height=Math.round(spec.heightMm*scale);
  const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Este navegador não permite exportar a prévia.');
- ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
  ctx.save();ctx.scale(scale,scale);await drawComposition(ctx,project,index);ctx.restore();
  return canvas;
 }
@@ -151,7 +151,7 @@ export async function renderPrintJpeg(project:LayoutProject,kind:PrintFileKind,i
  const canvas=document.createElement('canvas');canvas.width=dimensions.width;canvas.height=dimensions.height;
  const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Não foi possível preparar o arquivo de produção.');
  const scale=spec.dpi/25.4;
- ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
  ctx.save();ctx.scale(scale,scale);
  ctx.translate(spec.bleedMm-(kind==='page'&&index%2?spec.widthMm:0),spec.bleedMm);
  await drawComposition(ctx,project,isCover?(kind==='cover-back'?-2:-1):kind==='page'?Math.floor(index/2):index);
