@@ -1953,3 +1953,23 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Fundo: letras nos tons da paleta de fundos, da mais clara à mais escura (com trama leve de textura) */
 .dm-bg-word b{background:repeating-linear-gradient(45deg,#ffffff38 0 1.5px,transparent 1.5px 4px),var(--tint);background-blend-mode:normal;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 #00000026)}
 .dm-roller:before{background:repeating-linear-gradient(180deg,#e1d5c4 0 6px,#c8d1c1 6px 12px,#dfb4a3 12px 18px,#9ba9a0 18px 24px,#393e3b 24px 30px)}
+
+/* ===================== Título "Texto": uma caneta escrevendo à mão com tinta nas cinco cores ===================== */
+.dm-text-title{position:relative;height:66px;margin:-6px 0 8px}
+.dm-text-title svg{display:block;width:180px;height:66px;overflow:visible}
+.dm-write{font:700 54px 'Dancing Script',cursive;fill:url(#dm-ink-grad);fill-opacity:0;stroke:url(#dm-ink-grad);stroke-width:1.2;stroke-linejoin:round;stroke-dasharray:420;stroke-dashoffset:420;animation:dm-write-stroke 1.9s cubic-bezier(.45,.05,.4,1) .3s forwards,dm-write-fill .6s ease 1.9s forwards}
+@keyframes dm-write-stroke{to{stroke-dashoffset:0}}
+@keyframes dm-write-fill{to{fill-opacity:1;stroke-width:.4}}
+/* Caneta-tinteiro passando por cima, com leve sobe-e-desce da escrita */
+.dm-pen{position:absolute;left:4px;top:4px;width:34px;height:34px;pointer-events:none;animation:dm-pen-move 1.9s cubic-bezier(.45,.05,.4,1) .3s both}
+.dm-pen i{position:absolute;left:0;bottom:0;width:8px;height:40px;border-radius:4px 4px 2px 2px;background:linear-gradient(90deg,#2c2d27,#55564c 50%,#2c2d27);transform:rotate(35deg);transform-origin:bottom left;box-shadow:2px 4px 8px #0000004d;animation:dm-pen-wobble .22s ease-in-out .3s 8 alternate}
+.dm-pen i:before{content:'';position:absolute;left:1px;bottom:-9px;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:10px solid #d4b45a}
+.dm-pen i:after{content:'';position:absolute;left:0;right:0;top:6px;height:3px;background:#d4b45a}
+@keyframes dm-pen-move{0%{opacity:0;transform:translate(0,14px)}8%{opacity:1}90%{opacity:1;transform:translate(150px,10px)}100%{opacity:0;transform:translate(168px,-8px) rotate(10deg)}}
+@keyframes dm-pen-wobble{from{transform:rotate(35deg) translateY(0)}to{transform:rotate(30deg) translateY(-6px)}}
+/* Pingo de tinta no fim da palavra */
+.dm-text-title:after{content:'';position:absolute;left:162px;top:44px;width:6px;height:6px;border-radius:50%;background:#e81aa5;opacity:0;animation:dm-ink-dot .7s ease-out 2.1s both}
+@media(prefers-reduced-motion:reduce){.dm-write{animation:none;fill-opacity:1;stroke-dashoffset:0}.dm-pen,.dm-text-title:after{display:none}}
+.dm-text-title svg{width:220px}
+@keyframes dm-pen-move{0%{opacity:0;transform:translate(0,14px)}8%{opacity:1}90%{opacity:1;transform:translate(122px,10px)}100%{opacity:0;transform:translate(138px,-8px) rotate(10deg)}}
+.dm-text-title:after{left:140px}

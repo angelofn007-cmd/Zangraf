@@ -247,7 +247,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [iconIntro,setIconIntro]=useState(false);
  useEffect(()=>{if(panel!=='icons')return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),4200);return()=>window.clearTimeout(t);},[panel]);
  // Fonte do título animado da aba Layouts.
- useEffect(()=>{if(panel==='layouts'||panel==='photos'||panel==='background')void ensureFont('Bebas Neue');},[panel]);
+ useEffect(()=>{if(panel==='layouts'||panel==='photos'||panel==='background')void ensureFont('Bebas Neue');if(panel==='text')void ensureFont('Dancing Script');},[panel]);
  // Carrega as fontes dos temas para as capas prontas aparecerem certas.
  useEffect(()=>{if(panel!=='background'||backgroundTab!=='themes')return;for(const t of ALBUM_THEMES)for(const c of t.covers){void ensureFont(c.font);void ensureFont(c.subFont);}},[panel,backgroundTab]);
  const previewDialog = useRef<HTMLDialogElement>(null);
@@ -1024,7 +1024,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='text'&&(()=>{
      const pickFont=(family:AlbumFont)=>{if(selectedText)updateText(selectedText.id,{fontFamily:family});else addText('title',family);};
      const fontButton=(font:typeof ALBUM_FONTS[number])=><button key={font.family} type="button" aria-pressed={selectedText?.fontFamily===font.family} disabled={busy||(!selectedText&&texts.length>=20)} title={selectedText?`Usar ${font.family} no texto selecionado`:`Adicionar texto em ${font.family}`} onClick={()=>pickFont(font.family)}><span style={{fontFamily:`"${font.family}"`}}>{font.label}</span><small>{font.style} · {font.family}</small></button>;
-     return <><div className="dm-panel-title"><h2>Palavras que ficam</h2><Type size={18}/></div>
+     return <><h2 className="dm-text-title" aria-label="Texto"><svg viewBox="0 0 220 70" aria-hidden="true"><defs><linearGradient id="dm-ink-grad" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stopColor="#e8221e"/><stop offset=".25" stopColor="#19b33a"/><stop offset=".5" stopColor="#e0b800"/><stop offset=".75" stopColor="#1aa8e8"/><stop offset="1" stopColor="#e81aa5"/></linearGradient></defs><text x="6" y="52" className="dm-write">Texto</text></svg><span className="dm-pen" aria-hidden="true"><i/></span></h2>
       <button className="dm-button primary full" disabled={busy||texts.length>=20} onClick={()=>addText()}><Plus size={18}/>Adicionar texto</button>
       {selectedText?<label>Seu texto<textarea autoFocus rows={3} maxLength={600} value={selectedText.text} onChange={e=>updateText(selectedText.id,{text:e.target.value})}/></label>:null}
       {texts.length>1&&<><h3 className="dm-tone-heading">Textos nesta {activePage<0?'capa':'lâmina'}</h3>{texts.map(t=><button className={'dm-text-list '+(textId===t.id?'active':'')} key={t.id} onClick={()=>setTextId(t.id)}><Type size={14}/>{t.text||'Texto vazio'}</button>)}</>}
