@@ -1769,3 +1769,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-print-word{font:400 38px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.06em}
 /* Ordem das tintas: amarelo, azul (ciano) e rosa (magenta) */
 .dm-print-word:after{background:linear-gradient(180deg,#f5c400 0 34%,#00aeef 34% 67%,#ec008c 67%);-webkit-background-clip:text;background-clip:text}
+/* Tira de filme: respiro nas pontas para o 1 e o 10 não encostarem na borda */
+.dm-film-count{padding:8px 10px;border-radius:8px;overflow:hidden;box-sizing:border-box;width:100%}
+.dm-film-count>button{margin:0 2px;min-width:0}
+.dm-film-count>button:first-child{margin-left:0}.dm-film-count>button:last-child{margin-right:0}
