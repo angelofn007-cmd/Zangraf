@@ -324,7 +324,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  // Cada vez que o painel abre de novo, o conteúdo é montado de novo (para as animações recomeçarem).
  const openCount=useRef(0),wasOpen=useRef(false);if(panelOpen&&!wasOpen.current)openCount.current++;wasOpen.current=panelOpen;
  const [iconIntro,setIconIntro]=useState(false);
- useEffect(()=>{if(panel!=='icons'||!introOn)return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),4200);return()=>window.clearTimeout(t);},[panel,introOn]);
+ useEffect(()=>{if(panel!=='icons'||!introOn)return;setIconIntro(true);const t=window.setTimeout(()=>setIconIntro(false),3000);return()=>window.clearTimeout(t);},[panel,introOn]);
  // Fonte do título animado da aba Layouts.
  useEffect(()=>{if(panel==='layouts'||panel==='photos'||panel==='background')void ensureFont('Bebas Neue');if(panel==='text')void ensureFont('Dancing Script');},[panel]);
  // Carrega as fontes dos temas para as capas prontas aparecerem certas.
