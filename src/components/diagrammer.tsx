@@ -119,33 +119,37 @@ async function keepPreviewsInMemory(project:LayoutProject):Promise<LayoutProject
  return {...project,photos};
 }
 
-/** Traços da palavra "Texto" escrita à mão (na ordem em que se escreve). */
-const TEXTO_STROKES=[
- 'M12 20 C 28 15, 50 14, 70 17',
- 'M42 17 C 41 30, 38 42, 33 54 C 31 58, 26 58, 24 54',
- 'M50 44 C 58 43, 64 38, 61 34 C 58 31, 50 35, 50 43 C 50 51, 58 53, 66 48 C 70 45, 72 40, 76 40 C 80 40, 82 46, 86 52 C 88 55, 92 55, 96 50 C 99 46, 102 36, 105 24 C 106 20, 107 30, 106 40 C 105 48, 106 53, 112 53 C 118 53, 120 46, 124 42 C 128 37, 136 37, 137 44 C 138 51, 130 54, 126 50 C 123 46, 126 40, 132 40 C 136 40, 140 42, 146 40',
- 'M86 40 C 84 45, 80 51, 76 56',
- 'M98 32 C 104 31, 110 31, 115 32',
-];
-/** Título da aba Texto: a caneta escreve cada traço e a tinta só aparece onde a ponta já passou. */
+/**
+ * Título da aba Texto: a palavra numa fonte cursiva bonita, "escrita" por uma caneta.
+ * A tinta só aparece onde a ponta da caneta já passou (máscara que segue o traço, letra por letra).
+ */
 function HandwrittenTitle(){
- const svg=useRef<SVGSVGElement>(null),pen=useRef<HTMLSpanElement>(null),[done,setDone]=useState(false);
+ const svg=useRef<SVGSVGElement>(null),pen=useRef<HTMLSpanElement>(null),[paths,setPaths]=useState<string[]>([]),[done,setDone]=useState(false);
+ // 1) Depois que a fonte carrega, monta um traço de escrita para cada letra (sobe e desce dentro da letra).
+ useEffect(()=>{let alive=true;void ensureFont('Dancing Script').then(()=>document.fonts.ready).then(()=>{
+  const text=svg.current?.querySelector<SVGTextElement>('text.dm-hand-word');if(!alive||!text)return;
+  const n=text.getNumberOfChars();const list:string[]=[];
+  for(let i=0;i<n;i++){const r=text.getExtentOfChar(i);const x=r.x,y=r.y,w=r.width,h=r.height;
+   list.push(`M${x-2} ${y+h*.72} C ${x+w*.15} ${y+h*.05}, ${x+w*.3} ${y}, ${x+w*.38} ${y+h*.5} S ${x+w*.55} ${y+h*1.02}, ${x+w*.66} ${y+h*.45} S ${x+w*.9} ${y+h*.05}, ${x+w+2} ${y+h*.7}`);}
+  setPaths(list);});return()=>{alive=false};},[]);
+ // 2) A caneta percorre os traços; a máscara revela a fonte exatamente onde ela passou.
  useEffect(()=>{
-  const paths=Array.from(svg.current?.querySelectorAll<SVGPathElement>('path.dm-hand')||[]);const penEl=pen.current;if(!paths.length||!penEl)return;
-  const lengths=paths.map(p=>p.getTotalLength());const total=lengths.reduce((a,b)=>a+b,0);
-  paths.forEach((p,i)=>{p.style.strokeDasharray=`${lengths[i]}`;p.style.strokeDashoffset=`${lengths[i]}`;});
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){paths.forEach(p=>{p.style.strokeDashoffset='0';});setDone(true);return;}
-  const speed=170,lift=120;let start=0,frame=0;
-  // Linha do tempo: cada traço leva seu comprimento/velocidade; entre traços, a caneta "levanta" por um instante.
-  const plan=paths.map((_,i)=>({from:0,len:lengths[i]}));let t0=0;for(const [i,item] of plan.entries()){item.from=t0;t0+=lengths[i]/speed*1000+lift;}
-  const step=(now:number)=>{if(!start)start=now;const t=now-start-250;let tip:{x:number;y:number}|null=null;
-   plan.forEach((item,i)=>{const dur=item.len/speed*1000;const k=Math.max(0,Math.min(1,(t-item.from)/dur));paths[i].style.strokeDashoffset=`${item.len*(1-k)}`;if(t>=item.from&&t<=item.from+dur+lift){const pt=paths[i].getPointAtLength(item.len*k);tip={x:pt.x,y:pt.y};}});
-   if(tip){penEl.style.opacity='1';penEl.style.transform=`translate(${(tip as {x:number}).x}px,${(tip as {y:number}).y}px)`;}
-   if(t<t0){frame=requestAnimationFrame(step);}else{penEl.style.opacity='0';setDone(true);}
+  if(!paths.length)return;const els=Array.from(svg.current?.querySelectorAll<SVGPathElement>('path.dm-hand-mask')||[]);const penEl=pen.current;if(!els.length||!penEl)return;
+  const lengths=els.map(p=>p.getTotalLength());els.forEach((p,i)=>{p.style.strokeDasharray=`${lengths[i]}`;p.style.strokeDashoffset=`${lengths[i]}`;});
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(p=>{p.style.strokeDashoffset='0';});setDone(true);return;}
+  const speed=320,lift=50;const plan:{from:number;dur:number}[]=[];let total=0;for(const len of lengths){plan.push({from:total,dur:len/speed*1000});total+=len/speed*1000+lift;}
+  let start=0,frame=0;
+  const step=(now:number)=>{if(!start)start=now;const t=now-start-200;let tip:DOMPoint|null=null;
+   plan.forEach((item,i)=>{const k=Math.max(0,Math.min(1,(t-item.from)/item.dur));els[i].style.strokeDashoffset=`${lengths[i]*(1-k)}`;if(t>=item.from&&t<=item.from+item.dur+lift)tip=els[i].getPointAtLength(lengths[i]*k);});
+   if(tip){penEl.style.opacity='1';penEl.style.transform=`translate(${(tip as DOMPoint).x}px,${(tip as DOMPoint).y}px)`;}
+   if(t<total)frame=requestAnimationFrame(step);else{penEl.style.opacity='0';setDone(true);}
   };
   frame=requestAnimationFrame(step);return()=>cancelAnimationFrame(frame);
- },[]);
- return <h2 className={'dm-hand-title'+(done?' is-done':'')} aria-label="Texto"><span className="dm-sun" aria-hidden="true"/><svg ref={svg} viewBox="0 0 160 66" width="160" height="66" aria-hidden="true">{TEXTO_STROKES.map((d,i)=><path key={i} className="dm-hand" d={d}/>)}</svg><span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
+ },[paths]);
+ return <h2 className={'dm-hand-title'+(done?' is-done':'')} aria-label="Texto"><svg ref={svg} viewBox="0 0 170 70" width="170" height="70" aria-hidden="true">
+  <defs><mask id="dm-hand-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="170" height="70">{paths.map((d,i)=><path key={i} className="dm-hand-mask" d={d}/>)}</mask></defs>
+  <text x="6" y="50" className="dm-hand-word" mask={paths.length?'url(#dm-hand-reveal)':undefined} style={paths.length?undefined:{opacity:0}}>Texto</text>
+ </svg><span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
 }
 
 export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }: { projectId?: string; cartItemId?: string; requireLoginToSave?: boolean }) {

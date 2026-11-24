@@ -2014,3 +2014,9 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-pen2 i{margin-bottom:9px}
 @media(prefers-reduced-motion:reduce){.dm-sun:before{animation:none}}
 .dm-sun{top:-16px;left:34px;width:100px;height:100px}
+/* Texto v4: fonte cursiva bonita revelada pela caneta; sem sol, só um brilho amarelo suave */
+.dm-sun{display:none}
+.dm-hand-word{font:700 54px 'Dancing Script',cursive;fill:#1d1e20}
+.dm-hand-mask{fill:none;stroke:#fff;stroke-width:26;stroke-linecap:round;stroke-linejoin:round}
+.dm-hand-title svg{transition:filter .8s ease}
+.dm-hand-title.is-done svg{filter:drop-shadow(0 0 5px #fdf15399) drop-shadow(0 0 1px #fdf15366)}
