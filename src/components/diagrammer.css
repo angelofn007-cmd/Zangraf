@@ -1609,3 +1609,26 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-import-track{height:24px}
 .dm-import-mask{top:7px;bottom:7px}
 .dm-import-runner i{height:30px;margin-top:-15px}
+
+/* ===================== Ícones: categorias como cartuchos de tinta (HP) ===================== */
+.dm-ink-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:4px 0 14px;padding:10px 8px 8px;border-radius:14px;background:linear-gradient(180deg,#f4f2ec,#fbfaf6);box-shadow:inset 0 1px 3px #2a2a1e14}
+.dm-ink-tabs>button{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:4px 0;border:0;background:transparent;color:var(--dm-muted);cursor:pointer}
+.dm-cart{position:relative;display:block;width:24px;height:34px;overflow:hidden;border-radius:5px 5px 7px 7px;background:#fff;box-shadow:inset 0 0 0 1.5px #d6d2c6,0 2px 4px #2a2a1e14;transition:transform .35s cubic-bezier(.34,1.6,.64,1),box-shadow .25s}
+.dm-cart:before{content:'';position:absolute;left:7px;right:7px;top:0;height:4px;border-radius:0 0 3px 3px;background:#d6d2c6;z-index:2}
+.dm-cart-ink{position:absolute;left:0;right:0;bottom:0;height:34%;background:var(--ink);opacity:.75;transition:height .5s cubic-bezier(.3,.8,.3,1)}
+.dm-cart-ink:before{content:'';position:absolute;left:-50%;right:-50%;top:-5px;height:10px;border-radius:45%;background:var(--ink);animation:dm-ink-wave 2.4s linear infinite}
+@keyframes dm-ink-wave{to{transform:translateX(25%)}}
+.dm-cart-label{position:absolute;left:4px;right:4px;top:11px;height:7px;border-radius:2px;background:#ffffffd9;z-index:2;box-shadow:0 0 0 1px #0000000d}
+.dm-ink-name{max-width:100%;overflow:hidden;font-size:11px;font-weight:600;white-space:nowrap;text-overflow:ellipsis;transition:color .2s}
+.dm-ink-tabs>button:hover .dm-cart{transform:translateY(-2px)}
+.dm-ink-tabs>button:hover .dm-cart-ink{height:48%}
+.dm-ink-tabs>button[aria-selected=true]{color:var(--dm-ink)}
+.dm-ink-tabs>button[aria-selected=true] .dm-ink-name{font-weight:800}
+.dm-ink-tabs>button[aria-selected=true] .dm-cart{transform:translateY(-3px) scale(1.08);box-shadow:inset 0 0 0 1.5px var(--ink),0 6px 14px color-mix(in srgb,var(--ink) 40%,transparent)}
+.dm-ink-tabs>button[aria-selected=true] .dm-cart-ink{height:88%;opacity:1;animation:dm-ink-fill .7s cubic-bezier(.3,.8,.3,1) both}
+@keyframes dm-ink-fill{from{height:20%}}
+/* Gota de tinta caindo no cartucho escolhido */
+.dm-ink-drop{position:absolute;left:50%;top:-6px;width:8px;height:8px;margin-left:-4px;border-radius:50% 50% 50% 0;background:var(--ink);transform:rotate(-45deg);animation:dm-drop-fall .6s cubic-bezier(.5,0,.75,0) both;pointer-events:none}
+@keyframes dm-drop-fall{0%{opacity:0;transform:translateY(-14px) rotate(-45deg) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translateY(16px) rotate(-45deg) scale(1)}}
+.dm-studio[data-night=true] .dm-ink-tabs{background:var(--dm-control)}
+@media(prefers-reduced-motion:reduce){.dm-cart-ink:before,.dm-ink-drop,.dm-ink-tabs>button[aria-selected=true] .dm-cart-ink{animation:none}}
