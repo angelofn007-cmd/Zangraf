@@ -616,6 +616,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const canRemoveSpread = project.spreads.length > (countLocked ? configuredCount : 1);
 
  function updateSlot(patch: Partial<Slot>, frame = slotIndex) {
+  // Foto entrando na capa: mostra as duas barras da capa (edição + dorso) juntas.
+  if(activePage<0&&patch.photoId)setFrameFocus(true);
   if(activePage<0&&spread)replaceSpread({...spread,slots:spread.slots.map((s,i)=>i===frame?{...s,...patch}:s)});
   else if (activePage < 0) edit({ ...project!, [backMode ? 'backCover' : 'cover']: { ...cover, photo: { ...cover.photo, ...patch } } });
   else edit({ ...project!, spreads: project!.spreads.map((item, i) => i === activePage ? { ...item, slots: item.slots.map((value, j) => j === frame ? { ...value, ...patch } : value) } : item) });
