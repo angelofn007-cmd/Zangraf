@@ -753,10 +753,11 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  function handleElementKey(event:KeyboardEvent){
   if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='d'){event.preventDefault();duplicateSelected();return;}
   if(event.key==='Escape'){setReplaceTarget(null);setIconId(undefined);setTextId(undefined);setPositionOpen(false);setPhotoMode('crop');return;}
+  if((event.key==='Delete'||event.key==='Backspace')&&!frameFocus&&!selectedIcon&&!selectedText)return;
   if(event.key==='Delete'||event.key==='Backspace'){event.preventDefault();if(selectedIcon){updateIcons(icons.filter(i=>i.id!==selectedIcon.id));setIconId(undefined)}else if(selectedText){updateTexts(texts.filter(t=>t.id!==selectedText.id));setTextId(undefined)}else if(spread&&spread.slots.length>1)removeFrame();else if(slot?.photoId)updateSlot(emptySlot());return;}
   if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
   // Fora do modo Mover (e sem texto/ícone selecionado), as setas ← → trocam de lâmina.
-  if(!selectedIcon&&!selectedText&&photoMode!=='position'){
+  if(!selectedIcon&&!selectedText&&(photoMode!=='position'||!frameFocus)){
    if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();if(event.key==='ArrowLeft')previousPage();else nextPage();}
    return;
   }
