@@ -47,16 +47,19 @@ import './diagrammer.css';
 type SaveState = 'pending' | 'saving' | 'saved' | 'error';
 const PHOTO_LIMIT = MAX_PHOTO_BYTES;
 
+/** Número entre 0 e 1 fixo para cada foto (embaralha o painel sem mudar a cada clique). */
+function photoSeed(id: string) { let h = 2166136261; for (let k = 0; k < id.length; k++) { h ^= id.charCodeAt(k); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10007) / 10007; }
+
 type PhotoTile<T> = {item: T; ratio: number};
 type PhotoBlock<T> = {kind: 'pair'; columns: PhotoTile<T>[][]} | {kind: 'trio'; items: PhotoTile<T>[]};
 /**
  * Painel de fotos: blocos de 2 colunas empilhadas (cada foto vai para a coluna mais baixa e,
  * no fim do bloco, as colunas são igualadas) intercalados com faixas de 3 fotos menores.
  */
-function photoBlocks<T>(items: T[], ratioOf: (item: T) => number, width: number, gap: number): PhotoBlock<T>[] {
+function photoBlocks<T>(items: T[], ratioOf: (item: T) => number, width: number, gap: number, seedOf: (item: T) => number = () => .5): PhotoBlock<T>[] {
   const colW = (width - gap) / 2, minH = colW / 1.6, maxH = colW / .62, blocks: PhotoBlock<T>[] = [];
-  let columns: PhotoTile<T>[][] = [[], []], heights = [0, 0], sinceTrio = 0, i = 0;
-  const flush = () => { if (columns[0].length || columns[1].length) blocks.push({kind: 'pair', columns}); columns = [[], []]; heights = [0, 0]; sinceTrio = 0; };
+  let columns: PhotoTile<T>[][] = [[], []], heights = [0, 0], sinceTrio = 0, i = 0, nextTrio = 4 + Math.floor(seedOf(items[0]) * 5);
+  const flush = () => { if (columns[0].length || columns[1].length) blocks.push({kind: 'pair', columns}); columns = [[], []]; heights = [0, 0]; sinceTrio = 0; nextTrio = 4 + Math.floor(seedOf(items[Math.min(i, items.length - 1)]) * 6); };
   /** Ajusta a última foto de cada coluna para as duas terminarem juntas; devolve false se não der sem distorcer demais. */
   const level = () => {
     if (!columns[0].length || !columns[1].length) return false;
@@ -69,11 +72,14 @@ function photoBlocks<T>(items: T[], ratioOf: (item: T) => number, width: number,
   };
   while (i < items.length) {
     const left = items.length - i;
-    // Depois de umas 5 fotos em 2 colunas, entra uma faixa de 3 menores — só se as colunas fecharem certinho.
-    if (sinceTrio >= 5 && left >= 3 && left !== 4 && level()) {
-      flush(); blocks.push({kind: 'trio', items: items.slice(i, i + 3).map(item => ({item, ratio: .82}))}); i += 3; continue;
+    // De vez em quando (sem ritmo fixo) entra uma faixa de 3 menores — só se as colunas fecharem certinho.
+    if (sinceTrio >= nextTrio && left >= 3 && left !== 4 && level()) {
+      flush();
+      // Faixa com larguras variadas: uma das três pode ser mais larga.
+      const trio = items.slice(i, i + 3), wide = Math.floor(seedOf(trio[0]) * 4), h = .82 + seedOf(trio[1]) * .3;
+      blocks.push({kind: 'trio', items: trio.map((item, k) => ({item, ratio: (k === wide ? 1.7 : 1) * h}))}); i += 3; continue;
     }
-    const item = items[i], c = heights[0] <= heights[1] + 1 ? 0 : 1, ratio = Math.max(.62, Math.min(1.6, ratioOf(item)));
+    const item = items[i], close = Math.abs(heights[0] - heights[1]) < colW * .35, c = close ? (seedOf(item) < .5 ? 0 : 1) : heights[0] < heights[1] ? 0 : 1, ratio = Math.max(.62, Math.min(1.6, ratioOf(item)));
     columns[c].push({item, ratio}); heights[c] += colW / ratio + gap; sinceTrio++; i++;
   }
   flush();
@@ -770,17 +776,17 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        <button type="button" role="tab" aria-selected={filterUnused} onClick={()=>setFilterUnused(true)}>Não usadas{!!unusedCount&&<span>{unusedCount}</span>}</button>
        {selectPhotos&&<button type="button" className="dm-photo-tabs-done" onClick={()=>{setSelectPhotos(false);setPickedPhotos([])}}><Check size={14}/>Pronto</button>}
       </div>
-      {selectPhotos&&<div className="dm-multi-actions"><div className="dm-multi-head"><span>{pickedPhotos.length} {pickedPhotos.length===1?'selecionada':'selecionadas'}</span><button type="button" className="dm-link" onClick={()=>setPickedPhotos(pickedPhotos.length===project.photos.length?[]:project.photos.map(p=>p.id))}>{pickedPhotos.length===project.photos.length?'Limpar seleção':'Selecionar todas'}</button></div><div className="dm-multi-row"><button className="dm-button primary full" disabled={busy||!pickedPhotos.length} onClick={()=>addPhotosToAlbum(pickedPhotos)}><Plus size={16}/>Adicionar ao álbum</button><button type="button" className="dm-icon dm-multi-icon" disabled={!pickedPhotos.length||pickedPhotos.length>10} aria-label="Escolher um layout para as fotos marcadas" title={pickedPhotos.length>10?"Para escolher layout, marque até 10":"Escolher layout para estas fotos"} onClick={()=>{setLayoutCount(pickedPhotos.length);setPanel('layouts')}}><LayoutTemplate size={18}/></button>{!!pickedPhotos.length&&<button type="button" className="dm-icon dm-danger-icon" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} selecionadas`}`} onClick={()=>removePickedPhotos()}><Trash2 size={18}/></button>}</div></div>}<div ref={photoGridRef} className="dm-photo-viewport"><div key={filterUnused?'unused':'all'} className={'dm-photos dm-photos-rows dm-photos-columns'+(tabSlide?' is-'+tabSlide:'')}>{photoGridWidth>0&&(()=>{let order=0;const STAGGER=[1,.86,1.12,.92,1.06,.84,1.15,.95,1.1,.88],place=new Map(visiblePhotos.map((p,i)=>[p.id,i]));const ratioOf=(photo:Photo)=>{const base=photo.width&&photo.height?photo.width/photo.height:1.33;return Math.max(.5,Math.min(2.2,base*STAGGER[(place.get(photo.id)||0)%STAGGER.length]))};
+      {selectPhotos&&<div className="dm-multi-actions"><div className="dm-multi-head"><span>{pickedPhotos.length} {pickedPhotos.length===1?'selecionada':'selecionadas'}</span><button type="button" className="dm-link" onClick={()=>setPickedPhotos(pickedPhotos.length===project.photos.length?[]:project.photos.map(p=>p.id))}>{pickedPhotos.length===project.photos.length?'Limpar seleção':'Selecionar todas'}</button></div><div className="dm-multi-row"><button className="dm-button primary full" disabled={busy||!pickedPhotos.length} onClick={()=>addPhotosToAlbum(pickedPhotos)}><Plus size={16}/>Adicionar ao álbum</button><button type="button" className="dm-icon dm-multi-icon" disabled={!pickedPhotos.length||pickedPhotos.length>10} aria-label="Escolher um layout para as fotos marcadas" title={pickedPhotos.length>10?"Para escolher layout, marque até 10":"Escolher layout para estas fotos"} onClick={()=>{setLayoutCount(pickedPhotos.length);setPanel('layouts')}}><LayoutTemplate size={18}/></button>{!!pickedPhotos.length&&<button type="button" className="dm-icon dm-danger-icon" disabled={busy} aria-label={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} fotos selecionadas`}`} title={`Excluir ${pickedPhotos.length===1?'a foto selecionada':`as ${pickedPhotos.length} selecionadas`}`} onClick={()=>removePickedPhotos()}><Trash2 size={18}/></button>}</div></div>}<div ref={photoGridRef} className="dm-photo-viewport"><div key={filterUnused?'unused':'all'} className={'dm-photos dm-photos-rows dm-photos-columns'+(tabSlide?' is-'+tabSlide:'')}>{photoGridWidth>0&&(()=>{let order=0;const ratioOf=(photo:Photo)=>{const base=photo.width&&photo.height?photo.width/photo.height:1.33;return Math.max(.5,Math.min(2.2,base*(.8+photoSeed(photo.id)*.42)))};
        // Duas colunas empilhadas (alturas variadas); de vez em quando uma faixa com 3 fotos menores.
        const tile=({item:photo,ratio}:{item:Photo;ratio:number})=>{order++;
        const used=usedIds.has(photo.id);const picked=pickedPhotos.includes(photo.id);
        const checked=selectPhotos?picked:used;
-       return <div className={'dm-photo'+(checked?' is-checked':'')} key={photo.id} style={{aspectRatio:ratio,['--d' as string]:`${Math.min(order,14)*35}ms`}}>
+       return <div className={'dm-photo'+(checked?' is-checked':'')} key={photo.id} style={{aspectRatio:ratio,flexGrow:ratio,['--d' as string]:`${Math.min(order,14)*35}ms`}}>
         <button className="dm-photo-image" aria-label={`Usar ${photo.name}`} title={photo.name} draggable={!busy} disabled={busy} onDragStart={e=>{e.dataTransfer.setData('application/x-zangraf-photo',photo.id);e.dataTransfer.effectAllowed='copy'}} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else{placePhoto(photo.id);setTextId(undefined)}}}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false} loading="lazy" decoding="async"/></button>
         <button type="button" className="dm-photo-check" aria-pressed={checked} disabled={busy} aria-label={selectPhotos?(picked?'Desmarcar foto':'Marcar foto'):used?'Tirar do álbum':'Colocar no álbum'} title={selectPhotos?(picked?'Desmarcar':'Marcar'):used?'Tirar do álbum':'Colocar no álbum'} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else if(used)unusePhoto(photo.id);else{placePhoto(photo.id);setTextId(undefined)}}}>{checked&&<Check size={13} strokeWidth={3}/>}</button>
         {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))edit(removePhoto(project,photo.id))}}><X size={12}/></button>}
        </div>;};
-       return photoBlocks(visiblePhotos,ratioOf,photoGridWidth,6).map((block,b)=>block.kind==='trio'?<div className="dm-photo-trio" key={b}>{block.items.map(tile)}</div>:<div className="dm-photo-pair" key={b}>{block.columns.map((column,c)=><div className="dm-photo-col" key={c}>{column.map(tile)}</div>)}</div>)})()}</div></div>
+       return photoBlocks(visiblePhotos,ratioOf,photoGridWidth,6,photo=>photoSeed(photo.id+'*')).map((block,b)=>block.kind==='trio'?<div className="dm-photo-trio" key={b}>{block.items.map(tile)}</div>:<div className="dm-photo-pair" key={b}>{block.columns.map((column,c)=><div className="dm-photo-col" key={c}>{column.map(tile)}</div>)}</div>)})()}</div></div>
       {!visiblePhotos.length&&<p className="dm-photos-empty">{filterUnused?'Todas já estão no álbum ✓':''}</p>}
      </>}</>}
     {panel==='tone'&&(()=>{const adjust=slot?.adjust||{};const thumb=selectedPhoto?thumbUrls[selectedPhoto.id]:undefined;
