@@ -1943,3 +1943,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-wet-shine{0%{opacity:0;transform:translateX(-20px) skewX(-14deg)}20%{opacity:1}100%{opacity:0;transform:translateX(140px) skewX(-14deg)}}
 @media(prefers-reduced-motion:reduce){.dm-bg-word b{animation:none;clip-path:none}.dm-roller,.dm-bg-title:after{display:none}}
 @keyframes dm-roller-go{0%{transform:translateX(0);opacity:0}8%{opacity:1}88%{transform:translateX(100px);opacity:1}100%{transform:translateX(118px) translateY(-14px) rotate(14deg);opacity:0}}
+/* Fundo: uma cor só, tom de linho, combinando com texturas */
+.dm-bg-word b{--ink:#9c8466}
+.dm-roller:before{background:repeating-linear-gradient(180deg,#b39c7d 0 3px,#9c8466 3px 6px)}
