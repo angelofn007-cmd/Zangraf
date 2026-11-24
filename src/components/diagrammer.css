@@ -1898,3 +1898,12 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-build-button:not(:disabled){border:1.5px solid #ecd94a;background:var(--dm-surface);animation:dm-build-glow 3.2s ease-in-out infinite}
 @keyframes dm-build-glow{0%,100%{box-shadow:0 0 8px #fdf15340}50%{box-shadow:0 0 20px #fdf153a6,0 0 2px #fdf153}}
 .dm-studio .dm-build-button.is-ready:not(:disabled){background:#fffbd6}
+/* Montar: passando o mouse, a varinha brilha e balança; ao clicar, estoura um brilho */
+.dm-studio .dm-build-button:not(:disabled):hover>svg{animation:dm-wand-hover .9s ease-in-out infinite;filter:drop-shadow(0 0 4px #fdf153) drop-shadow(0 0 8px #fdf15399);color:#9a8600}
+@keyframes dm-wand-hover{0%,100%{transform:rotate(0) scale(1.08)}35%{transform:rotate(-14deg) scale(1.15)}70%{transform:rotate(6deg) scale(1.1)}}
+.dm-studio .dm-build-button:not(:disabled):hover{box-shadow:0 0 24px #fdf153b3,0 0 3px #fdf153;animation-play-state:paused}
+.dm-studio .dm-build-button.is-pop{animation:dm-build-pop .7s ease-out!important}
+.dm-studio .dm-build-button.is-pop>svg{animation:dm-wand-pop .7s cubic-bezier(.34,1.8,.64,1)!important;filter:drop-shadow(0 0 6px #fdf153) drop-shadow(0 0 14px #fff6a8)}
+@keyframes dm-build-pop{0%{box-shadow:0 0 0 0 #fdf153cc}40%{box-shadow:0 0 0 10px #fdf15355,0 0 30px #fdf153}100%{box-shadow:0 0 0 18px #fdf15300,0 0 12px #fdf15340}}
+@keyframes dm-wand-pop{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.45) rotate(-25deg)}100%{transform:scale(1) rotate(0)}}
+.dm-studio .dm-build-button:not(:disabled):active{transform:scale(.97)}
