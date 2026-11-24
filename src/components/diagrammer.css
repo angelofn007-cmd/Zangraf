@@ -1606,3 +1606,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-head-shake{50%{transform:translateY(.7px)}}
 @keyframes dm-head-led{50%{opacity:.35}}
 @media(prefers-reduced-motion:reduce){.dm-import-runner i,.dm-import-runner i:after{animation:none}}
+.dm-import-track{height:24px}
+.dm-import-mask{top:7px;bottom:7px}
+.dm-import-runner i{height:30px;margin-top:-15px}
