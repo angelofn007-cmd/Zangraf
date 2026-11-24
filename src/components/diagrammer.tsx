@@ -244,7 +244,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const bgInput = useRef<HTMLInputElement>(null);
  const [themeOpen, setThemeOpen] = useState<string|null>(null);
  // Fonte do título animado da aba Layouts.
- useEffect(()=>{if(panel==='layouts')void ensureFont('Bebas Neue');},[panel]);
+ useEffect(()=>{if(panel==='layouts'||panel==='photos')void ensureFont('Bebas Neue');},[panel]);
  // Carrega as fontes dos temas para as capas prontas aparecerem certas.
  useEffect(()=>{if(panel!=='background'||backgroundTab!=='themes')return;for(const t of ALBUM_THEMES)for(const c of t.covers){void ensureFont(c.font);void ensureFont(c.subFont);}},[panel,backgroundTab]);
  const previewDialog = useRef<HTMLDialogElement>(null);
@@ -927,6 +927,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
    <nav className="dm-rail" aria-label="Ferramentas do diagramador">{tabs.map(tab=><button key={tab.id} data-tab={tab.id} aria-pressed={panel===tab.id&&panelOpen} className={panel===tab.id&&panelOpen?'active':''} onClick={()=>{setPanelOpen(panel===tab.id?!panelOpen:true);setPanel(tab.id)}}><tab.icon size={23}/><span>{tab.label}</span></button>)}</nav>
    <aside className="dm-panel-slot" id="dm-tool-panel" aria-label={tabs.find(t=>t.id===panel)?.label} aria-hidden={!panelOpen} inert={!panelOpen}><div className="dm-panel" data-tab={panel} key={panel}>
     {panel==='photos'&&<>
+     <h2 className="dm-photo-title" aria-label="Fotos"><span className="dm-photo-cam" aria-hidden="true"><i/></span><span className="dm-photo-word" aria-hidden="true">{Array.from('FOTOS').map((ch,k)=><b key={k} style={{['--k' as string]:k}}><i>{ch}</i></b>)}</span><span className="dm-photo-flash" aria-hidden="true"/></h2>
      <div className="dm-upload-bar">
       <button type="button" className="dm-upload-main" disabled={busy} onClick={()=>fileInput.current?.click()} onDragOver={e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault()}} onDrop={e=>{e.preventDefault();void addPhotos(e.dataTransfer.files)}}><Upload size={18}/>{busy?'Carregando…':'Adicionar fotos'}</button>
       {!!library.length&&<button type="button" className={'dm-upload-more dm-select-all'+(selectPhotos?' is-on':'')} aria-pressed={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))} aria-label={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas as fotos'} title={selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))?'Desmarcar todas':'Selecionar todas'} disabled={busy} onClick={()=>{if(selectPhotos&&visiblePhotos.length>0&&visiblePhotos.every(p=>pickedPhotos.includes(p.id))){setSelectPhotos(false);setPickedPhotos([])}else{setSelectPhotos(true);setPickedPhotos(visiblePhotos.map(p=>p.id));setSnapKey(k=>k+1)}}}><CheckCheck size={21}/></button>}
