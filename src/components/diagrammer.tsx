@@ -57,6 +57,7 @@ type PhotoBlock<T> = {kind: 'pair'; columns: PhotoTile<T>[][]} | {kind: 'trio'; 
  * no fim do bloco, as colunas são igualadas) intercalados com faixas de 3 fotos menores.
  */
 function photoBlocks<T>(items: T[], ratioOf: (item: T) => number, width: number, gap: number, seedOf: (item: T) => number = () => .5): PhotoBlock<T>[] {
+  if (!items.length || width <= 0) return [];
   const colW = (width - gap) / 2, minH = colW / 1.6, maxH = colW / .62, blocks: PhotoBlock<T>[] = [];
   let columns: PhotoTile<T>[][] = [[], []], heights = [0, 0], sinceTrio = 0, i = 0, nextTrio = 4 + Math.floor(seedOf(items[0]) * 5);
   const flush = () => { if (columns[0].length || columns[1].length) blocks.push({kind: 'pair', columns}); columns = [[], []]; heights = [0, 0]; sinceTrio = 0; nextTrio = 4 + Math.floor(seedOf(items[Math.min(i, items.length - 1)]) * 6); };
