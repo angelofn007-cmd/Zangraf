@@ -549,8 +549,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   // Layout inteligente: escolhe a composição cujos quadros combinam com fotos em pé e deitadas.
   // A foto nova (última) tem prioridade no formato; as outras não podem perder qualidade.
   const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,{...rankOptions(added.map(s=>s.photoId)),focus:added.length-1})[0];
-  const layout=best?.layout||photoLayouts(added.length,currentRatio)[0];
-  const slots=best?best.order.map(i=>added[i]):added;
+  // A primeira foto da lâmina ocupa a lâmina inteira; só a partir da segunda o layout divide.
+  const full=added.length===1?photoLayouts(1,currentRatio).find(l=>l.id==='full-1'):undefined;
+  const layout=full||best?.layout||photoLayouts(added.length,currentRatio)[0];
+  const slots=full?added:best?best.order.map(i=>added[i]):added;
   const next={...target,layout:'livre' as LayoutName,frames:layout.frames,slots,spacing:target.spacing||{...DEFAULT_SPACING}};
   edit({...project!,spreads:project!.spreads.map((s,i)=>i===index?next:s)});
   if(index!==activePage)setActivePage(index);
@@ -561,6 +563,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  function addPhotosToAlbum(ids:string[]){
   const list=ids.filter(id=>project!.photos.some(p=>p.id===id));if(!list.length)return;
   if(!spread){assignPhoto(list[0]);return;}
+  if(activePage>=0&&list.length===1&&!spread.slots.some(s=>s.photoId)){appendPhoto(list[0]);setPickedPhotos([]);setSelectPhotos(false);return;}
   const slots=[...spread.slots];const queue=[...list];
   for(let i=0;i<slots.length&&queue.length;i++)if(!slots[i].photoId)slots[i]={...emptySlot(),photoId:queue.shift()!};
   let next:Spread={...spread,slots};let left=0;
@@ -586,6 +589,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   // 1) Um quadro vazio na página aberta (o selecionado primeiro).
   // Na capa inteira, o quadro do meio é o dorso: não recebe foto automaticamente.
   const isSpine=(i:number)=>activePage<0&&spineMm>0&&spread?.slots.length===3&&i===1;
+  // Lâmina sem nenhuma foto: a primeira ocupa a lâmina inteira.
+  if(activePage>=0&&spread&&!spread.slots.some(s=>s.photoId)){appendPhoto(id);return;}
   if(spread){const target=spread.slots[slotIndex]&&!spread.slots[slotIndex].photoId&&!isSpine(slotIndex)?slotIndex:spread.slots.findIndex((s,i)=>!s.photoId&&!isSpine(i));if(target>=0){assignPhoto(id,target);return;}}
   else if(activePage<0&&!cover.photo.photoId){assignPhoto(id);return;}
   // 2) Lâmina aberta com menos de 10 fotos: a foto entra nela e o layout muda para caber todas.
@@ -595,6 +600,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   for(let step=0;step<total;step++){
    const k=(start+step)%total;if(k===activePage)continue;
    const slots=project!.spreads[k].slots,slot=slots.findIndex(s=>!s.photoId);
+   if(!slots.some(s=>s.photoId)){if(appendPhoto(id,k))return;continue;}
    if(slot>=0){
     edit({...project!,spreads:project!.spreads.map((s,i)=>i===k?{...s,slots:s.slots.map((v,j)=>j===slot?{...emptySlot(),photoId:id}:v)}:s)});
     setActivePage(k);setSlotIndex(slot);setTextId(undefined);setIconId(undefined);return;
