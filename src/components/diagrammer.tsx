@@ -797,9 +797,28 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const ids=pickedPhotos.filter(id=>project!.photos.some(p=>p.id===id));if(!ids.length)return;
   const used=ids.filter(id=>usedIds.has(id)).length;
   if(!window.confirm(`Excluir ${ids.length===1?'esta foto':`estas ${ids.length} fotos`}?${used?` ${used===1?'Uma delas está':`${used} delas estão`} no álbum e sairá dos quadros.`:''} Você pode desfazer.`))return;
-  let next=project!;for(const id of ids)next=removePhoto(next,id);
-  edit(next);setPickedPhotos([]);
-  
+  void flyToTrash(ids).then(()=>{
+   const base=projectRef.current;if(!base)return;
+   let next=base;for(const id of ids)next=removePhoto(next,id);
+   edit(next);setPickedPhotos([]);setSelectPhotos(false);
+  });
+ }
+ /** Animação de exclusão: as fotos voam para a lixeira (ou somem num "puf", se a lixeira não estiver à vista). */
+ async function flyToTrash(ids:string[]){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const trash=document.querySelector<HTMLElement>('.dm-upload-trash');
+  const target=trash?.getBoundingClientRect();
+  const tiles=ids.map(id=>document.querySelector<HTMLElement>(`.dm-photo[data-photo="${CSS.escape(id)}"]`)).filter((el):el is HTMLElement=>!!el);
+  const runs=tiles.map((el,i)=>{
+   const box=el.getBoundingClientRect();
+   const delay=Math.min(i,16)*30;
+   if(!target)return el.animate([{transform:'none',opacity:1},{transform:'scale(1.06)',opacity:1,offset:.3},{transform:'scale(.2) rotate(-8deg)',opacity:0}],{duration:420,delay,easing:'cubic-bezier(.5,0,.75,0)',fill:'forwards'}).finished;
+   const dx=target.left+target.width/2-(box.left+box.width/2),dy=target.top+target.height/2-(box.top+box.height/2);
+   return el.animate([{transform:'none',opacity:1},{transform:`translate(${dx*.25}px,${dy*.25-30}px) scale(.7) rotate(-6deg)`,opacity:1,offset:.45},{transform:`translate(${dx}px,${dy}px) scale(.08) rotate(18deg)`,opacity:.3}],{duration:640,delay,easing:'cubic-bezier(.45,0,.6,1)',fill:'forwards'}).finished;
+  });
+  await Promise.all(runs).catch(()=>undefined);
+  trash?.animate([{transform:'scale(1)'},{transform:'scale(1.25) rotate(-8deg)'},{transform:'scale(.92) rotate(5deg)'},{transform:'scale(1)'}],{duration:450,easing:'cubic-bezier(.34,1.6,.64,1)'});
+  await new Promise(resolve=>window.setTimeout(resolve,180));
  }
  /** Muda a tonalidade da foto selecionada; `null` volta ao original. */
  function setAdjust(patch:Partial<PhotoAdjust>|null){
@@ -871,10 +890,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        const tile=({item:photo,ratio}:{item:Photo;ratio:number})=>{order++;
        const used=usedIds.has(photo.id);const picked=pickedPhotos.includes(photo.id);
        const checked=selectPhotos?picked:used;
-       return <div className={'dm-photo'+(checked?' is-checked':'')} key={photo.id} style={{aspectRatio:ratio,flexGrow:ratio,['--d' as string]:`${Math.min(order,14)*35}ms`}}>
+       return <div className={'dm-photo'+(checked?' is-checked':'')} key={photo.id} data-photo={photo.id} style={{aspectRatio:ratio,flexGrow:ratio,['--d' as string]:`${Math.min(order,14)*35}ms`}}>
         <button className="dm-photo-image" aria-label={`Usar ${photo.name}`} title={photo.name} draggable={!busy} disabled={busy} onDragStart={e=>{e.dataTransfer.setData('application/x-zangraf-photo',photo.id);e.dataTransfer.effectAllowed='copy'}} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else{placePhoto(photo.id);setTextId(undefined)}}}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false} loading="lazy" decoding="async" onError={()=>window.dispatchEvent(new CustomEvent('zangraf-photo-error',{detail:photo.id}))}/></button>
         <button type="button" className="dm-photo-check" aria-pressed={checked} disabled={busy} aria-label={selectPhotos?(picked?'Desmarcar foto':'Marcar foto'):used?'Tirar do álbum':'Colocar no álbum'} title={selectPhotos?(picked?'Desmarcar':'Marcar'):used?'Tirar do álbum':'Colocar no álbum'} onClick={()=>{if(selectPhotos){setPickedPhotos(ids=>ids.includes(photo.id)?ids.filter(id=>id!==photo.id):[...ids,photo.id])}else if(used)unusePhoto(photo.id);else{placePhoto(photo.id);setTextId(undefined)}}}>{checked&&<Check size={13} strokeWidth={3}/>}</button>
-        {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))edit(removePhoto(project,photo.id))}}><X size={12}/></button>}
+        {!selectPhotos&&<button className="dm-delete-photo" aria-label={`Excluir ${photo.name}`} title="Excluir foto" onClick={()=>{if(!used||window.confirm('Excluir esta foto? Ela também sai dos quadros onde aparece.'))void flyToTrash([photo.id]).then(()=>{const base=projectRef.current;if(base)edit(removePhoto(base,photo.id))})}}><X size={12}/></button>}
        </div>;};
        return photoBlocks(visiblePhotos,ratioOf,photoGridWidth,6,photo=>photoSeed(photo.id+'*')).map((block,b)=>block.kind==='trio'?<div className="dm-photo-trio" key={b}>{block.items.map(tile)}</div>:<div className="dm-photo-pair" key={b}>{block.columns.map((column,c)=><div className="dm-photo-col" key={c} style={{flex:`0 0 ${block.widths[c]}px`}}>{column.map(tile)}</div>)}</div>)})()}</div></div>
       {!visiblePhotos.length&&<p className="dm-photos-empty">{filterUnused?'Todas já estão no álbum ✓':''}</p>}
