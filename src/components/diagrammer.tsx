@@ -540,18 +540,22 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   setPickedPhotos([]);setSelectPhotos(false);setSlotIndex(0);setPhotoMode('crop');setTextId(undefined);
   setNotice('');
  }
- function appendPhoto(id:string){
-  if(busy||activePage<0||!spread||!project!.photos.some(p=>p.id===id))return;
-  const occupied=spread.slots.filter(s=>s.photoId);
-  if(occupied.length>=10){setNotice('Esta composição já tem 10 fotos. Troque uma foto ou escolha outra lâmina.');return;}
+ /** Acrescenta a foto numa lâmina (a aberta, por padrão) e troca o layout para caber todas, até 10. */
+ function appendPhoto(id:string,index=activePage){
+  const target=index>=0?project!.spreads[index]:undefined;
+  if(busy||!target||!project!.photos.some(p=>p.id===id))return false;
+  const occupied=target.slots.filter(s=>s.photoId);
+  if(occupied.length>=10){setNotice('Esta lâmina já tem 10 fotos. Troque uma foto ou escolha outra lâmina.');return false;}
   const added=[...occupied,{...emptySlot(),photoId:id}];
   // Layout inteligente: escolhe a composição cujos quadros combinam com fotos em pé e deitadas.
   const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,rankOptions(added.map(s=>s.photoId)))[0];
   const layout=best?.layout||photoLayouts(added.length,currentRatio)[0];
   const slots=best?best.order.map(i=>added[i]):added;
-  replaceSpread({...spread,layout:'livre',frames:layout.frames,slots,spacing:spread.spacing||{...DEFAULT_SPACING}});
+  const next={...target,layout:'livre' as LayoutName,frames:layout.frames,slots,spacing:target.spacing||{...DEFAULT_SPACING}};
+  edit({...project!,spreads:project!.spreads.map((s,i)=>i===index?next:s)});
+  if(index!==activePage)setActivePage(index);
   setLayoutCount(slots.length);setSlotIndex(Math.max(0,slots.findIndex(s=>s.photoId===id)));setPhotoMode('crop');setTextId(undefined);setIconId(undefined);
-  setNotice(`${slots.length} foto(s) na lâmina, no layout ${layout.name}, escolhido pelo formato das fotos. Veja outras composições em Layouts.`);
+  return true;
  }
  /** Coloca várias fotos de uma vez na área aberta: primeiro nos quadros vazios, o resto ganha um layout que caiba tudo. */
  function addPhotosToAlbum(ids:string[]){
@@ -584,18 +588,20 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const isSpine=(i:number)=>activePage<0&&spineMm>0&&spread?.slots.length===3&&i===1;
   if(spread){const target=spread.slots[slotIndex]&&!spread.slots[slotIndex].photoId&&!isSpine(slotIndex)?slotIndex:spread.slots.findIndex((s,i)=>!s.photoId&&!isSpine(i));if(target>=0){assignPhoto(id,target);return;}}
   else if(activePage<0&&!cover.photo.photoId){assignPhoto(id);return;}
-  // 2) Próximo quadro vazio do álbum: lâminas seguintes e, depois, as anteriores. A foto já colocada continua onde está.
+  // 2) Lâmina aberta com menos de 10 fotos: a foto entra nela e o layout muda para caber todas.
+  if(activePage>=0&&spread&&spread.slots.filter(s=>s.photoId).length<10){appendPhoto(id);return;}
+  // 3) Lâmina cheia (10) ou capa completa: vai para a próxima lâmina — quadro vazio ou acrescentando até 10.
   const total=project!.spreads.length,start=activePage>=0?activePage+1:0;
   for(let step=0;step<total;step++){
    const k=(start+step)%total;if(k===activePage)continue;
-   const slot=project!.spreads[k].slots.findIndex(s=>!s.photoId);
-   if(slot<0)continue;
-   edit({...project!,spreads:project!.spreads.map((s,i)=>i===k?{...s,slots:s.slots.map((v,j)=>j===slot?{...emptySlot(),photoId:id}:v)}:s)});
-   setActivePage(k);setSlotIndex(slot);setTextId(undefined);setIconId(undefined);return;
+   const slots=project!.spreads[k].slots,slot=slots.findIndex(s=>!s.photoId);
+   if(slot>=0){
+    edit({...project!,spreads:project!.spreads.map((s,i)=>i===k?{...s,slots:s.slots.map((v,j)=>j===slot?{...emptySlot(),photoId:id}:v)}:s)});
+    setActivePage(k);setSlotIndex(slot);setTextId(undefined);setIconId(undefined);return;
+   }
+   if(slots.filter(s=>s.photoId).length<10&&appendPhoto(id,k))return;
   }
-  // 3) Álbum cheio: acrescenta na lâmina aberta (o layout se ajusta).
-  if(activePage>=0)appendPhoto(id);
-  else setNotice('Todos os quadros já têm foto. Abra uma lâmina para acrescentar mais.');
+  setNotice('Todas as lâminas já têm 10 fotos. Acrescente uma lâmina para continuar.');
  }
  /** Troca duas fotos de lugar na mesma área, levando junto o enquadramento de cada uma. */
  function swapSlots(from:number,to:number){
