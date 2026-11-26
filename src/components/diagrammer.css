@@ -2940,12 +2940,25 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
    Álbum layflat: a foto atravessa o centro sem vinco, sem sombra e sem linha. Nada escurece nem
    clareia a página; só a folha ganha uma sombra suave enquanto está no ar, que some antes de ela deitar. */
 /* Lâmina parada: as duas metades têm a lâmina inteira por baixo e cada uma mostra o seu lado,
-   com 1 px de sobreposição no centro. Em tela Retina a junção cai entre pixels; assim não sobra fio. */
+   com alguns px de sobreposição no centro (o conteúdo é idêntico ali). Em tela Retina a junção cai entre pixels; assim não sobra fio. */
 .dm-book>.dm-book-half:not(.is-cover):not(.is-empty){left:0;right:0;width:auto}
 .dm-book>.dm-book-half:not(.is-cover):not(.is-empty)>div{left:0;width:100%}
-.dm-book>.dm-book-half.left:not(.is-cover):not(.is-empty){clip-path:inset(0 calc(50% - .5px) 0 0)}
-.dm-book>.dm-book-half.right:not(.is-cover):not(.is-empty){clip-path:inset(0 0 0 calc(50% - .5px))}
+.dm-book>.dm-book-half.left:not(.is-cover):not(.is-empty){clip-path:inset(0 calc(50% - 2px) 0 0)}
+.dm-book>.dm-book-half.right:not(.is-cover):not(.is-empty){clip-path:inset(0 0 0 calc(50% - 2px))}
 .dm-turning-sheet{will-change:transform}
 .dm-sheet-face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* Safari: o "backface-visibility" não esconde as camadas de cima da capa (sulco da dobra, brilho), que
+   continuavam aparecendo através da folha já virada. Por isso a troca de face é feita no tempo: no instante
+   em que a folha fica de lado (90°), a frente some e o verso aparece. Os pontos saem das curvas de cada
+   virada: página cubic-bezier(.32,.1,.38,1) cruza 90° em 36,7% do tempo; capa (6° até 12%, depois
+   cubic-bezier(.45,.05,.3,1)) cruza em 46,4%. */
+.dm-turning-sheet .dm-sheet-face.front{animation:dm-face-front .74s linear forwards}
+.dm-turning-sheet .dm-sheet-face.back{animation:dm-face-back .74s linear forwards}
+@keyframes dm-face-front{0%,36.6%{visibility:visible}36.7%,100%{visibility:hidden}}
+@keyframes dm-face-back{0%,36.6%{visibility:hidden}36.7%,100%{visibility:visible}}
+.dm-book.is-cover-turn .dm-turning-sheet .dm-sheet-face.front{animation:dm-cover-face-front var(--turn-ms) linear forwards}
+.dm-book.is-cover-turn .dm-turning-sheet .dm-sheet-face.back{animation:dm-cover-face-back var(--turn-ms) linear forwards}
+@keyframes dm-cover-face-front{0%,46.3%{visibility:visible}46.4%,100%{visibility:hidden}}
+@keyframes dm-cover-face-back{0%,46.3%{visibility:hidden}46.4%,100%{visibility:visible}}
 .dm-sheet-shadow{position:absolute;inset:0;pointer-events:none;transform:translateZ(-1px);box-shadow:0 8px 22px #0000002e;opacity:0;animation:dm-sheet-air var(--turn-ms,760ms) ease-in-out forwards}
 @keyframes dm-sheet-air{0%,8%{opacity:0}50%{opacity:1}92%,100%{opacity:0}}
