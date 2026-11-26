@@ -252,8 +252,10 @@ export function pickLayout(aspects:number[],spreadAspect:number,previousName?:st
  const every=photoLayouts(aspects.length,spreadAspect),both=every.filter(fillsBothPages);
  const all=both.length?both:every;
  const rank=(layouts:PhotoLayout[])=>rankLayoutsForPhotos(layouts,aspects,spreadAspect,options);
- // 1 foto = lâmina inteira; 2 fotos = meio a meio (uma por página)…
- const fixed=aspects.length===1?all.find(l=>l.id==='full-1'):aspects.length===2?all.find(l=>l.id==='pages-2'):undefined;
+ // 1 foto = lâmina inteira, sempre (a checagem do editor avisa se a foto ficar com pouca nitidez).
+ if(aspects.length===1){const full=every.find(l=>l.id==='full-1');if(full)return rank([full])[0];}
+ // 2 fotos = meio a meio (uma por página)…
+ const fixed=aspects.length===2?all.find(l=>l.id==='pages-2'):undefined;
  if(fixed){
   const fit=rank([fixed])[0];
   if(!fit.lowResolution)return fit;

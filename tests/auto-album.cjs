@@ -146,13 +146,19 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
     assert.equal(new Set(plan.groups.flat()).size, 30);
   });
 
-  test('Foto sem resolução para a lâmina inteira vai para um quadro menor', () => {
+  test('Uma foto sozinha ocupa sempre a lâmina inteira, mesmo com pouca resolução', () => {
     const area = {width: 600, height: 300};
-    const sharp = pickLayout([1.5], 2, undefined, {sizes: [{width: 9000, height: 6000}], areaMm: area, dpi: 300});
-    assert.equal(sharp.layout.id, 'full-1');
-    const small = pickLayout([1.5], 2, undefined, {sizes: [{width: 4500, height: 3000}], areaMm: area, dpi: 300});
-    assert.notEqual(small.layout.id, 'full-1');
-    assert.equal(small.lowResolution, false);
+    for (const [aspect, px] of [[1.5, 9000], [1.5, 4500], [2/3, 4000], [2/3, 1200], [1, 2000]]) {
+      const fit = pickLayout([aspect], 2, undefined, {sizes: [{width: px, height: Math.round(px / aspect)}], areaMm: area, dpi: 300});
+      assert.equal(fit.layout.id, 'full-1', `${aspect} ${px}px`);
+    }
+  });
+
+  test('Duas fotos com pouca resolução continuam preenchendo as duas páginas', () => {
+    const {fillsBothPages} = load('src/lib/auto-album.ts');
+    const area = {width: 600, height: 300};
+    const small = pickLayout([1.5, 1.5], 2, undefined, {sizes: [{width: 1800, height: 1200}, {width: 1800, height: 1200}], areaMm: area, dpi: 300});
+    assert.ok(fillsBothPages(small.layout), small.layout.id);
   });
 
   test('Montagem automática nunca deixa uma página da lâmina em branco', () => {
