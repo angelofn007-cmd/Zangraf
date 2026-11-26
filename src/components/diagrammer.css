@@ -2939,12 +2939,13 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* ===================== Virada de página: igual antes, durante e depois =====================
    Álbum layflat: a foto atravessa o centro sem vinco, sem sombra e sem linha. Nada escurece nem
    clareia a página; só a folha ganha uma sombra suave enquanto está no ar, que some antes de ela deitar. */
-/* Lâmina parada: as duas metades têm a lâmina inteira por baixo e cada uma mostra o seu lado,
-   com alguns px de sobreposição no centro (o conteúdo é idêntico ali). Em tela Retina a junção cai entre pixels; assim não sobra fio. */
-.dm-book>.dm-book-half:not(.is-cover):not(.is-empty){left:0;right:0;width:auto}
-.dm-book>.dm-book-half:not(.is-cover):not(.is-empty)>div{left:0;width:100%}
-.dm-book>.dm-book-half.left:not(.is-cover):not(.is-empty){clip-path:inset(0 calc(50% - 2px) 0 0)}
-.dm-book>.dm-book-half.right:not(.is-cover):not(.is-empty){clip-path:inset(0 0 0 calc(50% - 2px))}
+/* Lâmina parada: cada metade avança 2 px sobre a outra no centro, mostrando exatamente o mesmo conteúdo ali.
+   Em tela Retina a junção cai entre pixels; com a sobreposição não sobra fio. (Sem clip-path: no Safari,
+   recorte dentro de cena 3D deixava a virada pesada.) */
+.dm-book>.dm-book-half.left:not(.is-cover):not(.is-empty){width:calc(50% + 2px)}
+.dm-book>.dm-book-half.right:not(.is-cover):not(.is-empty){width:calc(50% + 2px)}
+.dm-book>.dm-book-half:not(.is-cover):not(.is-empty)>div{width:calc(200% - 4px)}
+.dm-book>.dm-book-half.right:not(.is-cover):not(.is-empty)>div{left:calc(-100% + 4px)}
 .dm-turning-sheet{will-change:transform}
 .dm-sheet-face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 /* Safari: o "backface-visibility" não esconde as camadas de cima da capa (sulco da dobra, brilho), que

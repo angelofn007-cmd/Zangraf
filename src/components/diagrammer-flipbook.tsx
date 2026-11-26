@@ -11,16 +11,16 @@ const isWrap=(project:LayoutProject)=>project.productionModel?.coverMode==='wrap
 /** Ordem do folheamento: capa fechada (só a frente) → lâminas → verso com o dorso no final. */
 function bookIndices(project:LayoutProject){const covers=coverPageIndices(project.productionModel?.coverMode);const spreads=project.spreads.map((_,i)=>i);return covers.length?[-1,...spreads,-2]:spreads;}
 
-function Artwork({project,index,urls}:{project:LayoutProject;index:number;urls:Record<string,string>}){
+const Artwork=React.memo(function Artwork({project,index,urls}:{project:LayoutProject;index:number;urls:Record<string,string>}){
  const spec=projectSpec(project,index);
  return index<0?<AlbumCover cover={index===-2?(project.backCover||defaultBackCover()):(project.cover||defaultCover())} urls={urls} spec={spec} ratio={spec.widthMm/spec.heightMm} back={index===-2}/>:<AlbumSpread spread={project.spreads[index]} urls={urls} spec={spec} ratio={spec.widthMm*2/spec.heightMm}/>;
-}
+});
 /** Só a frente (-1) ou só o verso com o dorso (-2) de uma capa. Na capa inteira, recorta a arte única. */
-function CoverPart({project,index,urls}:{project:LayoutProject;index:number;urls:Record<string,string>}){
+const CoverPart=React.memo(function CoverPart({project,index,urls}:{project:LayoutProject;index:number;urls:Record<string,string>}){
  if(!isWrap(project))return <div className="dm-cover-part"><div style={{width:'100%',left:0}}><Artwork project={project} index={index} urls={urls}/></div></div>;
  const total=projectSpec(project,-1).widthMm,spine=coverSpineMm(project),face=(total-spine)/2,part=index===-1?face:face+spine;
  return <div className="dm-cover-part"><div style={{width:`${total/part*100}%`,...(index===-1?{right:0}:{left:0})}}><Artwork project={project} index={-1} urls={urls}/></div></div>;
-}
+});
 /**
  * Medidas do dorso: na capa inteira (wrap) ele tem arte própria, no meio da capa; nas capas separadas,
  * é só a encadernação (cor da capa), com espessura estimada pelo número de lâminas.
@@ -89,11 +89,11 @@ function SpineArt({project,urls}:{project:LayoutProject;urls:Record<string,strin
  return <div className="dm-cover-part dm-spine-art"><div style={{width:`${info.total/info.spine*100}%`,left:`${-info.face/info.spine*100}%`}}><Artwork project={project} index={-1} urls={urls}/></div></div>;
 }
 /** Só a face da capa (-1) ou da contracapa (-2), sem o dorso, para as laterais da vista do dorso. */
-function FaceArt({project,index,urls}:{project:LayoutProject;index:number;urls:Record<string,string>}){
+const FaceArt=React.memo(function FaceArt({project,index,urls}:{project:LayoutProject;index:number;urls:Record<string,string>}){
  const info=spineInfo(project);
  if(!info.wrap)return <CoverPart project={project} index={index} urls={urls}/>;
  return <div className="dm-cover-part"><div style={{width:`${info.total/info.face*100}%`,...(index===-1?{right:0}:{left:0})}}><Artwork project={project} index={-1} urls={urls}/></div></div>;
-}
+});
 /** Lombada curva: a arte do dorso em fatias dispostas num arco (como a lombada arredondada de verdade). */
 const SPINE_SLICES=14,SPINE_ARC=74*Math.PI/180;
 function CurvedSpine({project,urls}:{project:LayoutProject;urls:Record<string,string>}){
@@ -165,12 +165,13 @@ const shortLabel=(index:number)=>index===-1?'Capa':index===-2?'Verso':String(ind
 
 export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProject;urls:Record<string,string>;index:number;onChange:(index:number)=>void}){
  const indices=bookIndices(project),position=Math.max(0,indices.indexOf(index));
- const [turn,setTurn]=useState<{to:number;direction:1|-1;ready?:boolean;flipped?:boolean}|null>(null),[flat]=useState(false),[shine,setShine]=useState(0),[spineOpen,setSpineOpen]=useState(()=>indices.includes(-1));
+ const [turn,setTurn]=useState<{to:number;direction:1|-1;ready?:boolean}|null>(null),[flat]=useState(false),[shine,setShine]=useState(0),[spineOpen,setSpineOpen]=useState(()=>indices.includes(-1));
  // Ao abrir a prévia: abertura animada (impressora → caixa → caminhão → casa) e depois o álbum no 4D.
  const [intro,setIntro]=useState(()=>indices.includes(-1)&&!(typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches));
  const [introShown,setIntroShown]=useState(intro);
  const endIntro=useCallback(()=>setIntro(false),[]),hideIntro=useCallback(()=>setIntroShown(false),[]);
  const hasCovers=indices.includes(-1);
+ const sheet=useRef<HTMLDivElement>(null);
  const swipe=useRef<number|null>(null),turning=useRef(false),thumbs=useRef<HTMLDivElement>(null);
  const pageSpec=projectSpec(project,0),ratio=project.spreads.length?pageSpec.widthMm*2/pageSpec.heightMm:coverRatio(project,-1)*2;
  const shift=(page:number)=>page===-1?-25:page===-2?25:0;
@@ -180,8 +181,8 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
   if(turning.current||to===index)return;
   if(flat||window.matchMedia('(prefers-reduced-motion: reduce)').matches){onChange(to);setShine(v=>v+1);return;}
   turning.current=true;
-  // Começa a virar com as fotos do destino já prontas (espera no máximo 300 ms).
-  void Promise.race([decodePhotos(pageUrls(project,to,urls)),new Promise(r=>setTimeout(r,300))]).then(()=>setTurn({to,direction}));
+  void decodePhotos(pageUrls(project,to,urls));
+  setTurn({to,direction});
  }
  // Enquanto a pessoa olha a página, as vizinhas já ficam prontas para a próxima virada.
  useEffect(()=>{
@@ -201,7 +202,8 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
  useEffect(()=>{if(!ready||target===undefined)return;
   // A folha fica de lado (90°) em 36,7% da virada de página (0,74 s) e em 46,4% da virada da capa:
   // pontos calculados das curvas cubic-bezier de cada animação no CSS.
-  const flip=setTimeout(()=>setTurn(t=>t&&{...t,flipped:true}),coverTurn?turnMs*.464:740*.367);
+  // Direto na folha (sem redesenhar o componente no meio do movimento).
+  const flip=setTimeout(()=>sheet.current?.classList.add('is-flipped'),coverTurn?turnMs*.464:740*.367);
   const timer=setTimeout(()=>{onChange(target);setTurn(null);setShine(v=>v+1);turning.current=false;},turnMs);
   return()=>{clearTimeout(flip);clearTimeout(timer);};},[ready,target,onChange,turnMs,coverTurn]);
  // Lado do álbum fechado em cena (parado, abrindo ou fechando): o miolo e o canto da lombada acompanham.
@@ -228,7 +230,7 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
     {/* Sempre as duas metades, na mesma posição: a página que fica parada não é redesenhada ao virar */}
     {split(!turn||turn.direction===-1?(turn?turn.to:index):index,'left')}
     {split(!turn?index:turn.direction===1?turn.to:index,'right')}
-    {turn&&<div className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}${turn.flipped?' is-flipped':''}`} key={`sheet-${index}-${turn.to}`}><i className="dm-sheet-shadow" aria-hidden="true"/><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>}
+    {turn&&<div ref={sheet} className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}`} key={`sheet-${index}-${turn.to}`}><i className="dm-sheet-shadow" aria-hidden="true"/><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>}
     {/* Álbum fechado: no canto de baixo junto da lombada, a continuação preta da lombada, sem faixa lateral */}
     {closedSide&&hasCovers&&<span className="dm-book-spine-foot" data-anim={closedAnim} aria-hidden="true"/>}
     {!turn&&<span className="dm-book-shine" key={shine} aria-hidden="true"/>}
