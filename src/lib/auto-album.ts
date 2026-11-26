@@ -200,7 +200,36 @@ export type AlbumPlan={groups:string[][];moments:number;leftover:number};
  * sem misturar momentos na mesma lâmina. Se houver mais fotos do que cabem (10 por lâmina),
  * escolhe fotos espaçadas ao longo da história em vez de cortar o final.
  */
-export function planAlbum(photos:AlbumPhoto[],spreadCount:number,spreadAspect=DEFAULT_SPREAD_ASPECT):AlbumPlan{
+/**
+ * Arruma onde cada lâmina começa e termina dentro de um momento (mesma ordem do tempo, mesmas quantidades):
+ * as lâminas de foto única caem, sempre que possível, numa foto que aguenta a lâmina inteira sem perder nitidez.
+ */
+function arrangeSizes(moment:AlbumPhoto[],sizes:number[],alone:(photo:AlbumPhoto)=>boolean):number[]{
+ const singles=sizes.filter(size=>size===1).length,others=sizes.filter(size=>size!==1);
+ if(!singles||!others.length)return sizes;
+ // Cálculo exato: entre todas as formas de intercalar as lâminas de foto única com as outras (na mesma ordem),
+ // escolhe a que põe mais fotos únicas em fotos que aguentam a lâmina inteira.
+ const prefix=[0];for(const size of others)prefix.push(prefix.at(-1)!+size);
+ const ok=moment.map(photo=>alone(photo)?1:0);
+ const memo=new Map<number,number>();
+ const best=(used:number,k:number):number=>{
+  if(used===singles&&k===others.length)return 0;
+  const key=used*1000+k;const hit=memo.get(key);if(hit!==undefined)return hit;
+  const pos=used+prefix[k];let value=-Infinity;
+  if(used<singles)value=ok[pos]+best(used+1,k);
+  if(k<others.length)value=Math.max(value,best(used,k+1));
+  memo.set(key,value);return value;
+ };
+ const result:number[]=[];let used=0,k=0;
+ while(used<singles||k<others.length){
+  const pos=used+prefix[k];
+  if(used<singles&&(k>=others.length||ok[pos]+best(used+1,k)>=best(used,k+1))){result.push(1);used++;}
+  else{result.push(others[k]);k++;}
+ }
+ return result;
+}
+
+export function planAlbum(photos:AlbumPhoto[],spreadCount:number,spreadAspect=DEFAULT_SPREAD_ASPECT,alone?:(photo:AlbumPhoto)=>boolean):AlbumPlan{
  const capacity=spreadCount*MAX_PHOTOS_PER_SPREAD;const leftover=Math.max(0,photos.length-capacity);
  let ordered=trimBursts(orderPhotos(photos),capacity);
  const maxPixels=Math.max(0,...photos.map(p=>p.pixels||0));
@@ -219,12 +248,13 @@ export function planAlbum(photos:AlbumPhoto[],spreadCount:number,spreadAspect=DE
  if(moments.some((moment,i)=>Math.ceil(moment.length/counts[i])>MAX_PHOTOS_PER_SPREAD)){moments=[ordered];counts=[usable];}
  const groups:string[][]=[];
  moments.forEach((moment,i)=>{
-  const sizes=chunkSizes(moment.length,counts[i]);
+  let sizes=chunkSizes(moment.length,counts[i]);
   // Momento que abre com uma foto sozinha: traz para a frente a melhor das primeiras fotos.
   if(sizes.length>1&&sizes[0]===1){
    const best=heroIndex(moment.slice(0,1+sizes[1]),spreadAspect,maxPixels);
    if(best)moment=[moment[best],...moment.slice(0,best),...moment.slice(best+1)];
   }
+  if(alone)sizes=arrangeSizes(moment,sizes,alone);
   let next=0;
   for(const size of sizes){groups.push(moment.slice(next,next+size).map(photo=>photo.id));next+=size;}
  });
@@ -274,6 +304,35 @@ export type AutoAlbumResult={project:LayoutProject;placed:number;moments:number;
  * não mexe nas capas e não usa no miolo as fotos que já estão na capa.
  * `focusOf` (opcional) devolve o ponto importante da foto (ex.: um rosto) para centralizar o recorte.
  */
+/**
+ * Qualidade em primeiro lugar: se uma lâmina deixa alguma foto abaixo da resolução (ex.: foto vertical sozinha
+ * na lâmina inteira), troca uma foto com uma lâmina vizinha quando a troca deixa as duas lâminas nítidas.
+ * Assim a foto que aguenta a lâmina inteira fica sozinha e a outra vai em dupla, sem mudar quantas fotos
+ * cada lâmina tem (nenhuma fica vazia) e mantendo a ordem do tempo dentro de cada lâmina.
+ * Procura primeiro nas lâminas vizinhas (até 6 de distância), para a história continuar na ordem; só o que
+ * continuar sem nitidez busca mais longe (até 20).
+ */
+export function keepQuality(input:string[][],isLow:(ids:string[])=>boolean,chronological:string[]):string[][]{
+ const groups=input.map(group=>[...group]);
+ const rank=new Map(chronological.map((id,i)=>[id,i]));
+ const byTime=(group:string[])=>group.sort((a,b)=>(rank.get(a)??0)-(rank.get(b)??0));
+ const low=groups.map(isLow);
+ // Busca primeiro nas lâminas mais próximas (a história continua na ordem) e vai se afastando até 6.
+ // Último recurso (só para o que continuar sem nitidez): busca mais longe, até 20 lâminas.
+ const near=[1,-1,2,-2,3,-3,4,-4,5,-5,6,-6],far=Array.from({length:14},(_,k)=>[k+7,-(k+7)]).flat();
+ for(const reach of [near,near,far])for(let i=0;i<groups.length;i++){
+  if(!low[i])continue;
+  search:for(const d of reach){
+   const j=i+d;if(j<0||j>=groups.length||!groups[j].length)continue;
+   for(let a=0;a<groups[i].length;a++)for(let b=0;b<groups[j].length;b++){
+    const gi=[...groups[i]],gj=[...groups[j]];[gi[a],gj[b]]=[gj[b],gi[a]];
+    if(!isLow(gi)&&!isLow(gj)){groups[i]=byTime(gi);groups[j]=byTime(gj);low[i]=false;low[j]=false;break search;}
+   }
+  }
+ }
+ return groups;
+}
+
 export function autoLayoutProject(project:LayoutProject,takenAt:Record<string,number|undefined>,spec:PrintSpec,focusOf?:(photoId:string,slot:Slot,frameW:number,frameH:number)=>Slot,faces?:ReadonlySet<string>):AutoAlbumResult{
  const onCover=new Set<string>();
  for(const cover of [project.cover,project.backCover]){
@@ -286,15 +345,21 @@ export function autoLayoutProject(project:LayoutProject,takenAt:Record<string,nu
   return {id:photo.id,aspect,takenAt:takenAt[photo.id],pixels:(photo.width||0)*(photo.height||0),face:faces?.has(photo.id),name:photo.name};
  });
  const spreadAspect=spec.widthMm/spec.heightMm*2;
- const plan=planAlbum(photos,project.spreads.length,spreadAspect);
+ const sizeOfEarly=new Map(project.photos.map(photo=>[photo.id,{width:photo.width,height:photo.height}]));
+ const areaEarly={width:spec.widthMm*2,height:spec.heightMm};
+ // Foto que aguenta a lâmina inteira sem perder nitidez: candidata a ficar sozinha.
+ const alone=(photo:AlbumPhoto)=>!pickLayout([photo.aspect],spreadAspect,undefined,{sizes:[sizeOfEarly.get(photo.id)||{}],areaMm:areaEarly,dpi:spec.dpi})?.lowResolution;
+ const plan=planAlbum(photos,project.spreads.length,spreadAspect,alone);
  const sizeOf=new Map(project.photos.map(photo=>[photo.id,{width:photo.width,height:photo.height}]));
  const areaMm={width:spec.widthMm*2,height:spec.heightMm};
+ const pick=(ids:string[],previous?:string)=>pickLayout(ids.map(id=>aspectOf.get(id)??1.5),spreadAspect,previous,{sizes:ids.map(id=>sizeOf.get(id)||{}),areaMm,dpi:spec.dpi});
+ const groups=keepQuality(plan.groups,ids=>!!ids.length&&!!pick(ids)?.lowResolution,photos.map(photo=>photo.id));
  let previousName:string|undefined;let placed=0;
  const spreads=project.spreads.map((spread,i):Spread=>{
-  const ids=plan.groups[i]||[];
+  const ids=groups[i]||[];
   const base={...spread,frames:undefined,spacing:undefined};
   if(!ids.length){previousName=undefined;return {...base,layout:'dupla',slots:[emptySlot(),emptySlot()]};}
-  const fit=pickLayout(ids.map(id=>aspectOf.get(id)??1.5),spreadAspect,previousName,{sizes:ids.map(id=>sizeOf.get(id)||{}),areaMm,dpi:spec.dpi})!;
+  const fit=pick(ids,previousName)!;
   previousName=fit.layout.name;placed+=ids.length;
   const slots=fit.order.map((photoIndex,frameIndex)=>{
    const slot={...emptySlot(),photoId:ids[photoIndex]};

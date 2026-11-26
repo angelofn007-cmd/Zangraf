@@ -154,6 +154,29 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
     }
   });
 
+  test('Montagem automática prioriza a nitidez: foto única vai para quem aguenta a lâmina inteira', () => {
+    const {autoLayoutProject, keepQuality} = load('src/lib/auto-album.ts');
+    const {createProject, defaultPrintSpec, spreadRectangles} = load('src/lib/layout-projects.ts');
+    // Troca simples: a vertical sozinha (sem nitidez) troca de lugar com a horizontal da dupla vizinha.
+    const low = ids => ids.length === 1 && ids[0].startsWith('V');
+    assert.deepEqual(keepQuality([['V1'], ['V2', 'H1']], low, ['V1', 'V2', 'H1']), [['H1'], ['V1', 'V2']]);
+    // Álbum de 55 lâminas, páginas 24,3 × 34,6 cm, 80 fotos de câmera (2 verticais para cada horizontal).
+    const spec = {...defaultPrintSpec(), widthMm: 243, heightMm: 346, dpi: 300};
+    const p = createProject();
+    p.spreads = Array.from({length: 55}, (_, i) => ({...p.spreads[0], id: 's' + i}));
+    p.photos = Array.from({length: 80}, (_, i) => { const v = i % 3 !== 2; return {id: 'f' + i, name: `DSC_${1000 + i}.jpg`, blob: null, width: v ? 4000 : 6000, height: v ? 6000 : 4000}; });
+    const taken = {}; p.photos.forEach((f, i) => { taken[f.id] = Date.UTC(2026, 0, 1, 10) + i * 90000 * (i % 7 === 0 ? 40 : 1); });
+    const result = autoLayoutProject(p, taken, spec);
+    const size = new Map(p.photos.map(f => [f.id, f]));
+    let blurry = 0;
+    for (const spread of result.project.spreads) {
+      const rects = spreadRectangles(spread);
+      spread.slots.forEach((slot, k) => { if (!slot.photoId) return; const f = size.get(slot.photoId), r = rects[k];
+        if (25.4 * Math.min(f.width / (r.w * 486), f.height / (r.h * 346)) < 225) blurry++; });
+    }
+    assert.ok(blurry <= 5, `${blurry} fotos abaixo de 225 dpi (antes eram 19)`);
+  });
+
   test('Layouts de uma página só ficam no fim da lista de uma foto', () => {
     const {photoLayouts, fillsBothPages} = load('src/lib/album-layouts.ts');
     const list = photoLayouts(1, 1.4);
