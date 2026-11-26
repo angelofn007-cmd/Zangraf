@@ -43,11 +43,12 @@ type Entry={id:string;name:string;frames:FrameRect[];marginRatio?:number;mirror?
 const CATALOG:Record<number,Entry[]>={
  1:[
   {id:'full',name:'Panorâmica',frames:FULL,marginRatio:0},
-  {id:'page-right',name:'Página direita',frames:right(FULL),marginRatio:0},
-  {id:'page-left',name:'Página esquerda',frames:left(FULL),marginRatio:0},
   {id:'framed',name:'Moldura',frames:within(FULL,.07,.09,.86,.82)},
   {id:'portrait',name:'Retrato central',frames:within(FULL,.3,.06,.4,.88)},
   {id:'right-framed',name:'Destaque à direita',frames:within(FULL,.56,.1,.36,.8)},
+  // Uma página só (a outra fica vazia): por último, só quando a pessoa escolhe.
+  {id:'page-right',name:'Página direita',frames:right(FULL),marginRatio:0},
+  {id:'page-left',name:'Página esquerda',frames:left(FULL),marginRatio:0},
  ],
  2:[
   {id:'pages',name:'Uma por página',frames:[...left(FULL),...right(FULL)],marginRatio:0},
@@ -155,6 +156,12 @@ export function photoLayouts(count:number,spreadAspect=2):PhotoLayout[]{
  const list=fitting.length?fitting:all;
  // Nome pela contagem de fotos (o nome descritivo fica como dica).
  return list.map(layout=>({...layout,description:layout.name,name:layoutCountName(layout.frames)}));
+}
+
+/** O layout tem foto nas duas páginas da lâmina? Os de uma página só nunca são recomendados nem usados na montagem automática. */
+export function fillsBothPages(layout:Pick<PhotoLayout,'frames'>){
+ const eps=1e-6;
+ return layout.frames.some(f=>f.x<.5-eps)&&layout.frames.some(f=>f.x+f.w>.5+eps);
 }
 
 export type LayoutFit={layout:PhotoLayout;order:number[];score:number;lowResolution:boolean};

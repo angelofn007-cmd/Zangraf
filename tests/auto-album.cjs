@@ -154,6 +154,14 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
     }
   });
 
+  test('Layouts de uma página só ficam no fim da lista de uma foto', () => {
+    const {photoLayouts, fillsBothPages} = load('src/lib/album-layouts.ts');
+    const list = photoLayouts(1, 1.4);
+    assert.equal(list[0].id, 'full-1');
+    const firstSingle = list.findIndex(l => !fillsBothPages(l));
+    assert.ok(list.slice(firstSingle).every(l => !fillsBothPages(l)), list.map(l => l.id).join(','));
+  });
+
   test('Duas fotos ficam sempre uma em cada página inteira, mesmo com pouca resolução', () => {
     const area = {width: 600, height: 300};
     for (const px of [9000, 3000, 1800]) for (const aspect of [1.5, 2/3]) {

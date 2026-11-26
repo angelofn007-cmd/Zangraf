@@ -3,7 +3,7 @@ import {MAX_PHOTO_BYTES,checkAlbumCapacity} from '@/lib/album-capacity';
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import {coverSpineMm,coverRegions,photoLayouts,rankLayoutsForPhotos,DEFAULT_SPACING,type PhotoLayout} from '@/lib/album-layouts';
+import {coverSpineMm,coverRegions,photoLayouts,rankLayoutsForPhotos,fillsBothPages,DEFAULT_SPACING,type PhotoLayout} from '@/lib/album-layouts';
 import { Sparkles, Focus, ShoppingBag, ArrowRight, Plus, Save, ImagePlus, Undo2, Redo2, Copy, Trash2, WandSparkles, Eye, X, Check, RotateCcw, Upload, ChevronLeft, ChevronRight, ChevronUp, Send, Type, Palette, LayoutTemplate, Minus, Maximize, Search, Info, SunMoon, RotateCw, RefreshCw, Images, MousePointer2, Crop, AlignLeft, AlignCenter, AlignRight, Bold, Italic, FlipHorizontal2, FlipVertical2, Layers3, CircleCheck, CircleAlert, Ellipsis, ImageOff, CheckCheck, ZoomIn } from 'lucide-react';
 import {checkAlbum,ISSUE_INFO,ISSUE_ORDER,pageLabel,type AlbumIssue} from '@/lib/album-check';
 import {ALBUM_FONTS,FONT_GROUPS,MAIN_FONT_COUNT,ensureFont,fontsInGroup,type AlbumFont} from '@/lib/album-fonts';
@@ -702,7 +702,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const layoutOptions=photoLayouts(layoutCount,currentRatio);
  /** Medidas da área (lâmina aberta ou capa) para a recomendação não ampliar fotos além da resolução delas. */
  const rankOptions=(ids:(string|null)[])=>({sizes:ids.map(id=>id?photoSizes[id]||{}:{}),areaMm:{width:currentSpec.widthMm*(activePage<0?1:2),height:currentSpec.heightMm},dpi:currentSpec.dpi});
- const rankedLayouts=areaPhotoIds.length===layoutCount?rankLayoutsForPhotos(layoutOptions,areaPhotoIds.map(aspectOf),currentRatio,rankOptions(areaPhotoIds)):null;
+ // Nas lâminas, layouts de uma página só (a outra vazia) nunca são o "Melhor para suas fotos": ficam no fim da lista.
+ const rankedLayouts=areaPhotoIds.length===layoutCount?(list=>activePage>=0?[...list.filter(f=>fillsBothPages(f.layout)),...list.filter(f=>!fillsBothPages(f.layout))]:list)(rankLayoutsForPhotos(layoutOptions,areaPhotoIds.map(aspectOf),currentRatio,rankOptions(areaPhotoIds))):null;
  let projectPrintError='';
  try{validateProjectForPrint(project);if(!project.productionModel)throw new Error('Este projeto ainda não tem medidas oficiais de capa. Escolha a configuração no produto antes de preparar a impressão.');}catch(error){projectPrintError=(error as Error).message}
 
@@ -744,7 +745,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   const added=[...occupied,{...emptySlot(),photoId:id}];
   // Layout inteligente: escolhe a composição cujos quadros combinam com fotos em pé e deitadas.
   // A foto nova (última) tem prioridade no formato; as outras não podem perder qualidade.
-  const best=rankLayoutsForPhotos(photoLayouts(added.length,currentRatio),added.map(s=>aspectOf(s.photoId)),currentRatio,{...rankOptions(added.map(s=>s.photoId)),focus:added.length-1})[0];
+  const options=photoLayouts(added.length,currentRatio),both=options.filter(fillsBothPages);
+  const best=rankLayoutsForPhotos(both.length?both:options,added.map(s=>aspectOf(s.photoId)),currentRatio,{...rankOptions(added.map(s=>s.photoId)),focus:added.length-1})[0];
   // A primeira foto da lâmina ocupa a lâmina inteira; só a partir da segunda o layout divide.
   const full=added.length===1?photoLayouts(1,currentRatio).find(l=>l.id==='full-1'):added.length===2?photoLayouts(2,currentRatio).find(l=>l.id==='pages-2'):undefined;
   const layout=full||best?.layout||photoLayouts(added.length,currentRatio)[0];

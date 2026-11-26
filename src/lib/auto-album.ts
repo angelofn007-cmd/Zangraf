@@ -1,4 +1,4 @@
-import {photoLayouts,rankLayoutsForPhotos,DEFAULT_SPACING,type PhotoLayout,type LayoutFit} from './album-layouts';
+import {photoLayouts,rankLayoutsForPhotos,fillsBothPages,DEFAULT_SPACING,type PhotoLayout,type LayoutFit} from './album-layouts';
 import {emptySlot,type LayoutProject,type PrintSpec,type Slot,type Spread} from './layout-projects';
 
 /**
@@ -237,11 +237,7 @@ export function planAlbum(photos:AlbumPhoto[],spreadCount:number,spreadAspect=DE
  * evita repetir a composição da lâmina anterior quando há outra quase tão boa.
  */
 export type PickOptions=Parameters<typeof rankLayoutsForPhotos>[3];
-/** O layout tem foto nas duas páginas? (Na montagem automática nenhuma página fica em branco.) */
-export function fillsBothPages(layout:PhotoLayout){
- const eps=1e-6;
- return layout.frames.some(f=>f.x<.5-eps)&&layout.frames.some(f=>f.x+f.w>.5+eps);
-}
+export {fillsBothPages};
 /**
  * Escolhe o layout que mais combina com o formato das fotos. Para o álbum não ficar repetitivo,
  * evita repetir a composição da lâmina anterior quando há outra quase tão boa.
