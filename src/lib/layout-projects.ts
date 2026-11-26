@@ -10,7 +10,8 @@ import {configuredSheetCount,physicalPrintDimensions,validatePhysicalPrintSpec,M
 export type LayoutName = 'inteira' | 'dupla' | 'quatro' | 'editorial' | 'seis' | 'respiro' | 'livre';
 /** `takenAt`: quando a foto foi tirada (EXIF), em ms; ausente se o arquivo não tiver essa informação. */
 export type Photo = { id: string; name: string; blob: Blob; preview?: Blob; thumbnail?: Blob; width?: number; height?: number; takenAt?: number; /** Imagem importada só para usar como fundo (não aparece nas fotos do álbum). */ background?: boolean };
-export type Slot = { photoId: string | null; x: number; y: number; zoom?: number; flipX?: boolean; flipY?: boolean; adjust?: PhotoAdjust };
+export type Slot = { photoId: string | null; x: number; y: number; zoom?: number; flipX?: boolean; flipY?: boolean; adjust?: PhotoAdjust;
+ /** Enquadramento: true = escolhido automaticamente (rosto no centro, recalculado quando o quadro muda); false = ajustado pela pessoa (não mexer). */ auto?: boolean };
 export type FrameRect = {x:number;y:number;w:number;h:number};
 export type AlbumText = {id:string;text:string;x:number;y:number;width:number;fontSize:number;fontFamily:AlbumFont;color:string;bold:boolean;italic:boolean;align:'left'|'center'|'right';rotation?:0|90;/** Altura mínima da caixa, em % da altura da área; o texto fica centralizado nela. */height?:number};
 export type LayoutSpacing={marginMm:number;gapMm:number};
@@ -242,7 +243,8 @@ export function frameGeometry(rect:{x:number;y:number;w:number;h:number},spec:Pr
  if(spacing){
   const width=spec.widthMm*2,height=spec.heightMm;
   const margin=Math.min(Math.max(0,spacing.marginMm),Math.min(width,height)*.2);
-  const gap=Math.min(Math.max(0,spacing.gapMm),Math.min(width,height)*.1);
+  // Até 20% do lado menor (o painel permite até 40 mm); quadros estreitos são protegidos logo abaixo.
+  const gap=Math.min(Math.max(0,spacing.gapMm),Math.min(width,height)*.2);
   const innerW=width-margin*2,innerH=height-margin*2;
   const left=rect.x>.001?gap/2:0,right=rect.x+rect.w<.999?gap/2:0;
   const top=rect.y>.001?gap/2:0,bottom=rect.y+rect.h<.999?gap/2:0;

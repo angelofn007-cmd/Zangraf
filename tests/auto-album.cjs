@@ -64,8 +64,13 @@ test('Usa todas as fotos uma vez, todas as lâminas, e não mistura momentos na 
   assert.ok(group.length>=1&&group.length<=10,`lâmina com ${group.length} fotos`);
   assert.equal(new Set(group.map(momentOf)).size,1,'momentos misturados');
  }
- // Mantém a ordem da história.
- assert.deepEqual(all,photos.map(p=>p.id));
+ // Mantém a ordem da história (só a foto que abre cada momento pode ter sido adiantada).
+ const moments=[...new Set(photos.map(p=>momentOf(p.id)))];
+ assert.deepEqual(moments,[...new Set(all.map(momentOf))]);
+ for(const m of moments){
+  const used=all.filter(id=>momentOf(id)===m),original=photos.map(p=>p.id).filter(id=>momentOf(id)===m);
+  assert.deepEqual(used.slice(1),original.filter(id=>id!==used[0]));
+ }
 });
 
 test('Poucas fotos: uma por lâmina e o resto fica vazio',()=>{
@@ -113,5 +118,200 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
     assert.equal(pickLayout([.75, 1.5], 2.8).layout.id, 'pages-2');
     const three = pickLayout([.75, 1.5, 1], 2.8).layout;
     assert.ok(Math.abs(three.frames.reduce((s, f) => s + f.w * f.h, 0) - 1) < 1e-6);
+  });
+}
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {trimBursts, planAlbum, pickLayout} = load('src/lib/auto-album.ts');
+  const T = Date.UTC(2026, 4, 10, 15, 0, 0), SEC = 1000, MIN = 60 * SEC;
+
+  test('Fotos demais: descarta primeiro as repetidas de rajada, ficando a melhor de cada uma', () => {
+    const photos = [
+      {id: 'a1', aspect: 1.5, takenAt: T, pixels: 1e6},
+      {id: 'a2', aspect: 1.5, takenAt: T + SEC, pixels: 12e6},
+      {id: 'a3', aspect: 1.5, takenAt: T + 2 * SEC, pixels: 1e6},
+      {id: 'b', aspect: 1.5, takenAt: T + 5 * MIN, pixels: 1e6},
+      {id: 'c', aspect: 1.5, takenAt: T + 10 * MIN, pixels: 1e6},
+    ];
+    assert.deepEqual(trimBursts(photos, 3).map(p => p.id), ['a2', 'b', 'c']);
+    assert.deepEqual(trimBursts(photos, 4).map(p => p.id).length, 4);
+    assert.equal(trimBursts(photos, 10).length, 5, 'cabendo, não descarta nada');
+  });
+
+  test('A foto que abre o momento sozinha é a de formato mais próximo da lâmina', () => {
+    const photos = Array.from({length: 30}, (_, i) => ({id: 'p' + i, aspect: i === 2 ? 1.5 : 2 / 3, takenAt: T + i * MIN}));
+    const plan = planAlbum(photos, 6);
+    assert.deepEqual(plan.groups[0], ['p2']);
+    assert.equal(new Set(plan.groups.flat()).size, 30);
+  });
+
+  test('Foto sem resolução para a lâmina inteira vai para um quadro menor', () => {
+    const area = {width: 600, height: 300};
+    const sharp = pickLayout([1.5], 2, undefined, {sizes: [{width: 9000, height: 6000}], areaMm: area, dpi: 300});
+    assert.equal(sharp.layout.id, 'full-1');
+    const small = pickLayout([1.5], 2, undefined, {sizes: [{width: 4500, height: 3000}], areaMm: area, dpi: 300});
+    assert.notEqual(small.layout.id, 'full-1');
+    assert.equal(small.lowResolution, false);
+  });
+}
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {dateFromName, orderPhotos} = load('src/lib/auto-album.ts');
+  const {groupFocus} = load('src/lib/photo-focus.ts');
+  const T = Date.UTC(2026, 4, 10, 15, 30, 0), MIN = 60 * 1000;
+
+  test('Lê data e hora do nome do arquivo só quando estão completas', () => {
+    for (const name of ['IMG_20260510_153000.jpg', 'PXL_20260510_153000123.jpg', 'Screenshot_2026-05-10-15-30-00.png', '20260510_153000.jpg', 'Screenshot 2026-05-10 at 15.30.00.png'])
+      assert.equal(dateFromName(name), T, name);
+    for (const name of ['IMG-20260510-WA0001.jpg', 'IMG_1234.jpg', 'foto.jpg', 'IMG_20261310_153000.jpg', undefined])
+      assert.equal(dateFromName(name), undefined, String(name));
+  });
+
+  test('Foto sem data entra ao lado da vizinha de numeração da mesma câmera', () => {
+    const ordered = orderPhotos([
+      {id: 'semData', aspect: 1, name: 'IMG_1002.JPG'},
+      {id: 'a', aspect: 1, name: 'IMG_1001.JPG', takenAt: T},
+      {id: 'b', aspect: 1, name: 'IMG_1003.JPG', takenAt: T + MIN},
+      {id: 'antes', aspect: 1, name: 'IMG_0999.JPG'},
+      {id: 'outra', aspect: 1, name: 'DSC_0001.JPG'},
+    ]);
+    assert.deepEqual(ordered.map(p => p.id), ['antes', 'a', 'semData', 'b', 'outra']);
+    assert.equal(ordered.find(p => p.id === 'semData').takenAt, undefined, 'não inventa data');
+  });
+
+  test('Numeração que não acompanha as datas (duas câmeras): fotos sem data ficam no fim', () => {
+    const ordered = orderPhotos([
+      {id: 'x', aspect: 1, name: 'IMG_0500.JPG'},
+      {id: 'a', aspect: 1, name: 'IMG_0900.JPG', takenAt: T},
+      {id: 'b', aspect: 1, name: 'IMG_0100.JPG', takenAt: T + MIN},
+    ]);
+    assert.deepEqual(ordered.map(p => p.id), ['a', 'b', 'x']);
+  });
+
+  test('Recorte centraliza o casal, sem ser puxado por rostos pequenos ao fundo', () => {
+    assert.deepEqual(groupFocus([{x: .3, y: .4, size: .02}, {x: .5, y: .5, size: .018}, {x: .9, y: .2, size: .002}]), {x: .4, y: .45});
+    assert.deepEqual(groupFocus([{x: .2, y: .3}]), {x: .2, y: .3});
+    assert.equal(groupFocus([]), undefined);
+  });
+}
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {interestMap, bestCropPosition} = load('src/lib/photo-saliency.ts');
+  /** Foto vertical 30×60 de fundo branco com um "rosto" (bloco cor de pele) na altura `faceY`. */
+  function portrait(faceY, background = [245, 245, 245]) {
+    const w = 30, h = 60, data = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4, skin = Math.abs(x - 15) < 5 && Math.abs(y - faceY) < 6;
+      const [r, g, b] = skin ? [224, 172, 140] : background;
+      data[i] = r; data[i + 1] = g; data[i + 2] = b; data[i + 3] = 255;
+    }
+    return interestMap(data, w, h);
+  }
+
+  test('Recorte sem detector de rostos: encontra o rosto e o põe no meio do quadro', () => {
+    // Quadro horizontal: só 40% da altura da foto aparece.
+    const top = bestCropPosition(portrait(8), 1, .4);
+    assert.ok(top.y < 10, `rosto no alto: y=${top.y}`);
+    const bottom = bestCropPosition(portrait(50), 1, .4);
+    assert.ok(bottom.y > 80, `rosto embaixo: y=${bottom.y}`);
+    const middle = bestCropPosition(portrait(30), 1, .4);
+    assert.ok(Math.abs(middle.y - 50) < 10, `rosto no meio: y=${middle.y}`);
+    // O rosto fica dentro do recorte, perto do centro dele.
+    const visible = 24, start = top.y / 100 * (60 - visible);
+    assert.ok(8 > start && 8 < start + visible);
+  });
+
+  test('Foto sem nada de interesse continua centralizada; foto que cabe inteira não mexe', () => {
+    assert.deepEqual(bestCropPosition(portrait(-100), 1, .4), {x: 50, y: 50});
+    assert.deepEqual(bestCropPosition(portrait(8), 1, 1), {x: 50, y: 50});
+  });
+
+  test('Pele escura e clara são reconhecidas; parede branca e amarela não', () => {
+    // Um pixel da cor testada numa foto cinza (a cor ocupa pouco da foto, como um rosto).
+    const one = rgb => {const data = new Uint8ClampedArray(100 * 4).fill(128); data.set([...rgb, 255], 0); for (let i = 3; i < data.length; i += 4) data[i] = 255; return interestMap(data, 10, 10).values[0];};
+    const white = one([245, 245, 245]), yellow = one([230, 190, 50]);
+    for (const [name, skin] of [['pele clara', [224, 172, 140]], ['pele escura', [120, 80, 60]]]) {
+      assert.ok(one(skin) > white + 1, `${name} vale mais que branco`);
+      assert.ok(one(skin) > yellow + 1, `${name} vale mais que amarelo`);
+    }
+  });
+}
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {interestMap, autoFrame} = load('src/lib/photo-saliency.ts');
+  const {emptySlot} = load('src/lib/layout-projects.ts');
+  function portrait(faceY) {
+    const w = 30, h = 60, data = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4, skin = Math.abs(x - 15) < 5 && Math.abs(y - faceY) < 6;
+      const [r, g, b] = skin ? [224, 172, 140] : [245, 245, 245];
+      data[i] = r; data[i + 1] = g; data[i + 2] = b; data[i + 3] = 255;
+    }
+    return interestMap(data, w, h);
+  }
+  test('Enquadramento automático: foto vertical em quadro horizontal mostra o rosto, sem ampliar', () => {
+    const slot = {...emptySlot(), photoId: 'p'};
+    const framed = autoFrame(slot, 3000, 6000, 300, 200, {map: portrait(8)});
+    assert.equal(framed.auto, true); assert.equal(framed.zoom, 1); assert.equal(framed.x, 50);
+    assert.ok(framed.y < 10, `y=${framed.y}`);
+    // Rosto detectado pelo navegador tem prioridade e fica no centro.
+    const face = autoFrame(slot, 3000, 6000, 300, 200, {face: {x: .5, y: .25}, map: portrait(50)});
+    assert.ok(face.y < 25, `y=${face.y}`);
+    // Foto que cabe inteira no quadro: fica como está (centro).
+    assert.equal(autoFrame(slot, 3000, 2000, 300, 200, {map: portrait(8)}).y, 50);
+  });
+}
+
+{
+  const test = require('node:test'), assert = require('node:assert/strict'), load = require('./load-ts.cjs');
+  const {interestMap, autoFrame, subjectFromFaces, subjectPoint} = load('src/lib/photo-saliency.ts');
+  const {emptySlot} = load('src/lib/layout-projects.ts');
+
+  test('Parede cor de pele não puxa o recorte (só um rosto pequeno conta como pele)', () => {
+    // Foto horizontal toda bege com uma pessoa escura no meio: o recorte não deve fugir para a parede.
+    const w = 60, h = 40, data = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4, person = Math.abs(x - 30) < 8;
+      const [r, g, b] = person ? [40, 30, 60] : [205, 175, 140];
+      data[i] = r; data[i + 1] = g; data[i + 2] = b; data[i + 3] = 255;
+    }
+    const framed = autoFrame({...emptySlot(), photoId: 'p'}, 6000, 4000, 200, 300, {map: interestMap(data, w, h)});
+    assert.ok(Math.abs(framed.x - 50) < 15, `x=${framed.x}`);
+  });
+
+  test('Com rosto detectado, a cabeça inteira (testa e cabelo) fica dentro e no centro do quadro', () => {
+    // Foto 3:2, rosto no meio um pouco acima; quadro vertical (só ~44% da largura aparece).
+    const faces = [{x: .5, y: .45, size: .02, box: {x: .45, y: .38, w: .1, h: .14}}, {x: .9, y: .2, size: .001, box: {x: .89, y: .19, w: .02, h: .02}}];
+    const subject = subjectFromFaces(faces);
+    assert.ok(subject.heads.y < .38 && subject.heads.h > .14, 'caixa inclui a testa e o cabelo');
+    assert.ok(subject.heads.x + subject.heads.w < .7, 'rosto pequeno ao fundo não entra');
+    const framed = autoFrame({...emptySlot(), photoId: 'p'}, 6000, 4000, 200, 300, subject);
+    const visible = (4000 * 200 / 300) / 6000, left = framed.x / 100 * (1 - visible);
+    assert.ok(left < subject.heads.x && left + visible > subject.heads.x + subject.heads.w, 'cabeça inteira no recorte');
+    assert.ok(Math.abs(left + visible / 2 - .5) < .02, 'rosto no centro');
+    assert.equal(framed.zoom, 1, 'sem ampliar (sem perder qualidade)');
+  });
+
+  test('Cabeças que não cabem no recorte: centraliza pelo menos o rosto', () => {
+    const subject = {face: {x: .3, y: .5}, heads: {x: .1, y: .2, w: .8, h: .5}};
+    const point = subjectPoint(subject, 6000, 4000, 200, 300);
+    assert.equal(point.x, .3, 'largura: cabeças não cabem, fica no rosto');
+    assert.equal(point.y, .5, 'altura: cabeça cabe e o rosto já fica no centro');
+  });
+
+  test('Centraliza exatamente no rosto, afastando só o mínimo para não cortar a cabeça', () => {
+    // Quadro horizontal numa foto vertical: aparece 40% da altura. Rosto bem no alto da foto.
+    const subject = {face: {x: .5, y: .2}, heads: {x: .4, y: .02, w: .2, h: .3}};
+    const point = subjectPoint(subject, 4000, 6000, 300, 180);
+    assert.equal(point.x, .5);
+    // Centrado no rosto (y .2) o recorte ia de 0 a .4: a cabeça (0,02–0,32) já cabe, então fica no rosto.
+    assert.ok(Math.abs(point.y - .2) < .01, `y=${point.y}`);
+    const low = subjectPoint({face: {x: .5, y: .5}, heads: {x: .4, y: .2, w: .2, h: .35}}, 4000, 6000, 300, 200);
+    const visible = (4000 * 200 / 300) / 6000;
+    assert.ok(low.y - visible / 2 <= .2 + 1e-9, 'topo do cabelo dentro');
   });
 }
