@@ -154,6 +154,16 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
     assert.notEqual(small.layout.id, 'full-1');
     assert.equal(small.lowResolution, false);
   });
+
+  test('Montagem automática nunca deixa uma página da lâmina em branco', () => {
+    const {fillsBothPages} = load('src/lib/auto-album.ts');
+    const area = {width: 600, height: 300};
+    // Fotos com pouca resolução para ocupar uma página inteira: antes caíam em "Dupla na direita"/"Página direita".
+    for (const count of [1, 2, 3, 4, 5, 6]) for (const aspect of [1.5, 2/3, 1]) for (const px of [9000, 3000, 1800, 1200]) {
+      const fit = pickLayout(Array(count).fill(aspect), 2, undefined, {sizes: Array(count).fill({width: px, height: Math.round(px / aspect)}), areaMm: area, dpi: 300});
+      assert.ok(fit && fillsBothPages(fit.layout), `${count} foto(s) ${aspect} ${px}px → ${fit && fit.layout.id}`);
+    }
+  });
 }
 
 {

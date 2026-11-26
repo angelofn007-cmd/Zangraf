@@ -237,13 +237,20 @@ export function planAlbum(photos:AlbumPhoto[],spreadCount:number,spreadAspect=DE
  * evita repetir a composição da lâmina anterior quando há outra quase tão boa.
  */
 export type PickOptions=Parameters<typeof rankLayoutsForPhotos>[3];
+/** O layout tem foto nas duas páginas? (Na montagem automática nenhuma página fica em branco.) */
+export function fillsBothPages(layout:PhotoLayout){
+ const eps=1e-6;
+ return layout.frames.some(f=>f.x<.5-eps)&&layout.frames.some(f=>f.x+f.w>.5+eps);
+}
 /**
  * Escolhe o layout que mais combina com o formato das fotos. Para o álbum não ficar repetitivo,
  * evita repetir a composição da lâmina anterior quando há outra quase tão boa.
  * Com `options.sizes`/`areaMm`/`dpi`, evita quadros grandes demais para a resolução das fotos.
  */
 export function pickLayout(aspects:number[],spreadAspect:number,previousName?:string,options:PickOptions={}):LayoutFit|undefined{
- const all=photoLayouts(aspects.length,spreadAspect);
+ // Layouts que deixam uma página vazia (ex.: "Dupla na direita") ficam só para quem monta à mão.
+ const every=photoLayouts(aspects.length,spreadAspect),both=every.filter(fillsBothPages);
+ const all=both.length?both:every;
  const rank=(layouts:PhotoLayout[])=>rankLayoutsForPhotos(layouts,aspects,spreadAspect,options);
  // 1 foto = lâmina inteira; 2 fotos = meio a meio (uma por página)…
  const fixed=aspects.length===1?all.find(l=>l.id==='full-1'):aspects.length===2?all.find(l=>l.id==='pages-2'):undefined;
