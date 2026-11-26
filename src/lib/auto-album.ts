@@ -252,16 +252,11 @@ export function pickLayout(aspects:number[],spreadAspect:number,previousName?:st
  const every=photoLayouts(aspects.length,spreadAspect),both=every.filter(fillsBothPages);
  const all=both.length?both:every;
  const rank=(layouts:PhotoLayout[])=>rankLayoutsForPhotos(layouts,aspects,spreadAspect,options);
- // 1 foto = lâmina inteira, sempre (a checagem do editor avisa se a foto ficar com pouca nitidez).
- if(aspects.length===1){const full=every.find(l=>l.id==='full-1');if(full)return rank([full])[0];}
- // 2 fotos = meio a meio (uma por página)…
- const fixed=aspects.length===2?all.find(l=>l.id==='pages-2'):undefined;
- if(fixed){
-  const fit=rank([fixed])[0];
-  if(!fit.lowResolution)return fit;
-  // …a não ser que a foto fique sem nitidez nesse tamanho: aí vai para um quadro menor que ela aguente.
-  return rank(all).find(other=>!other.lowResolution)||fit;
- }
+ // Igual a quando a pessoa adiciona as fotos à mão: 1 foto = lâmina inteira; 2 fotos = uma em cada página inteira.
+ // Sempre assim (a checagem do editor avisa se alguma foto ficar com pouca nitidez na impressão).
+ const fixedId=aspects.length===1?'full-1':aspects.length===2?'pages-2':undefined;
+ const fixed=fixedId&&every.find(l=>l.id===fixedId);
+ if(fixed)return rank([fixed])[0];
  // Da 3ª em diante: mosaicos que cobrem a lâmina toda (sem área vazia), escolhidos pelo formato das fotos.
  const covering=all.filter(l=>Math.abs(l.frames.reduce((sum,f)=>sum+f.w*f.h,0)-1)<1e-6);
  let ranked=rank(covering.length?covering:all);

@@ -154,11 +154,12 @@ test('Monta o projeto: cada lâmina com layout próprio, fotos da capa ficam for
     }
   });
 
-  test('Duas fotos com pouca resolução continuam preenchendo as duas páginas', () => {
-    const {fillsBothPages} = load('src/lib/auto-album.ts');
+  test('Duas fotos ficam sempre uma em cada página inteira, mesmo com pouca resolução', () => {
     const area = {width: 600, height: 300};
-    const small = pickLayout([1.5, 1.5], 2, undefined, {sizes: [{width: 1800, height: 1200}, {width: 1800, height: 1200}], areaMm: area, dpi: 300});
-    assert.ok(fillsBothPages(small.layout), small.layout.id);
+    for (const px of [9000, 3000, 1800]) for (const aspect of [1.5, 2/3]) {
+      const fit = pickLayout([aspect, aspect], 2, undefined, {sizes: [{width: px, height: Math.round(px / aspect)}, {width: px, height: Math.round(px / aspect)}], areaMm: area, dpi: 300});
+      assert.equal(fit.layout.id, 'pages-2', `${aspect} ${px}px`);
+    }
   });
 
   test('Montagem automática nunca deixa uma página da lâmina em branco', () => {
