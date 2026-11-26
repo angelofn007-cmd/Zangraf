@@ -1,3 +1,4 @@
+import {coverSpineMm} from './album-layouts';
 import {coverPageIndices} from './cover-production';
 import {cropRectangle,effectiveDpi,frameGeometry,projectSpec,resolutionLevel,spreadRectangles,type AlbumText,type LayoutProject,type Photo,type Slot} from './layout-projects';
 
@@ -12,7 +13,7 @@ export type AlbumIssue={kind:IssueKind;level:'error'|'warning';page:number;frame
 /** Títulos, explicações e ordem de exibição de cada tipo de problema. */
 export const ISSUE_INFO:Record<IssueKind,{title:string;hint:string}>={
  'low-dpi':{title:'Fotos que podem sair borradas',hint:'A foto está grande demais para a resolução dela. Diminua o zoom, use um quadro menor ou envie o arquivo original.'},
- 'fold-face':{title:'Rosto na dobra do meio',hint:'Um rosto ficou bem em cima da dobra central do álbum. Arraste a foto para o lado ou troque o layout.'},
+ 'fold-face':{title:'Rosto na dobra da capa',hint:'Um rosto ficou bem em cima do dorso da capa. Arraste a foto para o lado ou troque o layout.'},
  'text-edge':{title:'Texto perto do corte',hint:`Textos a menos de ${SAFE_MARGIN_MM} mm da borda podem ser cortados no acabamento. Afaste-os da beirada.`},
  'empty-frame':{title:'Quadros vazios',hint:'Esses quadros serão impressos sem foto. Coloque uma foto ou exclua o quadro.'},
  'duplicate':{title:'Fotos repetidas',hint:'A mesma foto aparece mais de uma vez no álbum. Confira se foi de propósito.'},
@@ -47,7 +48,7 @@ export function textBox(text:AlbumText,widthMm:number,heightMm:number){
 
 /**
  * Tudo que pode dar problema na impressão, com a lâmina (e o quadro ou texto) onde está.
- * `faces` é opcional: sem ele, fotos que atravessam a dobra viram um aviso para conferir.
+ * `faces` é opcional: sem ele, não dá para saber se há rosto no dorso da capa.
  */
 export function checkAlbum(project:LayoutProject,faces?:FaceLookup):AlbumIssue[]{
  const issues:AlbumIssue[]=[];
@@ -60,6 +61,21 @@ export function checkAlbum(project:LayoutProject,faces?:FaceLookup):AlbumIssue[]
   if(level!=='ok'&&dpi!==undefined)issues.push({kind:level==='low'?'low-dpi':'limit-dpi',level:level==='low'?'error':'warning',page,frame,detail:`${photo.name} · ${Math.round(dpi)} DPI de ${target}`});
  };
 
+ // Rosto em cima da dobra do meio: só na capa inteira (o dorso). Nas lâminas, fotos na dobra são normais e não avisam.
+ const checkFold=(slot:Slot,page:number,frame:number,trim:{x:number;w:number},image:{x:number;w:number;h:number},fold:number,bandMm:number)=>{
+  const photo=photos.get(slot.photoId||'');
+  if(!photo?.width||!photo.height)return;
+  // A foto atravessa a dobra com uma parte relevante dos dois lados?
+  if(Math.min(fold-trim.x,trim.x+trim.w-fold)<Math.min(15,trim.w*.1))return;
+  const known=faces?.(photo.id);if(!known)return;
+  const crop=cropRectangle(photo.width,photo.height,image.w,image.h,slot);
+  const toPhotoX=(mm:number)=>{let u=(mm-image.x)/image.w;if(slot.flipX)u=1-u;return (crop.x+u*crop.width)/photo.width!;};
+  const band=[toPhotoX(fold-bandMm/2),toPhotoX(fold+bandMm/2)].sort((a,b)=>a-b);
+  const yTop=crop.y/photo.height,yBottom=(crop.y+crop.height)/photo.height;
+  if(known.some(face=>face.x>=band[0]&&face.x<=band[1]&&face.y>=yTop&&face.y<=yBottom))
+   issues.push({kind:'fold-face',level:'error',page,frame,detail:photo.name});
+ };
+
  project.spreads.forEach((spread,page)=>{
   const spec=projectSpec(project,page);const W=spec.widthMm*2,H=spec.heightMm,fold=spec.widthMm;
   let photosHere=0;
@@ -67,21 +83,8 @@ export function checkAlbum(project:LayoutProject,faces?:FaceLookup):AlbumIssue[]
    const slot=spread.slots[frame];
    if(!slot?.photoId||!photos.has(slot.photoId)){issues.push({kind:'empty-frame',level:'error',page,frame,detail:`Quadro ${frame+1}`});return;}
    photosHere++;usePhoto(slot,page,frame);
-   const photo=photos.get(slot.photoId)!;
-   const {trim,image}=frameGeometry(rect,spec,true,spread.spacing);
+   const {image}=frameGeometry(rect,spec,true,spread.spacing);
    checkResolution(slot,page,frame,image.w,image.h,spec.dpi);
-   // A foto atravessa a dobra com uma parte relevante dos dois lados?
-   const side=Math.min(fold-trim.x,trim.x+trim.w-fold);
-   if(side<Math.min(15,trim.w*.1))return;
-   const known=photo.width&&photo.height?faces?.(photo.id):undefined;
-   if(known&&photo.width&&photo.height){
-    const crop=cropRectangle(photo.width,photo.height,image.w,image.h,slot);
-    const toPhotoX=(mm:number)=>{let u=(mm-image.x)/image.w;if(slot.flipX)u=1-u;return (crop.x+u*crop.width)/photo.width!;};
-    const band=[toPhotoX(fold-FOLD_BAND_MM/2),toPhotoX(fold+FOLD_BAND_MM/2)].sort((a,b)=>a-b);
-    const yTop=crop.y/photo.height,yBottom=(crop.y+crop.height)/photo.height;
-    if(known.some(face=>face.x>=band[0]&&face.x<=band[1]&&face.y>=yTop&&face.y<=yBottom))
-     issues.push({kind:'fold-face',level:'error',page,frame,detail:photo.name});
-   }
   });
   for(const text of spread.texts||[]){
    if(!text.text.trim()||text.rotation===90)continue;
@@ -100,18 +103,24 @@ export function checkAlbum(project:LayoutProject,faces?:FaceLookup):AlbumIssue[]
  for(const [cover,page] of [[project.cover,-1],[project.backCover,-2]] as const){
   if(!cover||!covers.includes(page))continue;
   const spec=projectSpec(project,page);
+  // Só a capa inteira tem dobra no meio: o dorso (mais um pouco de cada lado).
+  const wrap=project.productionModel?.coverMode==='wrap'&&page===-1;
+  const fold=spec.widthMm/2,band=coverSpineMm(project)+FOLD_BAND_MM;
   if(cover.composition){
    spreadRectangles(cover.composition).forEach((rect,frame)=>{
     const slot=cover.composition!.slots[frame];
     const spine=Math.abs(rect.x+rect.w/2-.5)<.001&&rect.w<.15;
     if(!slot?.photoId||!photos.has(slot.photoId)){if(!spine)issues.push({kind:'empty-frame',level:'error',page,frame,detail:`Quadro ${frame+1}`});return;}
     usePhoto(slot,page,frame);
-    const {image}=frameGeometry(rect,{...spec,widthMm:spec.widthMm/2},false,cover.composition!.spacing);
+    const {trim,image}=frameGeometry(rect,{...spec,widthMm:spec.widthMm/2},false,cover.composition!.spacing);
     checkResolution(slot,page,frame,image.w,image.h,spec.dpi);
+    if(wrap&&!spine)checkFold(slot,page,frame,trim,image,fold,band);
    });
   }else if(cover.photo.photoId&&photos.has(cover.photo.photoId)){
    usePhoto(cover.photo,page,0);
-   checkResolution(cover.photo,page,0,spec.widthMm+spec.bleedMm*2,spec.heightMm+spec.bleedMm*2,spec.dpi);
+   const image={x:-spec.bleedMm,w:spec.widthMm+spec.bleedMm*2,h:spec.heightMm+spec.bleedMm*2};
+   checkResolution(cover.photo,page,0,image.w,image.h,spec.dpi);
+   if(wrap)checkFold(cover.photo,page,0,{x:0,w:spec.widthMm},image,fold,band);
   }
  }
 

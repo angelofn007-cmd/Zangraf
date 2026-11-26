@@ -52,15 +52,25 @@ test('Foto atravessando a dobra não gera aviso quando não se sabe dos rostos',
  assert.deepEqual(kinds(checkAlbum(project)),[]);
 });
 
-test('Rosto no meio da foto que atravessa a dobra é erro; rosto do lado não é',()=>{
+test('Rosto na dobra do meio da lâmina não gera aviso',()=>{
  const project=album();
- project.photos=[photo('a',8000,4000)]; // 2:1, ocupa a lâmina inteira sem recorte
+ project.photos=[photo('a',8000,4000)];
  project.spreads=[{...createSpread('inteira'),slots:[slot('a')]}];
- assert.deepEqual(kinds(checkAlbum(project,()=>[{x:.5,y:.4}])),['fold-face']);
- assert.deepEqual(kinds(checkAlbum(project,()=>[{x:.2,y:.4}])),[]);
- // Espelhada, o rosto da direita continua fora da dobra.
- project.spreads[0].slots[0].flipX=true;
- assert.deepEqual(kinds(checkAlbum(project,()=>[{x:.8,y:.4}])),[]);
+ assert.deepEqual(kinds(checkAlbum(project,()=>[{x:.5,y:.4}])),[]);
+});
+
+test('Rosto no dorso da capa inteira é erro; rosto do lado não é; capa separada não tem dobra',()=>{
+ const project=album();
+ project.photos.push(photo('c',8000,4000));
+ const spec={...project.printSpec,widthMm:600,heightMm:300};
+ project.productionModel={id:'m',variantId:'v',version:'1',name:'M',sheets:1,coverMode:'wrap',front:spec,back:spec,page:project.printSpec};
+ project.cover={...(project.cover||{}),photo:slot('c')};
+ const faceOn=x=>id=>id==='c'?[{x,y:.4}]:[];
+ assert.deepEqual(kinds(checkAlbum(project,faceOn(.5))),['fold-face']);
+ assert.equal(checkAlbum(project,faceOn(.5))[0].page,-1);
+ assert.deepEqual(kinds(checkAlbum(project,faceOn(.2))),[]);
+ project.productionModel.coverMode='separate';
+ assert.deepEqual(kinds(checkAlbum(project,faceOn(.5))).filter(k=>k==='fold-face'),[]);
 });
 
 test('Texto encostado na borda é erro; texto atravessando a dobra é aviso',()=>{
