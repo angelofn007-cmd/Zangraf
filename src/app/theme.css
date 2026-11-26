@@ -88,3 +88,9 @@ html.zg-home-soft main{animation:zg-home-in .9s cubic-bezier(.22,.8,.24,1) .1s b
 /* Páginas de entrar e criar conta: sem o rodapé escuro, só o cartão de acesso */
 body:has(.auth-shell) .zg-foot{display:none}
 body:has(.auth-shell) main{padding-bottom:40px}
+
+/* Cabeçalho de ponta a ponta: fundo e linha de baixo ocupam a tela inteira (sem faixas nas bordas);
+   o conteúdo continua na mesma largura de antes (1440 px com 6% de respiro). Sem desfoque por trás,
+   que deixava as pontas com outra cor. */
+.zg-header{max-width:none;margin:0;background:var(--beige);backdrop-filter:none;-webkit-backdrop-filter:none}
+@media(min-width:761px){.zg-header{padding-left:max(6%,calc((100% - 1440px) / 2 + 86.4px));padding-right:max(6%,calc((100% - 1440px) / 2 + 86.4px))}}

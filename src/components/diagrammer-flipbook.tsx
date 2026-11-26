@@ -64,11 +64,15 @@ function edgeColor(canvas:HTMLCanvasElement,from:number,to:number,outerLeft:bool
  * As bordas das placas (a espessura da capa) ficam com a cor que a arte tem na margem de segurança:
  * a placa de trás com a borda do verso e a da frente com a borda da capa.
  */
+const boardCache=new WeakMap<LayoutProject,{back?:string;front?:string}>();
 function useBoardColors(project:LayoutProject){
- const [colors,setColors]=useState<{back?:string;front?:string}>({});
+ const [colors,setColors]=useState<{back?:string;front?:string}>(()=>boardCache.get(project)||{});
  useEffect(()=>{
+  const cached=boardCache.get(project);if(cached){setColors(cached);return;}
   let active=true;
-  void import('./diagrammer-export').then(async({renderPage})=>{
+  // Desenhar a capa num canvas é trabalho pesado: espera um momento livre do navegador (nunca no meio de uma animação).
+  const idle=(window as unknown as {requestIdleCallback?:(cb:()=>void,o?:{timeout:number})=>number}).requestIdleCallback||((cb:()=>void)=>window.setTimeout(cb,400));
+  idle(()=>{if(!active)return;void import('./diagrammer-export').then(async({renderPage})=>{
    const wrap=isWrap(project);
    if(wrap){
     const canvas=await renderPage(project,-1);const info=spineInfo(project),half=info.face/info.total;
@@ -76,7 +80,7 @@ function useBoardColors(project:LayoutProject){
    }
    const [front,back]=await Promise.all([renderPage(project,-1),renderPage(project,-2)]);
    return {back:edgeColor(back,0,1,true),front:edgeColor(front,0,1,false)};
-  }).then(found=>{if(active)setColors(found);}).catch(()=>undefined);
+  }).then(found=>{boardCache.set(project,found);if(active)setColors(found);}).catch(()=>undefined);},{timeout:4000});
   return()=>{active=false;};
  },[project]);
  return colors;
@@ -112,7 +116,7 @@ function CurvedSpine({project,urls}:{project:LayoutProject;urls:Record<string,st
  * com a arte do diagramador. Arrastar gira em qualquer direção, direto no transform (sem redesenhar a página);
  * o ângulo também vai para --ry, para a luz de cada lado acompanhar o giro.
  */
-function FourDView({project,urls}:{project:LayoutProject;urls:Record<string,string>}){
+function FourDView({project,urls,start=true}:{project:LayoutProject;urls:Record<string,string>;/** Montado escondido durante a entrega; a entrada só começa quando a caixa abre. */start?:boolean}){
  const info=spineInfo(project);
  const box=useRef<HTMLDivElement>(null),view=useRef<HTMLDivElement>(null),pose=useRef({y:-90,x:-6}),drag=useRef<{px:number;py:number;y:number;x:number}|null>(null);
  const place=(y:number,x:number,smooth:boolean)=>{pose.current={y,x};const el=box.current;if(!el)return;el.classList.toggle('is-dragging',!smooth);el.style.transform=`rotateX(${x}deg) rotateY(${y}deg)`;el.style.setProperty('--ry',`${y}deg`);};
@@ -120,10 +124,13 @@ function FourDView({project,urls}:{project:LayoutProject;urls:Record<string,stri
  // depois fica flutuando de leve. Tudo no próprio álbum 3D, sem opacidade nele (opacidade achata o 3D),
  // com a luz acompanhando o giro; quem aparece aos poucos é a área em volta.
  useEffect(()=>{
-  const el=box.current,stage=view.current;if(!el||!stage)return;
+  const el=box.current,stage=view.current;if(!el||!stage||!start)return;
   const done=()=>stage.classList.add('is-landed');
+  stage.classList.add('is-entering');
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){done();return;}
-  const frame=(y:number,ry:number,rx:number,scale:number)=>({transform:`translateY(${y}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`,'--ry':`${ry}deg`});
+  // Só transform (roda na placa de vídeo). A luz de cada lado fica no ângulo final durante a entrada:
+  // animar o ângulo da luz obrigava o navegador a recalcular e redesenhar o álbum inteiro a cada quadro.
+  const frame=(y:number,ry:number,rx:number,scale:number)=>({transform:`translateY(${y}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`});
   el.classList.add('is-dragging');
   // Cada trecho com a sua curva: sobe girando, passa um pouco do ponto e assenta.
   const anim=el.animate([
@@ -134,18 +141,21 @@ function FourDView({project,urls}:{project:LayoutProject;urls:Record<string,stri
   ],{duration:1700,easing:'linear',fill:'backwards'});
   anim.onfinish=()=>{el.classList.remove('is-dragging');done();};
   return()=>anim.cancel();
- },[]);
+ },[start]);
  const color=(project.cover||defaultCover()).color;
  const boards=useBoardColors(project);
  const end=()=>{drag.current=null;box.current?.classList.remove('is-dragging');view.current?.classList.remove('is-holding');};
- return <div className="dm-4d">
+ return <div className={'dm-4d'+(start?'':' is-waiting')} aria-hidden={!start||undefined}>
   <div ref={view} className="dm-spine-view" onPointerDown={e=>{drag.current={px:e.clientX,py:e.clientY,...pose.current};e.currentTarget.setPointerCapture(e.pointerId);e.currentTarget.classList.add('is-holding');}}
    onPointerMove={e=>{const d=drag.current;if(!d)return;place(d.y+(e.clientX-d.px)*.5,Math.max(-45,Math.min(30,d.x-(e.clientY-d.py)*.35)),false);}}
    onPointerUp={end} onPointerCancel={end}>
+   {/* Destaque: holofote atrás do álbum e estouro de raios nas cores HP quando ele assenta */}
+   <span className="dm-4d-glow" aria-hidden="true"/>
+   <span className="dm-4d-burst" aria-hidden="true">{[0,1,2,3,4,5,6,7,8,9].map(i=><i key={i} style={{'--k':i} as React.CSSProperties}/>)}</span>
    <div className="dm-4d-float">
    <div ref={box} className="dm-spine-box" style={{'--s':info.spine/info.height,'--f':info.face/info.height,'--board':color,'--board-back':boards.back||color,'--board-front':boards.front||color,'--ry':'-90deg',transform:'rotateX(-6deg) rotateY(-90deg)'} as React.CSSProperties}>
     <CurvedSpine project={project} urls={urls}/>
-    <div className="dm-spine-face front"><FaceArt project={project} index={-1} urls={urls}/></div>
+    <div className="dm-spine-face front"><FaceArt project={project} index={-1} urls={urls}/><i className="dm-4d-sheen" aria-hidden="true"/></div>
     <div className="dm-spine-face back"><FaceArt project={project} index={-2} urls={urls}/></div>
     {/* Placas da capa com espessura: face de dentro e as bordas (em cima, embaixo e na frente) */}
     {['back','front'].map(side=><React.Fragment key={side}>
@@ -222,7 +232,7 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
  return <section className="dm-flipbook" aria-label="Folheamento do álbum">
   {/* A abertura ocupa a tela inteira por cima da prévia; no fim o 4D já está montado embaixo e ela some aos poucos */}
   {introShown&&<PreviewIntro cover={<FaceArt project={project} index={-1} urls={urls}/>} onReveal={endIntro} onGone={hideIntro}/>}
-  {intro?<div className="dm-intro-spacer"/>:spineOpen?<div className="dm-book-stage dm-book-stage-spine"><FourDView project={project} urls={urls}/></div>:
+  {spineOpen&&hasCovers?<div className="dm-book-stage dm-book-stage-spine"><FourDView project={project} urls={urls} start={!intro}/></div>:intro?<div className="dm-intro-spacer"/>:
   <div className={'dm-book-stage '+(flat?'flat':'')} onPointerDown={e=>{swipe.current=e.clientX;window.getSelection()?.removeAllRanges()}} onDragStart={e=>e.preventDefault()} onPointerUp={e=>{const start=swipe.current;swipe.current=null;if(start!==null&&Math.abs(e.clientX-start)>45)move(e.clientX<start?1:-1)}}>
    <button type="button" className="dm-book-arrow prev" aria-label="Voltar" disabled={position===0||!!turn} onClick={()=>move(-1)}><ChevronLeft size={24}/></button>
    <div data-side={closedSide} data-turn={coverTurn?(index<0?'open':'close'):undefined} className={'dm-book'+(index<0&&!turn?' is-closed':'')+(coverTurn?' is-cover-turn':'')+(armed?' is-arming':'')} style={{['--turn-ms' as string]:`${turnMs}ms`,aspectRatio:ratio,width:`min(100%, calc((100dvh - 395px) * ${ratio}))`,['--shift' as string]:`${shift(shown)}%`,['--hinge' as string]:`${Math.min(12,15/spineInfo(project).face*100)}%`}} aria-busy={!!turn}>
@@ -237,7 +247,8 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
    </div>
    <button type="button" className="dm-book-arrow next" aria-label="Avançar" disabled={position===indices.length-1||!!turn} onClick={()=>move(1)}><ChevronRight size={24}/></button>
   </div>}
-  {!intro&&<div className={'dm-book-bar'+(spineOpen?' is-4d':'')}>
+  {/* Montada já durante a entrega (fica por baixo dela): na troca para o 4D não há nada pesado a montar. */}
+  {<div className={'dm-book-bar'+(spineOpen?' is-4d':'')}>
    {/* No 4D só o álbum aparece: a contagem e as miniaturas descem e somem; o botão fica no mesmo lugar */}
    <div className="dm-book-extras" aria-hidden={spineOpen||undefined} inert={spineOpen||undefined}>
    <span className="dm-book-count" aria-live="polite"><strong key={index}>{label}</strong><small>{position+1}/{indices.length}</small></span>

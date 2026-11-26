@@ -134,16 +134,16 @@ export type IntroSounds = {
  setVolume: (volume: number) => void;
 };
 
-const VOLUME_KEY = 'zangraf-intro-volume';
+const VOLUME_KEY = 'zangraf-intro-volume-v2';
 /** Volume máximo da trilha; o controle vai de 0 até aqui. */
-const MAX_LEVEL = .7;
-/** Volume escolhido pela pessoa (fica salvo neste navegador). Começa em 55%, um pouco baixo. */
+const MAX_LEVEL = .3;
+/** Volume escolhido pela pessoa (fica salvo neste navegador). Começa no máximo, que já é um volume baixo e agradável. */
 export function introVolume() {
  try {
   const saved = Number.parseFloat(localStorage.getItem(VOLUME_KEY) || '');
   if (Number.isFinite(saved)) return Math.min(1, Math.max(0, saved));
  } catch {}
- return .55;
+ return 1;
 }
 function saveIntroVolume(volume: number) {
  try { localStorage.setItem(VOLUME_KEY, String(volume)); } catch {}

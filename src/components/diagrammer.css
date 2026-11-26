@@ -2439,7 +2439,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-spine-face{position:absolute;top:0;height:100%;overflow:hidden;backface-visibility:visible}
 .dm-spine-face.front{left:100%;width:var(--fw);transform-origin:left center;transform:rotateY(90deg)}
 .dm-spine-face.back{right:100%;width:var(--fw);transform-origin:right center;transform:rotateY(-90deg)}
-.dm-spine-face .dm-cover-part{filter:saturate(.94) contrast(.96)}
 /* Dobradura com "ombro" logo depois do sulco, e o contorno do material */
 .dm-spine-face.front:after,.dm-spine-face.back:after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 0 1px #00000038}
 .dm-spine-face.front:after{background:linear-gradient(90deg,transparent calc(5.2% - 5px),#00000066 5.2%,#ffffff2e calc(5.2% + 2px),#ffffff12 calc(5.2% + 7px),transparent calc(5.2% + 10px)),linear-gradient(90deg,#00000038,transparent 4%)}
@@ -2482,7 +2481,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
  background:linear-gradient(90deg,#00000033,transparent 14%,transparent 86%,#00000033),linear-gradient(180deg,#0000001f,transparent 4%,transparent 96%,#0000001f),repeating-linear-gradient(90deg,#fbfaf6 0 1.6px,#d7d2c6 1.6px 2.2px)}
 .dm-4d-el.pages-fore:after,.dm-4d-el.board-fore:after{content:'';position:absolute;inset:0;background:#0b0b09;opacity:calc((1 - max(0, sin(var(--ry)) * -.35 - cos(var(--ry)) * .94)) * .45);border-radius:inherit}
 /* Sombra no chão, parada (não gira com o álbum) */
-.dm-4d-floor{position:absolute;left:50%;bottom:26px;width:calc(var(--h) * 1.2);height:30px;margin-left:calc(var(--h) * -.6);border-radius:50%;background:radial-gradient(ellipse,#2b2a1e47,transparent 70%);filter:blur(6px);pointer-events:none}
+.dm-4d-floor{position:absolute;left:50%;bottom:26px;width:calc(var(--h) * 1.2);height:30px;margin-left:calc(var(--h) * -.6);border-radius:50%;background:radial-gradient(ellipse closest-side,#2b2a1e40,#2b2a1e1f 55%,transparent);pointer-events:none}
 @keyframes dm-spine-in{from{opacity:0;transform:scale(.9) rotateY(-30deg)}}
 /* Barra: contagem e miniaturas somem com animação no 4D; o botão fica no mesmo lugar (à direita) e vira "3D" */
 .dm-studio .dm-book-bar{justify-content:flex-end}
@@ -2846,7 +2845,7 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-in-c3{0%,46.25%{opacity:0;transform:translateY(-8px)}48%,70%{opacity:1;transform:none}72%,100%{opacity:0;transform:translateY(8px)}}
 @keyframes dm-in-c4{0%,72%{opacity:0;transform:translateY(-8px)}73.5%,80.5%{opacity:1;transform:none}82.5%,100%{opacity:0;transform:translateY(8px)}}
 @keyframes dm-in-c5{0%,82.5%{opacity:0;transform:translateY(-8px) scale(.8)}84.5%,95%{opacity:1;transform:none}100%{opacity:0}}
-.dm-in-progress{position:absolute;left:20px;right:96px;bottom:16px;z-index:25;height:5px;border-radius:9px;background:#ffffff99;overflow:hidden}
+.dm-in-progress{position:absolute;left:20px;right:206px;bottom:16px;z-index:25;height:5px;border-radius:9px;background:#ffffff99;overflow:hidden}
 .dm-in-progress>i{display:block;height:100%;border-radius:9px;background:var(--zg-rays);animation:dm-in-progress 8s linear both}
 @keyframes dm-in-progress{from{width:0}to{width:100%}}
 .dm-studio .dm-in-skip{position:absolute;right:18px;bottom:10px;z-index:26;height:30px;padding:0 14px;border:0;border-radius:999px;background:#25261fcc;color:#fff;font:700 12px/1 Arial,Helvetica,sans-serif;cursor:pointer;transition:background .2s}
@@ -2857,10 +2856,10 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-in-sound.is-blocked{padding:0 14px;background:#e81aa5;animation:dm-in-sound-pulse 1s ease-in-out infinite}
 @keyframes dm-in-sound-pulse{50%{box-shadow:0 0 0 8px #e81aa540}}
 /* Volume da abertura: controle deslizante ao lado do botão de som */
-.dm-studio .dm-in-volume{position:absolute;right:122px;bottom:10px;z-index:26;display:flex;align-items:center;height:30px;padding:0 12px;border-radius:999px;background:#25261fcc}
-.dm-studio .dm-in-volume input{width:96px;height:4px;margin:0;border-radius:4px;appearance:none;-webkit-appearance:none;background:linear-gradient(90deg,#e81aa5 0 var(--v),#ffffff4d var(--v));cursor:pointer}
-.dm-studio .dm-in-volume input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0006}
-.dm-studio .dm-in-volume input::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0006}
+.dm-studio .dm-in-volume{position:absolute;right:120px;bottom:12px;z-index:26;display:flex;align-items:center;height:26px;padding:0 9px;border-radius:999px;background:#25261fcc}
+.dm-studio .dm-in-volume input{width:58px;height:3px;margin:0;border-radius:4px;appearance:none;-webkit-appearance:none;background:linear-gradient(90deg,#e81aa5 0 var(--v),#ffffff4d var(--v));cursor:pointer}
+.dm-studio .dm-in-volume input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0006}
+.dm-studio .dm-in-volume input::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0006}
 .dm-studio .dm-in-volume input:focus-visible{outline:2px solid #fff;outline-offset:4px}
 
 /* ===================== Pré-view: título com o olho piscando, chave 3D/4D e só duas ações ===================== */
@@ -2959,3 +2958,28 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 /* Virada armada (montada, ainda parada): nada se move até o navegador terminar de desenhar a folha */
 .dm-book.is-arming,.dm-book.is-arming:before,.dm-book.is-arming:after,.dm-book.is-arming *,.dm-book.is-arming *:before,.dm-book.is-arming *:after{animation-play-state:paused!important}
 .dm-book-block,.dm-book-spine-foot{will-change:opacity}
+
+/* ===================== 4D: entrada fluida e destaque do álbum =====================
+   Montado escondido durante a entrega (fotos e camadas já prontas); nada anima até a caixa abrir. */
+/* Fica visível (já desenhado) por baixo da entrega, que cobre a tela inteira: na troca não há nada a desenhar de uma vez. */
+.dm-4d.is-waiting{pointer-events:none}
+.dm-4d.is-waiting *,.dm-4d.is-waiting *:before,.dm-4d.is-waiting *:after{animation:none!important}
+/* Holofote atrás do álbum: acende quando ele chega e depois respira devagar */
+.dm-4d-glow{position:absolute;left:50%;top:50%;z-index:-1;width:calc(var(--h) * 1.7);height:calc(var(--h) * 1.25);margin:calc(var(--h) * -.68) 0 0 calc(var(--h) * -.85);border-radius:50%;pointer-events:none;
+ background:radial-gradient(closest-side,#fff8d6 0%,#fdf15366 34%,#fdf1531f 60%,transparent);opacity:0;will-change:transform,opacity;
+ animation:dm-4d-glow-in 1.5s cubic-bezier(.2,.8,.3,1) .35s both}
+.dm-spine-view.is-landed .dm-4d-glow{animation:dm-4d-glow-breathe 4.6s ease-in-out infinite}
+@keyframes dm-4d-glow-in{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+@keyframes dm-4d-glow-breathe{0%,100%{opacity:1;transform:none}50%{opacity:.78;transform:scale(.94)}}
+/* Estouro de raios nas cores HP saindo de trás do álbum quando ele assenta */
+.dm-4d-burst{position:absolute;left:50%;top:50%;z-index:-1;width:0;height:0;pointer-events:none}
+.dm-4d-burst i{position:absolute;left:-3px;top:0;width:6px;height:calc(var(--h) * .22);border-radius:6px;transform-origin:50% 0;opacity:0;
+ transform:rotate(calc(var(--k) * 36deg)) translateY(calc(var(--h) * .3)) scaleY(.2);animation:dm-4d-ray 1.1s cubic-bezier(.15,.75,.25,1) calc(1.15s + var(--k) * 18ms) both}
+.dm-4d-burst i:nth-child(5n+1){background:#e8221e}.dm-4d-burst i:nth-child(5n+2){background:#19b33a}.dm-4d-burst i:nth-child(5n+3){background:#f5e21a}.dm-4d-burst i:nth-child(5n+4){background:#1aa8e8}.dm-4d-burst i:nth-child(5n+5){background:#e81aa5}
+@keyframes dm-4d-ray{0%{opacity:0;transform:rotate(calc(var(--k) * 36deg)) translateY(calc(var(--h) * .28)) scaleY(.2)}25%{opacity:1}100%{opacity:0;transform:rotate(calc(var(--k) * 36deg)) translateY(calc(var(--h) * .62)) scaleY(1)}}
+/* Brilho que atravessa a capa logo que o álbum assenta, e de leve de tempos em tempos */
+.dm-4d-sheen{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none}
+.dm-4d-sheen:before{content:'';position:absolute;top:-10%;bottom:-10%;left:0;width:45%;background:linear-gradient(100deg,transparent,#ffffff00 20%,#ffffff59 50%,#ffffff00 80%,transparent);transform:translateX(-130%) skewX(-12deg);will-change:transform}
+.dm-spine-view.is-landed .dm-4d-sheen:before{animation:dm-4d-sheen 7s cubic-bezier(.4,0,.2,1) .15s infinite}
+@keyframes dm-4d-sheen{0%{transform:translateX(-130%) skewX(-12deg)}16%,100%{transform:translateX(330%) skewX(-12deg)}}
+@media(prefers-reduced-motion:reduce){.dm-4d-glow,.dm-4d-burst i,.dm-4d-sheen:before{animation:none!important}.dm-4d-glow{opacity:1}.dm-4d-burst{display:none}}
