@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState,type CSSProperties,type DragEvent,type PointerEvent} from 'react';
 import {ensureTextFonts} from '@/lib/album-fonts';
 import {TextureLayer,IconLayer,type IconInteractions} from './diagrammer-decoration';
-import {ArrowLeftRight,ImagePlus,TriangleAlert, Replace, RefreshCw} from 'lucide-react';
+import {ImagePlus,TriangleAlert, RefreshCw} from 'lucide-react';
 import {spreadRectangles,frameGeometry,defaultPrintSpec,effectiveDpi,resolutionLevel,type Cover,type Slot,type Spread,type PrintSpec,type AlbumText,type FrameRect} from '@/lib/layout-projects';
 
 /** Tipo de arraste usado para trocar fotos entre quadros da mesma área. */

@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { connection } from 'next/server';
 import { authenticationConfigured, getSession } from '@/lib/server/auth';
-import { SignOut } from '@/components/login';
 import { AccountNavigation } from '@/components/account-navigation';
 import './customer.css';
 
@@ -10,16 +9,26 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const enabled = authenticationConfigured();
   const session = enabled ? await getSession() : null;
   if (enabled && !session) redirect('/entrar');
+  const firstName = session?.user.name?.trim().split(/\s+/)[0];
   return <section className="section customer-area">
-    <header className="customer-header">
-      <div><span className="eyebrow">ÁREA DO CLIENTE{!enabled ? ' · DEMONSTRAÇÃO' : ''}</span>
-        <h1>{session ? `Olá, ${session.user.name}.` : 'Seu espaço de histórias.'}</h1>
-        <p>Seus projetos, pedidos e dados. Tudo em um só lugar.</p>
+    <header className="ca-hero">
+      <span className="ca-camera" aria-hidden="true">
+        <svg viewBox="0 0 64 48" width="64" height="48">
+          <rect x="2" y="10" width="60" height="36" rx="8" className="ca-camera-body" />
+          <path d="M20 10l5-7h14l5 7" className="ca-camera-top" />
+          <circle cx="32" cy="28" r="12" className="ca-camera-ring" />
+          <circle cx="32" cy="28" r="6.5" className="ca-camera-lens" />
+          <circle cx="51" cy="18" r="2.5" className="ca-camera-dot" />
+        </svg>
+        <i className="ca-flash" />
+      </span>
+      <div>
+        <h1>{firstName ? <>Olá, <em>{firstName}</em></> : <>Minha <em>conta</em></>}</h1>
+        <span className="ca-rays" aria-hidden="true"><i /><i /><i /><i /><i /></span>
       </div>
-      {session && <div className="customer-signout"><SignOut /></div>}
+      {!enabled && <span className="ca-demo">Demonstração</span>}
     </header>
-    {!enabled && <p className="demo-notice">Prévia visual. Você não está conectado a uma conta real.</p>}
     <AccountNavigation />
-    <div className="customer-content">{children}</div>
+    <div className="ca-content">{children}</div>
   </section>;
 }

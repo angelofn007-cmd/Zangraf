@@ -4,7 +4,7 @@ import {MAX_PHOTO_BYTES,checkAlbumCapacity} from '@/lib/album-capacity';
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import {coverSpineMm,coverRegions,photoLayouts,rankLayoutsForPhotos,DEFAULT_SPACING,type PhotoLayout} from '@/lib/album-layouts';
-import { Sparkles, Focus, ShoppingBag, ArrowLeft, ArrowRight, Plus, Save, ImagePlus, Undo2, Redo2, Copy, Trash2, WandSparkles, Eye, X, Check, BookOpen, RotateCcw, Upload, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Send, Type, Palette, LayoutTemplate, Settings2, Minus, Maximize, Search, Info, SunMoon, RotateCw, Replace, RefreshCw, Images, MousePointer2, Crop, AlignLeft, AlignCenter, AlignRight, Bold, Italic, FlipHorizontal2, FlipVertical2, Layers3, CircleCheck, CircleAlert, Ellipsis, ImageOff, CheckCheck, ZoomIn } from 'lucide-react';
+import { Sparkles, Focus, ShoppingBag, ArrowRight, Plus, Save, ImagePlus, Undo2, Redo2, Copy, Trash2, WandSparkles, Eye, X, Check, RotateCcw, Upload, ChevronLeft, ChevronRight, ChevronUp, Send, Type, Palette, LayoutTemplate, Minus, Maximize, Search, Info, SunMoon, RotateCw, RefreshCw, Images, MousePointer2, Crop, AlignLeft, AlignCenter, AlignRight, Bold, Italic, FlipHorizontal2, FlipVertical2, Layers3, CircleCheck, CircleAlert, Ellipsis, ImageOff, CheckCheck, ZoomIn } from 'lucide-react';
 import {checkAlbum,ISSUE_INFO,ISSUE_ORDER,pageLabel,type AlbumIssue} from '@/lib/album-check';
 import {ALBUM_FONTS,FONT_GROUPS,MAIN_FONT_COUNT,ensureFont,fontsInGroup,type AlbumFont} from '@/lib/album-fonts';
 import {ALBUM_ICONS,TEXTURES,SURFACES,SURFACE_GROUPS,surfaceUrl,type AlbumIcon,type TextureName,type SurfaceName} from '@/lib/album-decorations';
@@ -15,8 +15,8 @@ import {PhotoFocus} from './diagrammer-focus';
 import {BuildShow,type BuildShowState} from './diagrammer-build-show';
 import {CoverFinishingGuides} from './cover-finishing-guides';
 import {PHOTO_EFFECTS,isNeutralAdjust,photoFilterCss,photoWarmthLayer,type PhotoAdjust} from '@/lib/photo-adjust';
-import {coverLabel,coverMarginDescription} from '@/lib/cover-production';
-import { frameGeometry, changeLayout, createProject, createSpread, defaultCover, defaultBackCover, defaultPrintSpec, emptySlot, moveSpread, removePhoto, duplicateSpread, removeSpread, rectangles, loadProject, saveProjectRevision, validateProjectForPrint, LAYOUTS, MAX_PHOTOS, MAX_SPREADS, type LayoutProject, type LayoutName, type Photo, type Slot, type AlbumText, type FrameRect, type Spread, spreadRectangles, newAlbumText, projectSpec, projectPageIndices, combinedCover, copyProject, isReusableSpread, purgeExpiredProjects, PROJECT_LIFETIME_DAYS } from '@/lib/layout-projects';
+import {coverMarginDescription} from '@/lib/cover-production';
+import { frameGeometry, createProject, createSpread, defaultCover, defaultBackCover, defaultPrintSpec, emptySlot, removePhoto, loadProject, saveProjectRevision, validateProjectForPrint, type LayoutProject, type LayoutName, type Photo, type Slot, type AlbumText, type FrameRect, type Spread, spreadRectangles, newAlbumText, projectSpec, projectPageIndices, combinedCover, isReusableSpread, purgeExpiredProjects, PROJECT_LIFETIME_DAYS } from '@/lib/layout-projects';
 import {configuredSheetCount} from '@/lib/print-rules';
 import {pushHistory,restoreAlbum} from '@/lib/album-history';
 import {autoLayoutProject,readExifDate,dateFromName} from '@/lib/auto-album';
@@ -44,7 +44,7 @@ import { readCart, writeCart, unlinkProjects } from '@/lib/cart';
 import { products } from '@/lib/products';
 import { AlbumCover, AlbumSpread, type PhotoSizes } from './diagrammer-preview';
 import {ApprovalPanel} from './diagrammer-approval';
-import {specLabel,formatCm,snapshotModel,type PrintModel,type PrintVariant} from '@/lib/diagrammer-models';
+import {specLabel,formatCm,snapshotModel,type PrintModel} from '@/lib/diagrammer-models';
 import './diagrammer.css';
 
 type SaveState = 'pending' | 'saving' | 'saved' | 'error';
@@ -148,12 +148,6 @@ async function keepPreviewsInMemory(project:LayoutProject):Promise<LayoutProject
 }
 
 /** Manchas de tinta da abertura da aba Tonalidade: [x %, y %, tamanho px, giro, atraso ms, cor]. */
-const TONE_SPLATS:[number,number,number,number,number,string][]=[
- [12,18,70,-20,0,'#1d1e20'],[78,12,54,30,60,'#f4f4f2'],[42,34,90,10,40,'#2c2d29'],[88,42,46,-40,120,'#e9e9e6'],
- [20,58,64,50,90,'#f6f6f4'],[64,62,80,-10,30,'#151614'],[34,82,50,70,150,'#3a3b37'],[82,80,72,-60,80,'#f2f2ef'],
- [52,10,36,15,170,'#8a8b86'],[6,86,40,-25,110,'#c9cac5'],[94,64,30,40,200,'#5a5b56'],[48,52,28,0,220,'#bdbdb8'],
-];
-
 /** Os 8 riscos da palavra "Texto", na ordem e no sentido em que se escreve (desenhados por cima da fonte). */
 const TEXTO_STROKES=[
  'M11.7 51.1 C 12.3 49.1, 14.2 42.9, 15.4 38.9 C 16.6 34.9, 17.8 30.7, 18.8 27.4 C 19.8 24.1, 21.1 20.5, 21.6 19.1',
@@ -244,7 +238,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [showPreview, setShowPreview] = useState(false);
  const [previewPage, setPreviewPage] = useState(-1);
  const [shareOpen, setShareOpen] = useState(false);
- const [formatLocked, setFormatLocked] = useState(false);
  const [formatError, setFormatError] = useState('');
  const [panel,setPanel]=useState<'photos'|'tone'|'layouts'|'text'|'background'|'icons'>('photos');
  // O painel de ferramentas começa fechado ao abrir o diagramador; abre pela barra lateral ou pela aba ›.
@@ -407,8 +400,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const bgInput = useRef<HTMLInputElement>(null);
  const [themeOpen, setThemeOpen] = useState<string|null>(null);
  // Abertura da aba Tonalidade: tintas preta e branca espalhando pela aba.
- const [toneIntro,setToneIntro]=useState(false);
- useEffect(()=>{if(panel!=='tone')return;setToneIntro(true);const t=window.setTimeout(()=>setToneIntro(false),2600);void ensureFont('Bebas Neue');return()=>window.clearTimeout(t);},[panel]);
+ useEffect(()=>{if(panel==='tone')void ensureFont('Bebas Neue');},[panel]);
  // Abertura da aba Ícones: a impressora só faz a abertura completa na primeira vez que a aba abre.
  /** Animações de abertura das ferramentas: cada aba anima só na primeira vez que aparece desde que o painel foi aberto.
   *  Recolher o painel por completo e abrir de novo libera as animações outra vez. */
@@ -446,7 +438,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      if (alive.current) {
       setProject(next);
       setSaveState(unchanged?'saved':'pending');
-      if(result.conflict){setPast([]);setFuture([]);setFormatLocked(false);setFormatError('');setNotice('Este álbum foi alterado em outra aba. Suas alterações foram preservadas em uma cópia de recuperação; o projeto original e seu vínculo com o carrinho foram mantidos.')}
+      if(result.conflict){setPast([]);setFuture([]);setFormatError('');setNotice('Este álbum foi alterado em outra aba. Suas alterações foram preservadas em uma cópia de recuperação; o projeto original e seu vínculo com o carrinho foram mantidos.')}
      }
     }
     if (saved.cartItemId && !result.conflict) {
@@ -527,8 +519,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       loaded={...loaded,cartItemId:linkedItemId,productId:item.productId,configuration:item.configuration,printSpec:{...size,exportMode:'page'}};
       if(isNew){loaded.spreads=Array.from({length:count},()=>createSpread());const model=official.find(m=>m.productId===item.productId&&m.sizeLabel===item.configuration.size);const variants=model?.variants.filter(v=>v.sheets===count&&v.stock===item.configuration.stock)||[];const variant=variants.length===1?variants[0]:undefined;if(model&&variant){loaded.productionModel=snapshotModel(model,variant);if(model.coverMode==='wrap')loaded.cover=combinedCover(loaded.cover!,loaded.backCover!,coverSpineMm(loaded),loaded.productionModel.front.widthMm);}else{throw new Error('Escolha a gramatura e a quantidade na página do produto. As medidas oficiais dessa combinação precisam estar cadastradas antes de diagramar.');}}
      }
-     if(active)setFormatLocked(true);
-    }else if(active)setFormatLocked(false);
+    }
     if (active&&!isNew) loaded = await keepPreviewsInMemory(loaded);
     if (active) {
      projectRef.current = loaded; dirtyRef.current = isNew; setProject(loaded);
@@ -675,10 +666,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const wrapMode=project.productionModel?.coverMode==='wrap';
  // Modelos Anti-Risco têm 1,5 cm de debruagem depois do dorso (o nome do modelo é normalizado para "Anti-Risco").
  const isAntiRisco=/anti-?risco/i.test(project.productionModel?.name||'');
- const noCover=project.productionModel?.coverMode==='none';
  const legacyMargin=/anti[ -]?r{1,2}isco/i.test(project.productionModel?.name||'')?25:/1500/.test(project.productionModel?.name||'')?3:0;
  const coverMargins=project.productionModel?.coverMargins||(legacyMargin?{topMm:legacyMargin,rightMm:legacyMargin,bottomMm:legacyMargin,leftMm:legacyMargin}:undefined);
- const spreadExport=project.productionModel?.insideMode==='spread';
  const spineMm=coverSpineMm(project);
  const backMode = activePage === -2;
  const frontCover = project.cover || defaultCover();
@@ -686,7 +675,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const cover = backMode ? backCover : frontCover;
  /** A capa já tem alguma foto? Antes disso, as barras de edição da capa ficam escondidas. */
  const coverHasPhoto=activePage<0&&(!!cover.photo.photoId||!!cover.composition?.slots.some(s=>s.photoId));
- const spec = project.printSpec;
  const currentSpec=projectSpec(project,activePage);
  const currentRatio=currentSpec.widthMm/currentSpec.heightMm*(activePage<0?1:2);
  const texts=activePage<0?(cover.texts||[]):(project.spreads[activePage]?.texts||[]);
@@ -694,7 +682,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const icons=(activePage<0?cover.icons:project.spreads[activePage]?.icons)||[];
  const selectedIcon=icons.find(i=>i.id===iconId);
  const texture=(activePage<0?cover.texture:project.spreads[activePage]?.texture)||'none';
- const pageRatio = spec ? spec.widthMm / spec.heightMm : 1;
  const spread = activePage >= 0 ? project.spreads[activePage] : cover.composition||null;
  // Com foto na página aberta, as guias ficam mais apagadas: são só referência e não saem impressas.
  const hasPhotoHere=activePage<0?coverHasPhoto||!!cover.backgroundPhotoId:!!spread?.slots.some(s=>s.photoId)||!!spread?.backgroundPhotoId;
@@ -706,10 +693,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  /** Fotos do álbum (as imagens importadas só para fundo ficam de fora). */
  const library = project.photos.filter(photo => !photo.background);
  const visiblePhotos = library.filter(photo => !filterUnused || !usedIds.has(photo.id));
- const emptyCount = project.spreads.reduce((total, item) => total + item.slots.filter(frame => !frame.photoId).length, 0);
  const unusedCount = library.filter(photo => !usedIds.has(photo.id)).length;
- const albumFilled = project.spreads.some(item => item.slots.some(frame => frame.photoId));
- const storageMb = project.photos.reduce((sum,photo)=>sum+photo.blob.size,0)/1024/1024;
  const selectedPhoto = project.photos.find(photo => photo.id === slot?.photoId);
  const photoSizes:PhotoSizes=Object.fromEntries(project.photos.map(photo=>[photo.id,photo]));
  /** Largura ÷ altura da foto; sem medidas conhecidas, assume o formato comum de câmera (3:2). */
@@ -719,13 +703,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  /** Medidas da área (lâmina aberta ou capa) para a recomendação não ampliar fotos além da resolução delas. */
  const rankOptions=(ids:(string|null)[])=>({sizes:ids.map(id=>id?photoSizes[id]||{}:{}),areaMm:{width:currentSpec.widthMm*(activePage<0?1:2),height:currentSpec.heightMm},dpi:currentSpec.dpi});
  const rankedLayouts=areaPhotoIds.length===layoutCount?rankLayoutsForPhotos(layoutOptions,areaPhotoIds.map(aspectOf),currentRatio,rankOptions(areaPhotoIds)):null;
- const recommendedLayoutId=rankedLayouts?.[0]?.layout.id;
- const configuredCount = project.productionModel?.sheets||(project.cartItemId ? Number.parseInt(project.configuration?.sheets || '', 10) : 0);
- const countLocked = Number.isFinite(configuredCount) && configuredCount > 0;
- const canAddSpread = countLocked ? project.spreads.length < configuredCount : project.spreads.length < MAX_SPREADS;
  let projectPrintError='';
  try{validateProjectForPrint(project);if(!project.productionModel)throw new Error('Este projeto ainda não tem medidas oficiais de capa. Escolha a configuração no produto antes de preparar a impressão.');}catch(error){projectPrintError=(error as Error).message}
- const canRemoveSpread = project.spreads.length > (countLocked ? configuredCount : 1);
 
  function updateSlot(patch: Partial<Slot>, frame = slotIndex) {
   // Mudou a posição da mesma foto à mão: o enquadramento automático deixa de mexer nela.
@@ -745,12 +724,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  function replaceWith(id:string){if(replaceTarget===null)return;assignPhoto(id,replaceTarget);setReplaceTarget(null);}
  function selectPage(index: number) {setReplaceTarget(null);setPhotoMode('crop'); setActivePage(pageIndices.includes(index)?index:pageIndices[0]); if(index>=0&&project?.spreads[index])setLayoutCount(Math.min(10,Math.max(1,project.spreads[index].slots.filter(s=>s.photoId).length||project.spreads[index].slots.length))); setSlotIndex(0); setTextId(undefined);setIconId(undefined);setFocusOpen(false); setPositionOpen(false); }
  function replaceSpread(next:Spread){if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,composition:next,photo:emptySlot(),...(next.texts?{texts:next.texts}:{}),...(next.background?{color:next.background}:{})}});else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?next:s)});}
- function changeTemplate(layout: LayoutName) {
-  if(!spread){const next=createSpread(layout);next.slots[0]={...cover.photo};replaceSpread(next);setSlotIndex(0);return;}
-  const removed = spread.slots.slice(rectangles(layout).length).filter(frame => frame.photoId).length;
-  if (removed && !window.confirm(`Este modelo tem menos quadros. ${removed} foto(s) sairão desta lâmina e continuarão na sua biblioteca. Trocar o modelo?`)) return;
-  replaceSpread(changeLayout(spread,layout)); setSlotIndex(0);
- }
  function applyPhotoLayout(layout:PhotoLayout){
   const source=pickedPhotos.filter(id=>project!.photos.some(p=>p.id===id));
   const old=spread?.slots||[{...cover.photo}];
@@ -783,22 +756,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   return true;
  }
  /** Coloca várias fotos de uma vez na área aberta: primeiro nos quadros vazios, o resto ganha um layout que caiba tudo. */
- function addPhotosToAlbum(ids:string[]){
-  const list=ids.filter(id=>project!.photos.some(p=>p.id===id));if(!list.length)return;
-  if(!spread){assignPhoto(list[0]);return;}
-  if(activePage>=0&&list.length===1&&!spread.slots.some(s=>s.photoId)){appendPhoto(list[0]);setPickedPhotos([]);setSelectPhotos(false);return;}
-  const slots=[...spread.slots];const queue=[...list];
-  for(let i=0;i<slots.length&&queue.length;i++)if(!slots[i].photoId)slots[i]={...emptySlot(),photoId:queue.shift()!};
-  let next:Spread={...spread,slots};let left=0;
-  if(queue.length){
-   const all=[...slots.filter(s=>s.photoId),...queue.map(id=>({...emptySlot(),photoId:id} as Slot))];
-   const fit=all.slice(0,10);left=all.length-fit.length;
-   const best=rankLayoutsForPhotos(photoLayouts(fit.length,currentRatio),fit.map(s=>aspectOf(s.photoId)),currentRatio,rankOptions(fit.map(s=>s.photoId)))[0];
-   if(best)next={...spread,layout:'livre',frames:best.layout.frames,slots:best.order.map(i=>fit[i]),spacing:spread.spacing||{...DEFAULT_SPACING}};
-  }
-  replaceSpread(next);setPickedPhotos([]);setSelectPhotos(false);setPhotoMode('crop');
-  if(left)setNotice(`${left} ${left===1?'foto não coube':'fotos não couberam'} (até 10 por lâmina) e continuam nas suas fotos.`);
- }
  /** Tira a foto de todos os quadros do álbum; ela continua na biblioteca para usar depois. */
  function unusePhoto(id:string){
   const clear=(slot:Slot)=>slot.photoId===id?{...emptySlot()}:slot;
@@ -846,13 +803,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   if(existing===index)return;
   if(add)appendPhoto(id);else assignPhoto(id,index);
   setTextId(undefined);
- }
- function splitCover(){
-  if(!spineMm||!wrapMode)return;
-  if(spread?.slots.some(s=>s.photoId)&&!window.confirm('Organizar a capa em verso, dorso e frente? Você pode desfazer e as fotos continuam na biblioteca.'))return;
-  const slots=spread?.slots||[];
-  replaceSpread({id:spread?.id||crypto.randomUUID(),layout:'livre',frames:coverRegions(currentSpec.widthMm,spineMm),slots:[slots[0]||emptySlot(),slots.length===3?slots[1]:emptySlot(),slots.at(-1)||emptySlot()]});
-  setSlotIndex(1);setPhotoMode('crop');setTextId(undefined);
  }
  /** A capa inteira (verso + dorso + frente) vira um quadro único para uma foto só; desligar separa de novo em três. */
  const coverIsSingle=!!spread&&activePage===-1&&spread.slots.length===1&&(()=>{const r=spreadRectangles(spread)[0];return !!r&&r.x<=.001&&r.y<=.001&&r.w>=.999&&r.h>=.999;})();
@@ -952,8 +902,6 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  }
  function previousPage() { selectPage(pageIndices[Math.max(0,pageIndices.indexOf(activePage)-1)]); }
  function nextPage() { selectPage(pageIndices[Math.min(pageIndices.length-1,pageIndices.indexOf(activePage)+1)]); }
- function addSpread() { if (!canAddSpread) return; edit({ ...project!, spreads: [...project!.spreads, createSpread()] }); selectPage(project!.spreads.length); }
- function moveCurrent(direction: -1 | 1) { edit(moveSpread(project!, activePage, activePage + direction)); selectPage(activePage + direction); }
 
  function updateTexts(next:AlbumText[]){
   if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,texts:next,composition:cover.composition?{...cover.composition,texts:undefined}:undefined}});

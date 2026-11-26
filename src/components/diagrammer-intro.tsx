@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 import {Volume2,VolumeX} from 'lucide-react';
-import {playIntroSounds,resumeAudio,type IntroSounds} from '@/lib/sounds';
+import {introVolume,playIntroSounds,resumeAudio,type IntroSounds} from '@/lib/sounds';
 
 /** Duração total da abertura (todas as animações usam o mesmo relógio de 8 s; os % das keyframes são ms/80). */
 export const INTRO_MS=8000;
@@ -261,6 +261,12 @@ export function PreviewIntro({cover,onReveal,onGone}:{cover:ReactNode;/** O álb
  const startedAt=useRef(0);
  // "blocked": o navegador segurou o áudio (falta um toque da pessoa); "on"/"off": som ligado ou desligado.
  const [sound,setSound]=useState<'on'|'off'|'blocked'>('on');
+ const [volume,setVolume]=useState(introVolume);
+ /** Controle deslizante: muda o volume na hora; subir o volume com o som desligado liga o som. */
+ const changeVolume=(value:number)=>{
+  setVolume(value);sounds.current?.setVolume(value);
+  if(sound==='off'&&value>0){sounds.current?.setMuted(false);setSound('on');}
+ };
  /** "Pular" (ou Esc): a abertura some e os sons param junto. */
  const skip=()=>{sounds.current?.stop();setLeaving(true);};
  /** Botão de som: libera o áudio bloqueado (religando a trilha no ponto certo) ou liga/desliga. */
@@ -329,6 +335,9 @@ export function PreviewIntro({cover,onReveal,onGone}:{cover:ReactNode;/** O álb
   <i className="dm-in-flash" aria-hidden="true"/>
   <div className="dm-in-captions" aria-hidden="true">{captions.map(([t,c],i)=><span key={t} className={'c'+i} style={{'--c':c} as CSSProperties}><i/>{t}</span>)}</div>
   <div className="dm-in-progress" aria-hidden="true"><i/></div>
+  {sound!=='blocked'&&<label className="dm-in-volume" title="Volume">
+   <input type="range" min={0} max={1} step={.05} value={sound==='off'?0:volume} aria-label="Volume da abertura" aria-valuetext={`${Math.round((sound==='off'?0:volume)*100)}%`} onChange={e=>changeVolume(Number(e.target.value))} style={{'--v':`${(sound==='off'?0:volume)*100}%`} as CSSProperties}/>
+  </label>}
   <button type="button" className={'dm-in-sound'+(sound==='blocked'?' is-blocked':'')} onClick={toggleSound} aria-label={sound==='on'?'Desligar o som':'Ligar o som'} title={sound==='on'?'Desligar o som':'Ligar o som'}>
    {sound==='on'?<Volume2 size={16}/>:<VolumeX size={16}/>}{sound==='blocked'&&<span>Ativar som</span>}
   </button>

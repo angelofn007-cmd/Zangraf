@@ -263,7 +263,7 @@ export function pickLayout(aspects:number[],spreadAspect:number,previousName?:st
  return ranked.find(fit=>fit.layout.name!==previousName&&fit.score<=best.score+.08)||best;
 }
 
-export function layoutSpacing(layout:PhotoLayout,spec:PrintSpec){
+export function layoutSpacing(_layout:PhotoLayout,_spec:PrintSpec){
  return {...DEFAULT_SPACING};
 }
 

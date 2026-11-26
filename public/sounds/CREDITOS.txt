@@ -2,7 +2,7 @@ Efeitos sonoros da abertura da prévia e da montagem automática.
 Todos são CC0 (domínio público) do Freesound.org: podem ser usados, cortados e misturados sem pedir permissão.
 Os arquivos daqui são trechos recortados, com volume normalizado e convertidos para AAC.
 
-impressora.m4a  "portable thermal printer"            https://freesound.org/s/729049/
+impressora.m4a  "Impressora HP.wav" (arquivo fornecido pela Zangraf), trecho de 1,9 s a 4,3 s
 whoosh.m4a      "Whoosh" (qubodup)                     https://freesound.org/s/60013/
 aba.m4a         "Box open" (LeonsFlashlight)           https://freesound.org/s/135014/
 caixa.m4a       "Box Falling Down" (danlucaz)          https://freesound.org/s/500283/

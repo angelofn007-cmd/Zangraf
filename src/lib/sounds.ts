@@ -130,7 +130,24 @@ export type IntroSounds = {
  setMuted: (muted: boolean) => void;
  /** O navegador está deixando o som sair? (false = bloqueado até a pessoa tocar na tela) */
  playing: () => boolean;
+ /** Volume da abertura, de 0 a 1 (o controle deslizante). */
+ setVolume: (volume: number) => void;
 };
+
+const VOLUME_KEY = 'zangraf-intro-volume';
+/** Volume máximo da trilha; o controle vai de 0 até aqui. */
+const MAX_LEVEL = .7;
+/** Volume escolhido pela pessoa (fica salvo neste navegador). Começa em 55%, um pouco baixo. */
+export function introVolume() {
+ try {
+  const saved = Number.parseFloat(localStorage.getItem(VOLUME_KEY) || '');
+  if (Number.isFinite(saved)) return Math.min(1, Math.max(0, saved));
+ } catch {}
+ return .55;
+}
+function saveIntroVolume(volume: number) {
+ try { localStorage.setItem(VOLUME_KEY, String(volume)); } catch {}
+}
 
 /** Religa o áudio dentro de um clique (para o botão "Ativar som"). */
 export function resumeAudio() {
@@ -140,8 +157,8 @@ export function resumeAudio() {
 
 /** A trilha da abertura: [segundo da animação, som, opções]. Os tempos seguem as keyframes de 8 s. */
 const INTRO_TRACK: [number, SoundName, ClipOptions][] = [
- // Indigo imprimindo (0–1,4 s): o "zzzrrrt" de impressora térmica.
- [0, 'impressora', {volume: .55, duration: 1.4, fadeOut: .2}],
+ // Indigo imprimindo (0–1,4 s): "Impressora HP.wav", com duas batidas de folha.
+ [0, 'impressora', {volume: 1, duration: 1.4, fadeOut: .2}],
  // O álbum sai voando e cai na caixa; as abas fecham e a fita passa.
  [1.1, 'whoosh', {volume: .9}],
  [1.98, 'aba', {volume: .45, rate: 1.3}],
@@ -173,14 +190,14 @@ const INTRO_TRACK: [number, SoundName, ClipOptions][] = [
  */
 export function playIntroSounds(elapsed = 0): IntroSounds {
  const ctx = audio();
- if (!ctx) return {stop: () => undefined, setMuted: () => undefined, playing: () => false};
+ if (!ctx) return {stop: () => undefined, setMuted: () => undefined, playing: () => false, setVolume: saveIntroVolume};
  console.info('[Zangraf] sons da abertura · áudio:', ctx.state);
  const t0 = ctx.currentTime + .03 - elapsed;
  // Compressor na saída: quando vários sons coincidem (caixa + campainha + confete), nada estoura.
  const out = ctx.createGain(), compressor = ctx.createDynamicsCompressor(), level = ctx.createGain();
  compressor.threshold.value = -14; compressor.knee.value = 8; compressor.ratio.value = 6;
  compressor.attack.value = .004; compressor.release.value = .2;
- level.gain.value = .85;
+ level.gain.value = MAX_LEVEL * introVolume();
  out.connect(compressor).connect(level).connect(ctx.destination);
  let stopped = false;
  // Cada som entra assim que o arquivo estiver pronto (normalmente já foi baixado no primeiro clique).
@@ -202,5 +219,13 @@ export function playIntroSounds(elapsed = 0): IntroSounds {
    out.gain.linearRampToValueAtTime(muted ? 0 : 1, now + .08);
   },
   playing: () => ctx.state === 'running',
+  setVolume: volume => {
+   const value = Math.min(1, Math.max(0, volume));
+   saveIntroVolume(value);
+   const now = ctx.currentTime;
+   level.gain.cancelScheduledValues(now);
+   level.gain.setValueAtTime(level.gain.value, now);
+   level.gain.linearRampToValueAtTime(MAX_LEVEL * value, now + .05);
+  },
  };
 }

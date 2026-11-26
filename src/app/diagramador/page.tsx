@@ -1,4 +1,4 @@
-import {Diagrammer} from '@/components/diagrammer';
+import {DiagrammerLoader as Diagrammer} from '@/components/diagrammer-loader';
 import {StudioStart} from '@/components/studio-start';
 import {authenticationConfigured, getSession} from '@/lib/server/auth';
 export const metadata={title:'Estúdio de álbuns'};

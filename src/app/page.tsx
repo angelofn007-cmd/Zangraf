@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Gift, Sparkles} from 'lucide-react';
+import {ArrowDown, ArrowUpRight, BookOpen, Gift, Sparkles} from 'lucide-react';
 import {connection} from 'next/server';
 import {ProductCard} from '@/components/product-card';
 import {Reveal} from '@/components/reveal';

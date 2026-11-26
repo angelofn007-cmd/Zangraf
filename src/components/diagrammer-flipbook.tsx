@@ -31,6 +31,40 @@ function spineInfo(project:LayoutProject){
  const sheets=project.productionModel?.sheets||project.spreads.length;
  return {wrap,spine:art||Math.max(8,Math.min(face*.12,4+sheets*.7)),face,height:spec.heightMm,total:spec.widthMm};
 }
+/** Cor média de uma faixa da borda (a margem de segurança) de uma parte da capa desenhada. */
+function edgeColor(canvas:HTMLCanvasElement,from:number,to:number,outerLeft:boolean){
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return undefined;
+ const x0=Math.round(canvas.width*from),x1=Math.round(canvas.width*to),w=x1-x0,h=canvas.height;
+ const band=Math.max(3,Math.round(Math.min(w,h)*.035));
+ const data=ctx.getImageData(x0,0,w,h).data;let r=0,g=0,b=0,n=0;
+ // Só o anel externo: borda de cima, de baixo e a lateral de fora desta parte (a lombada fica de fora).
+ for(let y=0;y<h;y+=2)for(let x=0;x<w;x+=2){
+  const outer=y<band||y>=h-band||(outerLeft?x<band:x>=w-band);if(!outer)continue;
+  const i=(y*w+x)*4;r+=data[i];g+=data[i+1];b+=data[i+2];n++;
+ }
+ return n?`rgb(${Math.round(r/n)},${Math.round(g/n)},${Math.round(b/n)})`:undefined;
+}
+/**
+ * As bordas das placas (a espessura da capa) ficam com a cor que a arte tem na margem de segurança:
+ * a placa de trás com a borda do verso e a da frente com a borda da capa.
+ */
+function useBoardColors(project:LayoutProject){
+ const [colors,setColors]=useState<{back?:string;front?:string}>({});
+ useEffect(()=>{
+  let active=true;
+  void import('./diagrammer-export').then(async({renderPage})=>{
+   const wrap=isWrap(project);
+   if(wrap){
+    const canvas=await renderPage(project,-1);const info=spineInfo(project),half=info.face/info.total;
+    return {back:edgeColor(canvas,0,half,true),front:edgeColor(canvas,1-half,1,false)};
+   }
+   const [front,back]=await Promise.all([renderPage(project,-1),renderPage(project,-2)]);
+   return {back:edgeColor(back,0,1,true),front:edgeColor(front,0,1,false)};
+  }).then(found=>{if(active)setColors(found);}).catch(()=>undefined);
+  return()=>{active=false;};
+ },[project]);
+ return colors;
+}
 /** A arte do dorso (recortada do meio da capa inteira) ou a cor da capa. */
 function SpineArt({project,urls}:{project:LayoutProject;urls:Record<string,string>}){
  const info=spineInfo(project);
@@ -86,13 +120,14 @@ function FourDView({project,urls}:{project:LayoutProject;urls:Record<string,stri
   return()=>anim.cancel();
  },[]);
  const color=(project.cover||defaultCover()).color;
+ const boards=useBoardColors(project);
  const end=()=>{drag.current=null;box.current?.classList.remove('is-dragging');view.current?.classList.remove('is-holding');};
  return <div className="dm-4d">
   <div ref={view} className="dm-spine-view" onPointerDown={e=>{drag.current={px:e.clientX,py:e.clientY,...pose.current};e.currentTarget.setPointerCapture(e.pointerId);e.currentTarget.classList.add('is-holding');}}
    onPointerMove={e=>{const d=drag.current;if(!d)return;place(d.y+(e.clientX-d.px)*.5,Math.max(-45,Math.min(30,d.x-(e.clientY-d.py)*.35)),false);}}
    onPointerUp={end} onPointerCancel={end}>
    <div className="dm-4d-float">
-   <div ref={box} className="dm-spine-box" style={{'--s':info.spine/info.height,'--f':info.face/info.height,'--board':color,'--ry':'-90deg',transform:'rotateX(-6deg) rotateY(-90deg)'} as React.CSSProperties}>
+   <div ref={box} className="dm-spine-box" style={{'--s':info.spine/info.height,'--f':info.face/info.height,'--board':color,'--board-back':boards.back||color,'--board-front':boards.front||color,'--ry':'-90deg',transform:'rotateX(-6deg) rotateY(-90deg)'} as React.CSSProperties}>
     <CurvedSpine project={project} urls={urls}/>
     <div className="dm-spine-face front"><FaceArt project={project} index={-1} urls={urls}/></div>
     <div className="dm-spine-face back"><FaceArt project={project} index={-2} urls={urls}/></div>
@@ -137,9 +172,10 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
  useEffect(()=>{thumbs.current?.querySelector('[aria-current=true]')?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});},[index]);
  const label=spineOpen?'Álbum em 4D':index===-1?'Capa':index===-2?(isWrap(project)?'Verso e dorso':'Verso'):`Lâmina ${index+1}`;
  const split=(page:number,side:'left'|'right'):ReactNode=>{
-  if(page===-1)return side==='right'?<div className="dm-book-half right is-cover"><CoverPart project={project} index={-1} urls={urls}/></div>:<div className="dm-book-half left is-empty"/>;
-  if(page===-2)return side==='left'?<div className="dm-book-half left is-cover"><FaceArt project={project} index={-2} urls={urls}/></div>:<div className="dm-book-half right is-empty"/>;
-  return <div className={`dm-book-half ${side}`}><div><Artwork project={project} index={page} urls={urls}/></div></div>;
+  const key=`${page}-${side}`;
+  if(page===-1)return side==='right'?<div key={key} className="dm-book-half right is-cover"><CoverPart project={project} index={-1} urls={urls}/></div>:<div key={key} className="dm-book-half left is-empty"/>;
+  if(page===-2)return side==='left'?<div key={key} className="dm-book-half left is-cover"><FaceArt project={project} index={-2} urls={urls}/></div>:<div key={key} className="dm-book-half right is-empty"/>;
+  return <div key={key} className={`dm-book-half ${side}`}><div><Artwork project={project} index={page} urls={urls}/></div></div>;
  };
  return <section className="dm-flipbook" aria-label="Folheamento do álbum">
   {/* A abertura ocupa a tela inteira por cima da prévia; no fim o 4D já está montado embaixo e ela some aos poucos */}
@@ -149,15 +185,12 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
    <button type="button" className="dm-book-arrow prev" aria-label="Voltar" disabled={position===0||!!turn} onClick={()=>move(-1)}><ChevronLeft size={24}/></button>
    <div data-side={closedSide} data-turn={coverTurn?(index<0?'open':'close'):undefined} className={'dm-book'+(index<0&&!turn?' is-closed':'')+(coverTurn?' is-cover-turn':'')} style={{['--turn-ms' as string]:`${turnMs}ms`,aspectRatio:ratio,width:`min(100%, calc((100dvh - 395px) * ${ratio}))`,['--shift' as string]:`${shift(shown)}%`,['--hinge' as string]:`${Math.min(12,15/spineInfo(project).face*100)}%`}} aria-busy={!!turn}>
     {closedSide&&hasCovers&&<span className="dm-book-block" data-anim={closedAnim} aria-hidden="true"/>}
-    {!turn?(index<0?<>{split(index,'left')}{split(index,'right')}</>:<Artwork project={project} index={index} urls={urls}/>):<>
-     {split(turn.direction===1?index:turn.to,'left')}{split(turn.direction===1?turn.to:index,'right')}
-     <div className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}`} key={`${index}-${turn.to}`}><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>
-    </>}
+    {/* Sempre as duas metades, na mesma posição: a página que fica parada não é redesenhada ao virar */}
+    {split(!turn||turn.direction===-1?(turn?turn.to:index):index,'left')}
+    {split(!turn?index:turn.direction===1?turn.to:index,'right')}
+    {turn&&<div className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}`} key={`sheet-${index}-${turn.to}`}><i className="dm-sheet-shadow" aria-hidden="true"/><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>}
     {/* Álbum fechado: no canto de baixo junto da lombada, a continuação preta da lombada, sem faixa lateral */}
     {closedSide&&hasCovers&&<span className="dm-book-spine-foot" data-anim={closedAnim} aria-hidden="true"/>}
-    {/* Sombra que a folha/capa projeta na página de baixo enquanto vira */}
-    {turn&&<><span className={`dm-turn-shade from ${turn.direction===1?'right':'left'}`} aria-hidden="true"/><span className={`dm-turn-shade to ${turn.direction===1?'left':'right'}`} aria-hidden="true"/></>}
-    {index>=0&&<span className="dm-book-gutter" aria-hidden="true"/>}
     {!turn&&<span className="dm-book-shine" key={shine} aria-hidden="true"/>}
    </div>
    <button type="button" className="dm-book-arrow next" aria-label="Avançar" disabled={position===indices.length-1||!!turn} onClick={()=>move(1)}><ChevronRight size={24}/></button>

@@ -1,7 +1,7 @@
 import {ensureProjectFonts} from '@/lib/album-fonts';
 import {drawIcons,drawTexture,surfaceFit,surfaceUrl} from '@/lib/album-decorations';
 import {coverPageIndices} from '@/lib/cover-production';
-import { cropRectangle, defaultCover, defaultBackCover, defaultPrintSpec, spreadRectangles, projectSpec, frameGeometry, printDimensions, validateProjectForPrint, type LayoutProject, type Slot, loadProject, projectPageIndices } from '@/lib/layout-projects';
+import { cropRectangle, defaultCover, defaultBackCover, spreadRectangles, projectSpec, frameGeometry, printDimensions, validateProjectForPrint, type LayoutProject, type Slot, loadProject, projectPageIndices } from '@/lib/layout-projects';
 import {drawCoverText,drawAlbumTexts} from './diagrammer-text';
 import {applyPhotoAdjust,isNeutralAdjust,photoWarmthLayer} from '@/lib/photo-adjust';
 

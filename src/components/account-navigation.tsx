@@ -2,21 +2,22 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Package, UserRound, ChevronRight } from 'lucide-react';
+import { BookImage, Package, UserRound } from 'lucide-react';
 
+/** Cada aba tem uma cor da faixa HP. */
 const sections = [
-  { href: '/minha-conta/projetos', label: 'Meus projetos', description: 'Crie e continue seus álbuns', icon: BookOpen },
-  { href: '/minha-conta/pedidos', label: 'Meus pedidos', description: 'Acompanhe suas compras', icon: Package },
-  { href: '/minha-conta/dados', label: 'Meus dados', description: 'Consulte sua conta', icon: UserRound },
+  { href: '/minha-conta/projetos', label: 'Meus álbuns', icon: BookImage, color: 'var(--zg-blue)' },
+  { href: '/minha-conta/pedidos', label: 'Pedidos', icon: Package, color: 'var(--zg-magenta)' },
+  { href: '/minha-conta/dados', label: 'Meus dados', icon: UserRound, color: 'var(--zg-green)' },
 ];
 
 export function AccountNavigation() {
   const pathname = usePathname();
-  return <nav className="customer-nav" aria-label="Área do cliente">
-    {sections.map(({ href, label, description, icon: Icon }) => <Link key={href} href={href} aria-current={pathname === href ? 'page' : undefined}>
-      <span className="customer-nav-icon"><Icon size={23} aria-hidden="true" /></span>
-      <span><strong>{label}</strong><small>{description}</small></span>
-      <ChevronRight className="customer-nav-arrow" size={18} aria-hidden="true" />
+  const active = Math.max(0, sections.findIndex(section => pathname === section.href));
+  return <nav className="ca-tabs" aria-label="Área do cliente" style={{ ['--active' as string]: active, ['--tab-color' as string]: sections[active].color }}>
+    <span className="ca-tabs-pill" aria-hidden="true" />
+    {sections.map(({ href, label, icon: Icon }, index) => <Link key={href} href={href} aria-current={index === active && pathname === href ? 'page' : undefined}>
+      <Icon size={18} strokeWidth={1.8} aria-hidden="true" /><span>{label}</span>
     </Link>)}
   </nav>;
 }

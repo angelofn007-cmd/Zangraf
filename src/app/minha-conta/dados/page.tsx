@@ -1,15 +1,27 @@
 import Link from 'next/link';
+import { Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { authenticationConfigured, getSession } from '@/lib/server/auth';
-import { UserRound } from 'lucide-react';
+import { SignOut } from '@/components/login';
 
 export const metadata = { title: 'Meus dados' };
 export default async function Page() {
   const session = authenticationConfigured() ? await getSession() : null;
-  return <>
-    <div className="customer-section-heading"><h2>Meus dados</h2><p>Informações do seu cadastro na Zangraf.</p></div>
-    {session ? <div className="customer-profile">
-      <div className="customer-profile-title"><span className="customer-nav-icon"><UserRound size={23} aria-hidden="true" /></span><h3>Dados da conta</h3></div>
-      <dl><div><dt>Nome</dt><dd>{session.user.name}</dd></div><div><dt>E-mail</dt><dd>{session.user.email}</dd></div></dl>
-    </div> : <div className="empty"><h3>Nenhuma conta conectada</h3><p>Entre na sua conta para consultar seus dados.</p><Link className="button" href="/entrar">Entrar na minha conta</Link></div>}
-  </>;
+  if (!session) return <div className="ca-empty">
+    <span className="ca-avatar is-empty" aria-hidden="true"><UserRound size={34} strokeWidth={1.5} /></span>
+    <h2>Nenhuma conta conectada</h2>
+    <p>Entre para ver seus dados.</p>
+    <Link className="ca-button" href="/entrar">Entrar</Link>
+  </div>;
+  const initials = session.user.name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || '?';
+  return <div className="ca-profile">
+    <span className="ca-avatar" aria-hidden="true">{initials}</span>
+    <div className="ca-profile-main">
+      <h2>{session.user.name}</h2>
+      <p><Mail size={15} aria-hidden="true" />{session.user.email}</p>
+    </div>
+    <div className="ca-profile-actions">
+      <Link href="/privacidade" className="ca-link"><ShieldCheck size={16} aria-hidden="true" />Privacidade</Link>
+      <span className="ca-signout"><SignOut /></span>
+    </div>
+  </div>;
 }
