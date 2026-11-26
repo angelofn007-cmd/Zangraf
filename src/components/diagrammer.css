@@ -2412,7 +2412,6 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 
 /* Acabamento fosco anti-risco: sem reflexo nem brilho passando; a laminação deixa a arte um pouco mais suave */
 .dm-studio .dm-book-shine{display:none}
-.dm-studio .dm-book-half.is-cover .dm-cover-part{filter:saturate(.94) contrast(.96) brightness(1.01)}
 .dm-studio .dm-book-half.is-cover:before{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;background:#fff;opacity:.04}
 
 /* ===================== Dorso ===================== */
@@ -2594,7 +2593,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 @keyframes dm-cover-close{0%{transform:rotateY(0)}12%{transform:rotateY(6deg)}100%{transform:rotateY(180deg)}}
 /* Na folha que vira só a própria sombra (o miolo fica parado embaixo) */
 .dm-studio .dm-sheet-face .dm-book-half.is-cover{box-shadow:none}
-/* Miolo, placa de trás e canto preto: somem ao abrir, voltam ao fechar (suave) */
+/* Miolo, placa de trás e canto preto: somem ao abrir e voltam ao fechar num instante em que a capa os cobre.
+   Trocam de uma vez (sem esmaecer): com as sombras grandes que têm, esmaecer obrigava a redesenhar a cada quadro. */
 .dm-book-block[data-anim=out],.dm-book-spine-foot[data-anim=out]{animation:dm-closed-out var(--turn-ms) ease forwards}
 .dm-book-block[data-anim=in],.dm-book-spine-foot[data-anim=in]{animation:dm-closed-in var(--turn-ms) ease forwards}
 @keyframes dm-closed-out{0%,40%{opacity:1}85%,100%{opacity:0}}
@@ -2626,8 +2626,8 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-book.is-cover-turn:before{left:calc(var(--overhang) * -1);border-right:0;border-radius:4px 0 0 4px;opacity:0;animation:dm-board-land var(--turn-ms) ease forwards}
 .dm-studio .dm-book.is-cover-turn[data-side=back]:before{left:50%;border-left:0;border-right:var(--overhang) solid var(--board);border-radius:0 4px 4px 0}
 .dm-studio .dm-book.is-cover-turn[data-turn=close]:before{animation-name:dm-board-lift}
-@keyframes dm-board-land{0%,70%{opacity:0}100%{opacity:1}}
-@keyframes dm-board-lift{0%{opacity:1}30%,100%{opacity:0}}
+@keyframes dm-board-land{0%,84.9%{opacity:0}85%,100%{opacity:1}}
+@keyframes dm-board-lift{0%,14.9%{opacity:1}15%,100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.dm-book-block,.dm-book-spine-foot,.dm-sheet-shadow,.dm-book.is-cover-turn:before,.dm-book.is-cover-turn:after{animation:none!important}}
 
 /* ===================== Dorso e debruagem: marcas de dobra finas, no estilo de arquivo de gráfica =====================
@@ -2948,17 +2948,13 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-turning-sheet{will-change:transform}
 .dm-sheet-face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 /* Safari: o "backface-visibility" não esconde as camadas de cima da capa (sulco da dobra, brilho), que
-   continuavam aparecendo através da folha já virada. Por isso a troca de face é feita no tempo: no instante
-   em que a folha fica de lado (90°), a frente some e o verso aparece. Os pontos saem das curvas de cada
-   virada: página cubic-bezier(.32,.1,.38,1) cruza 90° em 36,7% do tempo; capa (6° até 12%, depois
-   cubic-bezier(.45,.05,.3,1)) cruza em 46,4%. */
-.dm-turning-sheet .dm-sheet-face.front{animation:dm-face-front .74s linear forwards}
-.dm-turning-sheet .dm-sheet-face.back{animation:dm-face-back .74s linear forwards}
-@keyframes dm-face-front{0%,36.6%{visibility:visible}36.7%,100%{visibility:hidden}}
-@keyframes dm-face-back{0%,36.6%{visibility:hidden}36.7%,100%{visibility:visible}}
-.dm-book.is-cover-turn .dm-turning-sheet .dm-sheet-face.front{animation:dm-cover-face-front var(--turn-ms) linear forwards}
-.dm-book.is-cover-turn .dm-turning-sheet .dm-sheet-face.back{animation:dm-cover-face-back var(--turn-ms) linear forwards}
-@keyframes dm-cover-face-front{0%,46.3%{visibility:visible}46.4%,100%{visibility:hidden}}
-@keyframes dm-cover-face-back{0%,46.3%{visibility:hidden}46.4%,100%{visibility:visible}}
-.dm-sheet-shadow{position:absolute;inset:0;pointer-events:none;transform:translateZ(-1px);box-shadow:0 8px 22px #0000002e;opacity:0;animation:dm-sheet-air var(--turn-ms,760ms) ease-in-out forwards}
+   continuavam aparecendo através da folha já virada. Por isso a troca de face é feita no instante em que a
+   folha fica de lado (90°): o componente marca a folha com .is-flipped nesse momento (um único recálculo de
+   estilo, em vez de animar "visibility", que obrigava o navegador a recalcular a folha em todo quadro). */
+.dm-turning-sheet:not(.is-flipped) .dm-sheet-face.back,.dm-turning-sheet.is-flipped .dm-sheet-face.front{visibility:hidden}
+.dm-sheet-shadow{position:absolute;inset:0;pointer-events:none;transform:translateZ(-1px);will-change:opacity;box-shadow:0 8px 22px #0000002e;opacity:0;animation:dm-sheet-air var(--turn-ms,760ms) ease-in-out forwards}
 @keyframes dm-sheet-air{0%,8%{opacity:0}50%{opacity:1}92%,100%{opacity:0}}
+
+/* Virada armada (montada, ainda parada): nada se move até o navegador terminar de desenhar a folha */
+.dm-book.is-arming,.dm-book.is-arming:before,.dm-book.is-arming:after,.dm-book.is-arming *,.dm-book.is-arming *:before,.dm-book.is-arming *:after{animation-play-state:paused!important}
+.dm-book-block,.dm-book-spine-foot{will-change:opacity}

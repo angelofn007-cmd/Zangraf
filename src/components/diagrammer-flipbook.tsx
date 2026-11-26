@@ -31,6 +31,22 @@ function spineInfo(project:LayoutProject){
  const sheets=project.productionModel?.sheets||project.spreads.length;
  return {wrap,spine:art||Math.max(8,Math.min(face*.12,4+sheets*.7)),face,height:spec.heightMm,total:spec.widthMm};
 }
+/** Endereços das fotos que aparecem numa página (lâmina, capa ou verso). */
+function pageUrls(project:LayoutProject,page:number,urls:Record<string,string>){
+ const ids:(string|null|undefined)[]=[];
+ if(page<0){
+  for(const cover of page===-1&&isWrap(project)?[project.cover,project.backCover]:[page===-2?project.backCover:project.cover]){
+   if(!cover)continue;ids.push(cover.photo.photoId,cover.backgroundPhotoId,...(cover.composition?.slots.map(s=>s.photoId)||[]));
+  }
+ }else{const spread=project.spreads[page];if(spread)ids.push(spread.backgroundPhotoId,...spread.slots.map(s=>s.photoId));}
+ return [...new Set(ids.filter((id):id is string=>!!id&&!!urls[id]).map(id=>urls[id]))];
+}
+/** Decodifica as fotos antes de aparecerem: a virada não trava no meio esperando a imagem. */
+const decoded=new Set<string>();
+function decodePhotos(list:string[]){
+ return Promise.all(list.filter(url=>!decoded.has(url)).map(url=>{const img=new Image();img.decoding='async';img.src=url;
+  return img.decode().then(()=>{decoded.add(url);}).catch(()=>undefined);}));
+}
 /** Cor média de uma faixa da borda (a margem de segurança) de uma parte da capa desenhada. */
 function edgeColor(canvas:HTMLCanvasElement,from:number,to:number,outerLeft:boolean){
  const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return undefined;
@@ -149,7 +165,7 @@ const shortLabel=(index:number)=>index===-1?'Capa':index===-2?'Verso':String(ind
 
 export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProject;urls:Record<string,string>;index:number;onChange:(index:number)=>void}){
  const indices=bookIndices(project),position=Math.max(0,indices.indexOf(index));
- const [turn,setTurn]=useState<{to:number;direction:1|-1}|null>(null),[flat]=useState(false),[shine,setShine]=useState(0),[spineOpen,setSpineOpen]=useState(()=>indices.includes(-1));
+ const [turn,setTurn]=useState<{to:number;direction:1|-1;ready?:boolean;flipped?:boolean}|null>(null),[flat]=useState(false),[shine,setShine]=useState(0),[spineOpen,setSpineOpen]=useState(()=>indices.includes(-1));
  // Ao abrir a prévia: abertura animada (impressora → caixa → caminhão → casa) e depois o álbum no 4D.
  const [intro,setIntro]=useState(()=>indices.includes(-1)&&!(typeof window!=='undefined'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches));
  const [introShown,setIntroShown]=useState(intro);
@@ -158,12 +174,36 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
  const swipe=useRef<number|null>(null),turning=useRef(false),thumbs=useRef<HTMLDivElement>(null);
  const pageSpec=projectSpec(project,0),ratio=project.spreads.length?pageSpec.widthMm*2/pageSpec.heightMm:coverRatio(project,-1)*2;
  const shift=(page:number)=>page===-1?-25:page===-2?25:0;
- const shown=turn?turn.to:index;
- function go(to:number,direction:1|-1){if(turning.current||to===index)return;if(flat||window.matchMedia('(prefers-reduced-motion: reduce)').matches){onChange(to);setShine(v=>v+1);return;}turning.current=true;setTurn({to,direction});}
+ // O livro só desliza junto com a virada (depois de tudo montado e desenhado).
+ const shown=turn?.ready?turn.to:index;
+ function go(to:number,direction:1|-1){
+  if(turning.current||to===index)return;
+  if(flat||window.matchMedia('(prefers-reduced-motion: reduce)').matches){onChange(to);setShine(v=>v+1);return;}
+  turning.current=true;
+  // Começa a virar com as fotos do destino já prontas (espera no máximo 300 ms).
+  void Promise.race([decodePhotos(pageUrls(project,to,urls)),new Promise(r=>setTimeout(r,300))]).then(()=>setTurn({to,direction}));
+ }
+ // Enquanto a pessoa olha a página, as vizinhas já ficam prontas para a próxima virada.
+ useEffect(()=>{
+  const pages=bookIndices(project);
+  const near=[pages[position+1],pages[position-1],pages[position+2],pages[position-2]].filter((page):page is number=>page!==undefined);
+  const idle=(window as unknown as {requestIdleCallback?:(cb:()=>void)=>number}).requestIdleCallback||((cb:()=>void)=>window.setTimeout(cb,120));
+  idle(()=>{void near.reduce((chain,page)=>chain.then(()=>decodePhotos(pageUrls(project,page,urls))),Promise.resolve() as Promise<unknown>);});
+ },[position,project,urls]);
  function move(direction:1|-1){const to=indices[position+direction];if(to!==undefined)go(to,direction);}
  // Virada da capa um pouco mais lenta que a das lâminas (a capa é mais pesada).
  const coverTurn=!!turn&&(index<0||turn.to<0),turnMs=coverTurn?1000:760;
- useEffect(()=>{if(!turn)return;const timer=setTimeout(()=>{onChange(turn.to);setTurn(null);setShine(v=>v+1);turning.current=false;},turnMs);return()=>clearTimeout(timer);},[turn,onChange,turnMs]);
+ // Monta a virada parada e só solta o movimento dois quadros depois, quando o navegador já desenhou
+ // a folha e as fotos: o custo de montar fica antes do movimento, e não um tranco no começo da virada.
+ const armed=!!turn&&!turn.ready;
+ useEffect(()=>{if(!armed)return;let b=0;const a=requestAnimationFrame(()=>{b=requestAnimationFrame(()=>setTurn(t=>t&&{...t,ready:true}));});return()=>{cancelAnimationFrame(a);cancelAnimationFrame(b);};},[armed]);
+ const ready=!!turn?.ready,target=turn?.to;
+ useEffect(()=>{if(!ready||target===undefined)return;
+  // A folha fica de lado (90°) em 36,7% da virada de página (0,74 s) e em 46,4% da virada da capa:
+  // pontos calculados das curvas cubic-bezier de cada animação no CSS.
+  const flip=setTimeout(()=>setTurn(t=>t&&{...t,flipped:true}),coverTurn?turnMs*.464:740*.367);
+  const timer=setTimeout(()=>{onChange(target);setTurn(null);setShine(v=>v+1);turning.current=false;},turnMs);
+  return()=>{clearTimeout(flip);clearTimeout(timer);};},[ready,target,onChange,turnMs,coverTurn]);
  // Lado do álbum fechado em cena (parado, abrindo ou fechando): o miolo e o canto da lombada acompanham.
  const closedSide=index===-1||turn?.to===-1?'front':index===-2||turn?.to===-2?'back':undefined;
  const closedAnim=!turn?undefined:index<0?'out':'in';
@@ -183,12 +223,12 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
   {intro?<div className="dm-intro-spacer"/>:spineOpen?<div className="dm-book-stage dm-book-stage-spine"><FourDView project={project} urls={urls}/></div>:
   <div className={'dm-book-stage '+(flat?'flat':'')} onPointerDown={e=>{swipe.current=e.clientX;window.getSelection()?.removeAllRanges()}} onDragStart={e=>e.preventDefault()} onPointerUp={e=>{const start=swipe.current;swipe.current=null;if(start!==null&&Math.abs(e.clientX-start)>45)move(e.clientX<start?1:-1)}}>
    <button type="button" className="dm-book-arrow prev" aria-label="Voltar" disabled={position===0||!!turn} onClick={()=>move(-1)}><ChevronLeft size={24}/></button>
-   <div data-side={closedSide} data-turn={coverTurn?(index<0?'open':'close'):undefined} className={'dm-book'+(index<0&&!turn?' is-closed':'')+(coverTurn?' is-cover-turn':'')} style={{['--turn-ms' as string]:`${turnMs}ms`,aspectRatio:ratio,width:`min(100%, calc((100dvh - 395px) * ${ratio}))`,['--shift' as string]:`${shift(shown)}%`,['--hinge' as string]:`${Math.min(12,15/spineInfo(project).face*100)}%`}} aria-busy={!!turn}>
+   <div data-side={closedSide} data-turn={coverTurn?(index<0?'open':'close'):undefined} className={'dm-book'+(index<0&&!turn?' is-closed':'')+(coverTurn?' is-cover-turn':'')+(armed?' is-arming':'')} style={{['--turn-ms' as string]:`${turnMs}ms`,aspectRatio:ratio,width:`min(100%, calc((100dvh - 395px) * ${ratio}))`,['--shift' as string]:`${shift(shown)}%`,['--hinge' as string]:`${Math.min(12,15/spineInfo(project).face*100)}%`}} aria-busy={!!turn}>
     {closedSide&&hasCovers&&<span className="dm-book-block" data-anim={closedAnim} aria-hidden="true"/>}
     {/* Sempre as duas metades, na mesma posição: a página que fica parada não é redesenhada ao virar */}
     {split(!turn||turn.direction===-1?(turn?turn.to:index):index,'left')}
     {split(!turn?index:turn.direction===1?turn.to:index,'right')}
-    {turn&&<div className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}`} key={`sheet-${index}-${turn.to}`}><i className="dm-sheet-shadow" aria-hidden="true"/><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>}
+    {turn&&<div className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}${turn.flipped?' is-flipped':''}`} key={`sheet-${index}-${turn.to}`}><i className="dm-sheet-shadow" aria-hidden="true"/><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>}
     {/* Álbum fechado: no canto de baixo junto da lombada, a continuação preta da lombada, sem faixa lateral */}
     {closedSide&&hasCovers&&<span className="dm-book-spine-foot" data-anim={closedAnim} aria-hidden="true"/>}
     {!turn&&<span className="dm-book-shine" key={shine} aria-hidden="true"/>}
