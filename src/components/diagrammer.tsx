@@ -44,6 +44,7 @@ import { readCart, writeCart, unlinkProjects } from '@/lib/cart';
 import { products } from '@/lib/products';
 import { AlbumCover, AlbumSpread, type PhotoSizes } from './diagrammer-preview';
 import {ApprovalPanel} from './diagrammer-approval';
+import {parseComment,type OwnerApproval} from '@/lib/approval';
 import {specLabel,formatCm,snapshotModel,type PrintModel} from '@/lib/diagrammer-models';
 import './diagrammer.css';
 
@@ -210,6 +211,13 @@ function HandwrittenTitle({instant=false}:{instant?:boolean}){
   <span className="dm-pen2" ref={pen} aria-hidden="true"><i/></span></h2>;
 }
 
+/** Fotos com pedido do cliente (versão atual), por página: marcadas no álbum 3D da aprovação. */
+function approvalMarks(approval:OwnerApproval|null):Record<number,number[]>{
+ const marks:Record<number,number[]>={};
+ for(const c of approval?.comments||[]){if(c.version!==approval!.version)continue;const photo=parseComment(c.body).photo;if(photo)(marks[c.page]||=[]).push(photo);}
+ return marks;
+}
+
 export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }: { projectId?: string; cartItemId?: string; requireLoginToSave?: boolean }) {
  const [project, setProject] = useState<LayoutProject | null>(null);
  const [activePage, setActivePage] = useState(-1);
@@ -238,6 +246,9 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [showPreview, setShowPreview] = useState(false);
  const [previewPage, setPreviewPage] = useState(-1);
  const [shareOpen, setShareOpen] = useState(false);
+ // Aprovação na pré-view: pedidos atuais (fotos marcadas no álbum 3D) e a foto que pisca ao clicar num pedido.
+ const [approvalInfo,setApprovalInfo]=useState<OwnerApproval|null>(null);
+ const [approvalFlash,setApprovalFlash]=useState<{page:number;photo:number;key:number}|null>(null);
  const [formatError, setFormatError] = useState('');
  const [panel,setPanel]=useState<'photos'|'tone'|'layouts'|'text'|'background'|'icons'>('photos');
  // O painel de ferramentas começa fechado ao abrir o diagramador; abre pela barra lateral ou pela aba ›.
@@ -1306,7 +1317,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      <ul>{list.slice(0,40).map((issue,i)=><li key={i}><button type="button" onClick={()=>goToIssue(issue)}><strong>{pageLabel(project,issue.page)}</strong><span>{issue.detail}</span><ArrowRight size={13} aria-hidden="true"/></button></li>)}</ul>
      {list.length>40&&<p>E mais {list.length-40}.</p>}
     </details>;})}
-  </div><button className="dm-button primary full" disabled={busy||!!projectPrintError||!!formatError||!project.cartItemId} onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}>Ir para o carrinho <ArrowRight size={16}/></button><button className="dm-link dm-preview-link" onClick={()=>{setPreviewPage(-1);setShowPreview(true);setPrintOpen(false)}}><Eye size={16}/>Ver prévia completa do álbum</button><ApprovalPanel project={project} busy={busy} onGoToPage={index=>{selectPage(index);setPrintOpen(false);}}/></section>}
+  </div><button className="dm-button primary full" disabled={busy||!!projectPrintError||!!formatError||!project.cartItemId} onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}>Ir para o carrinho <ArrowRight size={16}/></button><button className="dm-link dm-preview-link" onClick={()=>{setPreviewPage(-1);setShowPreview(true);setPrintOpen(false)}}><Eye size={16}/>Ver prévia completa do álbum</button><ApprovalPanel project={project} busy={busy} onGoToPage={index=>{selectPage(index);setPrintOpen(false);}} onEditPage={index=>{selectPage(index);setPrintOpen(false);}}/></section>}
   <dialog ref={previewDialog} className={'dm-preview-dialog dm-pv'+(shareOpen?' is-sharing':'')} onCancel={()=>setShowPreview(false)} onClose={()=>{setShowPreview(false);setShareOpen(false)}} aria-label="Pré-view do álbum">
    <header className="dm-pv-head">
     <h2 className="dm-pv-title" aria-label="Pré-view">
@@ -1315,8 +1326,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     </h2>
     <button type="button" className="dm-fx-close" aria-label="Fechar pré-view" onClick={()=>setShowPreview(false)}><X size={22} strokeWidth={2.2}/></button>
    </header>
-   <div className="dm-preview-body">{showPreview&&<AlbumFlipbook project={project} urls={urls} index={previewPage} onChange={setPreviewPage}/>}
-    {shareOpen&&<aside className="dm-share-sheet" aria-label="Enviar para o cliente aprovar"><button type="button" className="dm-icon dm-share-close" aria-label="Fechar" onClick={()=>setShareOpen(false)}><X size={16}/></button><ApprovalPanel project={project} busy={busy} onGoToPage={page=>setPreviewPage(page)}/></aside>}
+   <div className="dm-preview-body">{showPreview&&<AlbumFlipbook project={project} urls={urls} index={previewPage} onChange={setPreviewPage} numbers={shareOpen?{marks:approvalMarks(approvalInfo),flash:approvalFlash}:undefined}/>}
+    {shareOpen&&<aside className="dm-share-sheet" aria-label="Enviar para o cliente aprovar"><button type="button" className="dm-icon dm-share-close" aria-label="Fechar" onClick={()=>setShareOpen(false)}><X size={16}/></button><ApprovalPanel project={project} busy={busy} onLoaded={setApprovalInfo} onGoToPage={(page,photo)=>{setPreviewPage(page);setApprovalFlash(photo?{page,photo,key:Date.now()}:null);}} onEditPage={page=>{setShowPreview(false);setShareOpen(false);selectPage(page);}}/></aside>}
    </div>
    <div className="dm-pv-actions">
     <button type="button" className={'dm-pv-btn dm-pv-send'+(shareOpen?' active':'')} aria-expanded={shareOpen} onClick={()=>setShareOpen(v=>!v)}><span className="dm-pv-btn-icon"><Send size={20}/></span><span className="dm-pv-btn-text">Enviar para o cliente aprovar</span></button>

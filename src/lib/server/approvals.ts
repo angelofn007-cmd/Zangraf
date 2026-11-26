@@ -4,9 +4,9 @@ import {del, get, put} from '@vercel/blob';
 import sharp from 'sharp';
 import {getDatabase} from './db';
 import {AdminError} from './admin-access';
-import {APPROVAL_BUDGET_BYTES, APPROVAL_DAYS, MAX_COMMENTS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH, MAX_PREVIEW_BYTES, MAX_PREVIEW_SIDE, cleanText, encodePin, statusAfterComment, validatePages, type ApprovalComment, type ApprovalStatus, type OwnerApproval, type PublicApproval} from '@/lib/approval';
+import {APPROVAL_BUDGET_BYTES, APPROVAL_DAYS, MAX_COMMENTS, MAX_COMMENT_LENGTH, MAX_NAME_LENGTH, MAX_PREVIEW_BYTES, MAX_PREVIEW_SIDE, cleanText, encodePin, encodePhoto, statusAfterComment, validatePages, type ApprovalComment, type ApprovalStatus, type PhotoBox, type OwnerApproval, type PublicApproval} from '@/lib/approval';
 
-type StoredPage={index:number;label:string;pathname:string|null;width:number;height:number;size:number};
+type StoredPage={index:number;label:string;pathname:string|null;width:number;height:number;size:number;photos?:PhotoBox[]};
 type ShareRow={id:string;token:string;user_id:string;project_id:string;album_name:string;version:number;pages:StoredPage[];bytes:string;status:ApprovalStatus;approved_by:string|null;approved_at:Date|null;expires_at:Date;updated_at:Date};
 
 const expiresAt=()=>new Date(Date.now()+APPROVAL_DAYS*24*60*60*1000);
@@ -15,7 +15,7 @@ async function removeBlobs(paths:string[]){if(paths.length)await del(paths).catc
 
 function toPublic(row:ShareRow,comments:ApprovalComment[]):PublicApproval{
  return {albumName:row.album_name,version:row.version,status:row.status,approvedBy:row.approved_by,approvedAt:row.approved_at?.toISOString()??null,expiresAt:row.expires_at.toISOString(),
-  pages:row.pages.map(({index,label,width,height})=>({index,label,width,height})),comments};
+  pages:row.pages.map(({index,label,width,height,photos})=>({index,label,width,height,photos:photos||[]})),comments};
 }
 async function commentsOf(shareId:string):Promise<ApprovalComment[]>{
  const result=await getDatabase().query('SELECT id,version,page,author,body,created_at FROM zangraf_album_comments WHERE share_id=$1 ORDER BY created_at',[shareId]);
@@ -130,8 +130,11 @@ export async function clientAction(token:string,body:Record<string,unknown>):Pro
    const like=body.like===true;
    const note=cleanText(body.body,MAX_COMMENT_LENGTH).replace(/^@(like|pin:)/,'');
    if(!like&&!note)throw new AdminError('Escreva o comentário antes de enviar.',400);
-   const text=like?('@like '+note).trim():encodePin(body.pin)+note;
    if(!Number.isInteger(body.page)||!row.pages.some(p=>p.index===body.page))throw new AdminError('Lâmina inválida.',400);
+   // Pedido sobre uma foto numerada da lâmina (1 a 10): o número precisa existir nessa lâmina.
+   const photos=row.pages.find(p=>p.index===body.page)?.photos?.length||0;
+   const photo=Number.isInteger(body.photo)&&Number(body.photo)>=1&&Number(body.photo)<=photos?encodePhoto(body.photo):'';
+   const text=like?('@like '+note).trim():(photo||encodePin(body.pin))+note;
    const count=await client.query('SELECT count(*)::int AS n FROM zangraf_album_comments WHERE share_id=$1',[row.id]);
    if(count.rows[0].n>=MAX_COMMENTS)throw new AdminError('Este álbum já recebeu o máximo de comentários. Fale direto com o fotógrafo.',429);
    await client.query('INSERT INTO zangraf_album_comments(id,share_id,version,page,author,body) VALUES($1,$2,$3,$4,$5,$6)',[randomUUID(),row.id,row.version,body.page,author,text]);

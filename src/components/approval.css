@@ -136,3 +136,35 @@ body:has(.ap-page) .zg-header,body:has(.ap-page) .zg-foot,body:has(.ap-page) .zg
 @media(max-width:900px){.ap-bar{margin:18px 0 10px}.ap-thumbs{margin:0}.ap-arrow{position:absolute;z-index:2;top:50%;width:40px;height:40px;margin-top:-20px}.ap-arrow.prev{left:-8px}.ap-arrow.next{right:-8px}}
 @media(max-width:560px){.ap-bar{flex-direction:column;align-items:stretch}.ap-react-btn{flex:1;justify-content:center}}
 @media(prefers-reduced-motion:reduce){.ap-page *{animation:none!important;transition:none!important}}
+
+/* ===================== Aprovação com o livro 3D e fotos numeradas ===================== */
+.ap-steps{max-width:1400px;margin:14px auto 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ap-muted);counter-reset:s}
+.ap-steps li{display:flex;align-items:center;gap:7px;counter-increment:s}
+.ap-steps li:before{content:counter(s);display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ap-surface);border:1px solid var(--ap-line);color:var(--ap-ink);font-size:11px;font-weight:700}
+.ap-book-wrap{position:relative;flex:1;min-width:0}
+.ap-book-wrap.is-picking .ab-book{box-shadow:0 0 0 3px var(--ap-accent),0 24px 50px #2533172e}
+.ap-request{gap:12px}
+.ap-step-title{display:flex;align-items:center;gap:8px;margin:2px 0 0;font-size:13.5px}
+.ap-step-title span{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ap-accent);color:var(--ap-accent-ink);font-size:12px;font-weight:700;flex-shrink:0}
+.ap-photo-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ap-photo-chips button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ap-line);background:var(--ap-surface);color:var(--ap-ink);font-weight:700;font-size:15px;cursor:pointer;transition:transform .25s cubic-bezier(.34,1.6,.5,1),background .2s}
+.ap-photo-chips button:hover{transform:scale(1.12);background:var(--ap-accent);border-color:var(--ap-accent)}
+.ap-whole{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;padding:8px 14px;border-radius:20px;border:1.5px dashed var(--ap-line);background:transparent;color:var(--ap-ink);font:inherit;font-size:13px;cursor:pointer}
+.ap-whole:hover{border-color:var(--ap-ink)}
+.ap-picked{display:flex;align-items:center;gap:8px;margin:0;font-weight:700;font-size:14px;animation:ap-rise .3s cubic-bezier(.34,1.4,.64,1)}
+.ap-picked b{display:grid;place-items:center;min-width:26px;height:26px;border-radius:13px;background:var(--ap-accent);color:var(--ap-accent-ink)}
+.ap-picked button{margin-left:auto;border:0;background:none;color:var(--ap-muted);font:inherit;font-size:12px;font-weight:400;text-decoration:underline;cursor:pointer}
+.ap-chips{display:flex;flex-wrap:wrap;gap:7px}
+.ap-chips button{padding:8px 12px;border-radius:18px;border:1.5px solid var(--ap-line);background:var(--ap-surface);color:var(--ap-ink);font:inherit;font-size:13px;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.ap-chips button:hover{transform:translateY(-1px);border-color:var(--ap-ink)}
+.ap-chips button[aria-pressed=true]{background:var(--ap-accent);border-color:var(--ap-accent);color:var(--ap-accent-ink);font-weight:700}
+.ap-req-title{display:inline-flex;align-items:center;gap:6px}
+.ap-req-title b{display:grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:#e81aa5;color:#fff;font-size:11px}
+.ap-comments li small{display:block;margin-top:4px}
+.ap-older{margin-top:6px}
+/* Janelas fechadas ficam escondidas (o display:flex acima vencia o padrão do navegador e elas apareciam no fim da página) */
+.ap-dialog:not([open]){display:none}
+.ap-steps li{display:block}
+.ap-steps li:before{display:inline-grid;vertical-align:middle;margin-right:7px}
+.ap-picked b{background:#e81aa5;color:#fff}
+@media(max-width:600px){.ap-steps{flex-direction:column;gap:6px;font-size:12.5px}}

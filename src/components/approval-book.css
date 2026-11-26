@@ -1,0 +1,42 @@
+/* Livro da aprovação (cliente e fotógrafo): folha virando em 3D e fotos numeradas de 1 a 10.
+   Só transform e opacity nas animações: leve até no celular. */
+.ab-book{position:relative;width:100%;max-height:68vh;margin:0 auto;background:#fff;border-radius:3px;perspective:3600px;
+ box-shadow:0 3px 0 #d4d0c7,0 6px 0 #eee8df,0 24px 50px #2533172e}
+.ab-page{display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit;-webkit-user-select:none;user-select:none;pointer-events:none}
+.ab-half{position:absolute;top:0;bottom:0;width:50%;background-repeat:no-repeat;background-size:200% 100%;background-color:#fff}
+.ab-half.left{left:0;background-position:left center}
+.ab-half.right{right:0;background-position:right center}
+.ab-sheet{position:absolute;top:0;bottom:0;width:50%;transform-style:preserve-3d;will-change:transform;z-index:2}
+.ab-sheet.forward{left:50%;transform-origin:left center;animation:ab-forward .72s cubic-bezier(.32,.1,.38,1) forwards}
+.ab-sheet.backward{left:0;transform-origin:right center;animation:ab-backward .72s cubic-bezier(.32,.1,.38,1) forwards}
+.ab-face{left:0!important;right:auto!important;width:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.ab-face.back{transform:rotateY(180deg)}
+.ab-sheet-shadow{position:absolute;inset:0;transform:translateZ(-1px);box-shadow:0 8px 22px #0000002e;opacity:0;animation:ab-air .72s ease-in-out forwards;pointer-events:none}
+@keyframes ab-forward{to{transform:rotateY(-180deg)}}
+@keyframes ab-backward{to{transform:rotateY(180deg)}}
+@keyframes ab-air{0%,8%{opacity:0}50%{opacity:1}92%,100%{opacity:0}}
+.ab-slide.next{animation:ab-slide-next .46s cubic-bezier(.2,.9,.25,1) both}
+.ab-slide.prev{animation:ab-slide-prev .46s cubic-bezier(.2,.9,.25,1) both}
+@keyframes ab-slide-next{from{opacity:0;transform:translateX(36px) scale(.98)}}
+@keyframes ab-slide-prev{from{opacity:0;transform:translateX(-36px) scale(.98)}}
+
+/* Fotos numeradas */
+.ab-numbers{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+.ab-photo{position:absolute;display:block;padding:0;border:0;background:transparent;box-sizing:border-box;border-radius:2px}
+.ab-photo b{position:absolute;left:8px;top:8px;display:grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:13px;box-sizing:border-box;
+ background:#1d1e20e6;color:#fff;font:700 13px/1 Arial,Helvetica,sans-serif;box-shadow:0 2px 8px #0000004d,0 0 0 2px #ffffffd9;
+ animation:ab-num-in .4s cubic-bezier(.34,1.6,.5,1) calc(var(--i) * 40ms) both}
+@keyframes ab-num-in{from{opacity:0;transform:scale(.4)}}
+.ab-photo.is-marked b{background:#e81aa5}
+.ab-photo.is-selected{box-shadow:inset 0 0 0 4px #fdf153,0 0 0 9999px #00000040}
+.ab-photo.is-selected b{background:#fdf153;color:#1d1e20;transform:scale(1.15)}
+/* Escolhendo a foto: cada foto é um botão; os números pulsam */
+.ab-numbers.is-picking{pointer-events:auto}
+.ab-numbers.is-picking .ab-photo{cursor:pointer;transition:background .2s,box-shadow .2s}
+.ab-numbers.is-picking .ab-photo:hover,.ab-numbers.is-picking .ab-photo:focus-visible{background:#fdf15326;box-shadow:inset 0 0 0 3px #fdf153;outline:none}
+.ab-numbers.is-picking .ab-photo b{background:#fdf153;color:#1d1e20;animation:ab-num-in .4s cubic-bezier(.34,1.6,.5,1) calc(var(--i) * 40ms) both,ab-pulse 1.6s ease-in-out calc(.5s + var(--i) * 80ms) infinite}
+@keyframes ab-pulse{0%,100%{box-shadow:0 2px 8px #0000004d,0 0 0 2px #fff}50%{box-shadow:0 2px 8px #0000004d,0 0 0 2px #fff,0 0 0 9px #fdf15366}}
+/* Destaque vindo da lista de pedidos (fotógrafo) */
+.ab-photo.is-flash{animation:ab-flash 1.6s ease-out 2}
+@keyframes ab-flash{0%{box-shadow:inset 0 0 0 0 #fdf153}30%{box-shadow:inset 0 0 0 6px #fdf153,0 0 0 9999px #0000002e}100%{box-shadow:inset 0 0 0 0 #fdf153}}
+@media(prefers-reduced-motion:reduce){.ab-sheet,.ab-sheet-shadow,.ab-slide,.ab-photo b,.ab-photo.is-flash{animation:none!important}}

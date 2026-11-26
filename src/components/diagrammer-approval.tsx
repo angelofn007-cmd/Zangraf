@@ -1,9 +1,10 @@
 'use client';
 import {useCallback, useEffect, useState} from 'react';
-import {Check, Copy, Heart, Mail, MapPin, MessageCircle, RefreshCw, Send, Trash2} from 'lucide-react';
+import {Check, Copy, Heart, LayoutGrid, Mail, MapPin, MessageCircle, PencilLine, RefreshCw, Send, Trash2} from 'lucide-react';
 import {projectPageIndices, type LayoutProject} from '@/lib/layout-projects';
 import {pageLabel} from '@/lib/album-check';
-import {MAX_PREVIEW_BYTES, STATUS_LABEL, emailShareUrl, parseComment, whatsappShareUrl, type OwnerApproval} from '@/lib/approval';
+import {MAX_PREVIEW_BYTES, STATUS_LABEL, emailShareUrl, parseComment, requestTitle, whatsappShareUrl, type OwnerApproval} from '@/lib/approval';
+import {photoBoxes} from '@/lib/approval-photos';
 import {renderPage} from './diagrammer-export';
 
 const dateFormat = new Intl.DateTimeFormat('pt-BR', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'});
@@ -23,7 +24,10 @@ async function call(url: string, init?: RequestInit) {
 }
 
 /** Envio do álbum para o cliente final aprovar, e acompanhamento dos comentários. */
-export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProject; busy: boolean; onGoToPage: (index: number) => void}) {
+export function ApprovalPanel({project, busy, onGoToPage, onEditPage, onLoaded}: {project: LayoutProject; busy: boolean;
+  /** Mostra a lâmina na pré-view e pisca a foto do pedido. */ onGoToPage: (index: number, photo?: number) => void;
+  /** Fecha a pré-view e abre a lâmina no editor para corrigir. */ onEditPage: (index: number) => void;
+  /** Avisa os pedidos atuais (para marcar as fotos no álbum 3D). */ onLoaded?: (approval: OwnerApproval | null) => void}) {
   const [approval, setApproval] = useState<OwnerApproval | null>(null);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState('');
@@ -33,10 +37,10 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
 
   const load = useCallback(async () => {
     setLoading(true); setError('');
-    try { setApproval((await call(`/api/aprovacao?projeto=${encodeURIComponent(project.id)}`)).approval); }
+    try { const found = (await call(`/api/aprovacao?projeto=${encodeURIComponent(project.id)}`)).approval; setApproval(found); onLoaded?.(found); }
     catch (e) { setError((e as Error).message); }
     finally { setLoading(false); }
-  }, [project.id]);
+  }, [project.id, onLoaded]);
   useEffect(() => { void load(); }, [load]);
 
   async function sendVersion() {
@@ -45,7 +49,7 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
     try {
       const indices = projectPageIndices(project);
       setProgress('Preparando o envio…');
-      const created = await call('/api/aprovacao', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({projectId: project.id, albumName: project.name, pages: indices.map(index => ({index, label: pageLabel(project, index)}))})});
+      const created = await call('/api/aprovacao', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({projectId: project.id, albumName: project.name, pages: indices.map(index => ({index, label: pageLabel(project, index), photos: photoBoxes(project, index)}))})});
       for (const [position, index] of indices.entries()) {
         setProgress(`Enviando ${pageLabel(project, index).toLowerCase()} (${position + 1} de ${indices.length})…`);
         const canvas = await renderPage(project, index);
@@ -60,7 +64,7 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
   }
   async function remove() {
     if (!approval || !window.confirm('Encerrar este link? O cliente não vai mais conseguir abrir, e os comentários serão apagados.')) return;
-    try { await call(`/api/aprovacao?id=${approval.id}`, {method: 'DELETE'}); setApproval(null); }
+    try { await call(`/api/aprovacao?id=${approval.id}`, {method: 'DELETE'}); setApproval(null); onLoaded?.(null); }
     catch (e) { setError((e as Error).message); }
   }
 
@@ -75,6 +79,9 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
 
   const likes = current.filter(c => parseComment(c.body).like).length;
   const changes = current.filter(c => !parseComment(c.body).like);
+  // Pedidos agrupados por lâmina, na ordem do álbum.
+  const order = projectPageIndices(project);
+  const groups = [...new Set(changes.map(c => c.page))].sort((a, b) => order.indexOf(a) - order.indexOf(b)).map(page => [page, changes.filter(c => c.page === page)] as const);
 
   return <div className="dm-approval">
     <div className="dm-approval-head">
@@ -92,7 +99,12 @@ export function ApprovalPanel({project, busy, onGoToPage}: {project: LayoutProje
         <button type="button" className="dm-button" onClick={() => void copy()}>{copied ? <Check size={15}/> : <Copy size={15}/>}{copied ? 'Copiado' : 'Copiar link'}</button>
       </div>
       {!!current.length && <div className="dm-approval-summary">{likes > 0 && <span className="like"><Heart size={13}/>{likes}</span>}{changes.length > 0 && <span className="change"><MapPin size={13}/>{changes.length} {changes.length === 1 ? 'ajuste' : 'ajustes'}</span>}</div>}
-      {changes.length ? <ul className="dm-approval-comments">{changes.map(c => { const parsed = parseComment(c.body); return <li key={c.id}><button type="button" onClick={() => onGoToPage(c.page)}><strong>{pageLabel(project, c.page)}{parsed.pin && <MapPin size={11}/>}</strong><span>{parsed.text}</span><small>{c.author} · {dateFormat.format(new Date(c.createdAt))}</small></button></li>; })}</ul>
+      {changes.length ? <div className="dm-approval-groups">{groups.map(([page, list]) => <section key={page} className="dm-approval-group">
+        <header><strong>{pageLabel(project, page)}</strong><button type="button" className="dm-approval-fix" onClick={() => onEditPage(page)}><PencilLine size={13}/>Corrigir no editor</button></header>
+        <ul>{list.map(c => { const parsed = parseComment(c.body); return <li key={c.id}><button type="button" onClick={() => onGoToPage(c.page, parsed.photo || undefined)}>
+          <span className="dm-approval-target">{parsed.photo ? <b>{parsed.photo}</b> : parsed.pin ? <MapPin size={12}/> : <LayoutGrid size={12}/>}{requestTitle(parsed)}</span>
+          <span className="dm-approval-text">{parsed.text}</span><small>{c.author} · {dateFormat.format(new Date(c.createdAt))}</small></button></li>; })}</ul>
+      </section>)}</div>
         : !current.length && <p className="dm-muted dm-small">Nenhuma resposta ainda.</p>}
       {older > 0 && <p className="dm-muted dm-small">{older} comentário(s) de versões anteriores.</p>}
       <button type="button" className="dm-button full" disabled={busy || working} onClick={() => void sendVersion()}><Send size={15}/>{working ? progress : 'Enviar versão atualizada'}</button>

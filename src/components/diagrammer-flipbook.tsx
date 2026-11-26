@@ -6,6 +6,8 @@ import {projectSpec,defaultCover,defaultBackCover,type LayoutProject} from '@/li
 import {coverSpineMm} from '@/lib/album-layouts';
 import {coverPageIndices} from '@/lib/cover-production';
 import {AlbumCover,AlbumSpread} from './diagrammer-preview';
+import {PhotoNumbers} from './approval-book';
+import {photoBoxes} from '@/lib/approval-photos';
 
 const isWrap=(project:LayoutProject)=>project.productionModel?.coverMode==='wrap';
 /** Ordem do folheamento: capa fechada (só a frente) → lâminas → verso com o dorso no final. */
@@ -173,7 +175,9 @@ function FourDView({project,urls,start=true}:{project:LayoutProject;urls:Record<
 function coverRatio(project:LayoutProject,index:number){const spec=projectSpec(project,-1);if(!isWrap(project)){const s=projectSpec(project,index);return s.widthMm/s.heightMm;}const spine=coverSpineMm(project),face=(spec.widthMm-spine)/2;return (index===-1?face:face+spine)/spec.heightMm;}
 const shortLabel=(index:number)=>index===-1?'Capa':index===-2?'Verso':String(index+1);
 
-export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProject;urls:Record<string,string>;index:number;onChange:(index:number)=>void}){
+export function AlbumFlipbook({project,urls,index,onChange,numbers}:{project:LayoutProject;urls:Record<string,string>;index:number;onChange:(index:number)=>void;
+ /** Aprovação: fotos numeradas (1 a 10) por cima da lâmina, marcadas as que têm pedido; `flash` pisca uma foto. */
+ numbers?:{marks:Record<number,number[]>;flash?:{page:number;photo:number;key:number}|null}}){
  const indices=bookIndices(project),position=Math.max(0,indices.indexOf(index));
  const [turn,setTurn]=useState<{to:number;direction:1|-1;ready?:boolean}|null>(null),[flat]=useState(false),[shine,setShine]=useState(0),[spineOpen,setSpineOpen]=useState(()=>indices.includes(-1));
  // Ao abrir a prévia: abertura animada (impressora → caixa → caminhão → casa) e depois o álbum no 4D.
@@ -241,6 +245,7 @@ export function AlbumFlipbook({project,urls,index,onChange}:{project:LayoutProje
     {split(!turn||turn.direction===-1?(turn?turn.to:index):index,'left')}
     {split(!turn?index:turn.direction===1?turn.to:index,'right')}
     {turn&&<div ref={sheet} className={`dm-turning-sheet ${turn.direction===1?'forward':'backward'}`} key={`sheet-${index}-${turn.to}`}><i className="dm-sheet-shadow" aria-hidden="true"/><div className="dm-sheet-face front">{split(index,turn.direction===1?'right':'left')}</div><div className="dm-sheet-face back">{split(turn.to,turn.direction===1?'left':'right')}</div></div>}
+    {numbers&&!turn&&index>=0&&<PhotoNumbers photos={photoBoxes(project,index)} marked={new Set(numbers.marks[index]||[])} flash={numbers.flash&&numbers.flash.page===index?{n:numbers.flash.photo,key:numbers.flash.key}:null}/>}
     {/* Álbum fechado: no canto de baixo junto da lombada, a continuação preta da lombada, sem faixa lateral */}
     {closedSide&&hasCovers&&<span className="dm-book-spine-foot" data-anim={closedAnim} aria-hidden="true"/>}
     {!turn&&<span className="dm-book-shine" key={shine} aria-hidden="true"/>}

@@ -29,10 +29,23 @@ test('Mensagem pronta para o WhatsApp leva o link',()=>{
 {
   const assert = require('node:assert');
   const {parseComment, encodePin, emailShareUrl} = require('./load-ts.cjs')('src/lib/approval.ts');
-  assert.deepStrictEqual(parseComment('@like'), {like: true, pin: null, text: ''});
-  assert.deepStrictEqual(parseComment(encodePin({x: .5, y: .25}) + 'Trocar'), {like: false, pin: {x: .5, y: .25}, text: 'Trocar'});
+  assert.deepStrictEqual(parseComment('@like'), {like: true, pin: null, photo: null, text: ''});
+  assert.deepStrictEqual(parseComment(encodePin({x: .5, y: .25}) + 'Trocar'), {like: false, pin: {x: .5, y: .25}, photo: null, text: 'Trocar'});
   assert.strictEqual(encodePin({x: 2, y: .1}), '');
-  assert.deepStrictEqual(parseComment('Normal'), {like: false, pin: null, text: 'Normal'});
+  assert.deepStrictEqual(parseComment('Normal'), {like: false, pin: null, photo: null, text: 'Normal'});
   assert.ok(emailShareUrl('https://x/aprovar/abc', 'Ana').startsWith('mailto:?subject='));
   console.log('approval markers ok');
 }
+
+test('Pedido aponta a foto numerada (1 a 10) e lâminas levam as fotos numeradas',()=>{
+ const {parseComment,encodePhoto,validatePhotos,requestTitle}=load('src/lib/approval.ts');
+ assert.deepEqual(parseComment(encodePhoto(3)+'Trocar esta foto: com a vovó'),{like:false,pin:null,photo:3,text:'Trocar esta foto: com a vovó'});
+ assert.equal(encodePhoto(11),'');assert.equal(encodePhoto(0),'');assert.equal(encodePhoto('2'),'');
+ assert.equal(requestTitle(parseComment('@foto:10 Aumentar')),'Foto 10');
+ assert.equal(requestTitle(parseComment('Mudar a ordem')),'Lâmina toda');
+ const boxes=validatePhotos([{x:0,y:0,w:.5,h:1},{x:.5,y:0,w:.5,h:1}]);
+ assert.deepEqual(boxes.map(b=>b.n),[1,2]);
+ assert.deepEqual(validatePhotos([{x:2,y:0,w:1,h:1}]),[]);
+ assert.equal(validatePhotos(Array.from({length:14},()=>({x:0,y:0,w:.1,h:.1}))).length,10);
+ assert.deepEqual(validatePages([{index:0,label:'Lâmina 1',photos:[{x:0,y:0,w:1,h:1}]}])[0].photos.map(b=>b.n),[1]);
+});

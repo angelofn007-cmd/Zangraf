@@ -2983,3 +2983,20 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-spine-view.is-landed .dm-4d-sheen:before{animation:dm-4d-sheen 7s cubic-bezier(.4,0,.2,1) .15s infinite}
 @keyframes dm-4d-sheen{0%{transform:translateX(-130%) skewX(-12deg)}16%,100%{transform:translateX(330%) skewX(-12deg)}}
 @media(prefers-reduced-motion:reduce){.dm-4d-glow,.dm-4d-burst i,.dm-4d-sheen:before{animation:none!important}.dm-4d-glow{opacity:1}.dm-4d-burst{display:none}}
+
+/* ===================== Aprovação na pré-view: pedidos por lâmina e foto ===================== */
+.dm-pv.is-sharing .dm-share-sheet{flex-basis:340px}
+.dm-approval-groups{display:flex;flex-direction:column;gap:10px;max-height:min(46vh,420px);overflow:auto;padding-right:2px}
+.dm-approval-group{border:1px solid var(--dm-line);border-radius:12px;background:var(--dm-surface);overflow:hidden;animation:dm-rise .35s cubic-bezier(.2,.9,.25,1) both}
+.dm-approval-group>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px 7px 12px;border-bottom:1px solid var(--dm-line)}
+.dm-approval-group>header strong{font-size:13px}
+.dm-approval-fix{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border:0;border-radius:14px;background:var(--dm-yellow,#fdf153);color:#1d1e20;font:700 11.5px/1 Arial,Helvetica,sans-serif;cursor:pointer;transition:transform .2s}
+.dm-approval-fix:hover{transform:translateY(-1px)}
+.dm-approval-group ul{list-style:none;margin:0;padding:4px;display:flex;flex-direction:column;gap:2px}
+.dm-approval-group li button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:8px;border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;font:inherit;cursor:pointer;transition:background .15s}
+.dm-approval-group li button:hover{background:var(--dm-soft)}
+.dm-approval-target{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700}
+.dm-approval-target b{display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#e81aa5;color:#fff;font-size:11px}
+.dm-approval-text{font-size:13px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+.dm-approval-group small{font-size:11px;color:var(--dm-muted)}
+@keyframes dm-rise{from{opacity:0;transform:translateY(8px)}}
