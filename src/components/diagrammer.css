@@ -192,12 +192,12 @@
  .dm-filmstrip>button{flex-basis:76px}.dm-thumb{width:66px;height:40px}.dm-thumb.cover{width:36px}.dm-filmstrip{min-height:84px;padding:4px 8px 8px}.dm-pages-toolbar{padding:4px 6px 0}.dm-pages-toolbar strong{min-width:48px;font-size:9.5px}.dm-bottom{padding:3px 8px;gap:5px}.dm-zoom input{width:54px!important}
  .dm-toast{top:118px;max-width:calc(100% - 16px);font-size:12px}
  .dm-export-popover{top:66px;right:8px;width:calc(100vw - 16px);max-height:calc(100dvh - 80px);padding:20px}
- .dm-delete-photo{opacity:1}.dm-focus-columns{grid-template-columns:1fr}.dm-focus-source>img{max-height:34dvh}.dm-focus-result{max-width:200px;margin:auto}
+ .dm-delete-photo{opacity:1}
  .dm-preview-dialog{width:95vw;padding:16px 12px}.dm-preview-dialog h2{font-size:19px}.dm-book-stage{padding:8px 0 18px}.dm-book-controls{gap:5px}.dm-book-controls span{display:none}.dm-book-controls strong{font-size:10px}.dm-theme-grid{gap:10px}}
 @media(prefers-reduced-motion:reduce){.dm-studio *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.dm-book{transform:none}}
 
 /* Componentes com fundo próprio no modo noturno */
-.dm-studio[data-night=true] :is(.dm-position-menu,.dm-export-popover,.dm-preview-dialog,.dm-focus-dialog,.dm-layout-grid>button,.dm-text-list,.dm-text-presets button,.dm-cover-region-tools button,.dm-position-menu button,.dm-saved-layout,.dm-model-card,.dm-variant){background:var(--dm-control);color:var(--dm-ink);border-color:var(--dm-line)}
+.dm-studio[data-night=true] :is(.dm-position-menu,.dm-export-popover,.dm-preview-dialog,.dm-layout-grid>button,.dm-text-list,.dm-text-presets button,.dm-cover-region-tools button,.dm-position-menu button,.dm-saved-layout,.dm-model-card,.dm-variant){background:var(--dm-control);color:var(--dm-ink);border-color:var(--dm-line)}
 .dm-studio[data-night=true] :is(.dm-cover-region-tools,.dm-finishing-help,.dm-multi-actions){background:#302f20;color:#ddd6a6;border-color:#4b4a33}
 .dm-studio[data-night=true] .dm-layout-grid>button>span{background:#3d3c34;border-color:#3d3c34}
 .dm-studio[data-night=true] .dm-layout-grid i{background:#b9b59a;border-color:#3d3c34}
@@ -240,8 +240,7 @@ body:has(.dm-studio){overflow:hidden}body:has(.dm-studio)>.zg-header,body:has(.d
 .dm-texture-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.dm-decoration-layer{position:absolute;inset:0;z-index:7;pointer-events:none;overflow:hidden}.dm-decoration-layer>button,.dm-decoration-layer>span{position:absolute;display:block;padding:0;border:0;background:transparent;touch-action:none;transform-origin:center}.dm-decoration-layer>button{pointer-events:auto;cursor:move}.dm-decoration-layer svg{display:block;width:100%;height:100%}.dm-decoration-layer>button.selected{outline:1.5px solid #a39536;outline-offset:4px}.dm-decoration-layer>button:hover{outline:1px dashed #a39536;outline-offset:4px}
 .dm-preview-dialog{width:min(1200px,95vw);max-width:95vw;max-height:94dvh;overflow:auto;padding:22px 28px;border-radius:18px;background:var(--dm-surface);color:var(--dm-ink)}.dm-preview-dialog h2{font:500 23px Georgia,serif}.dm-book-hint{display:flex;align-items:center;justify-content:space-between;margin:8px 0;color:var(--dm-muted);font-size:11px}.dm-book-hint>span{display:flex;align-items:center;gap:8px}.dm-book-stage{perspective:2400px;padding:12px 15px 28px;touch-action:pan-y;display:flex;justify-content:center}.dm-book{position:relative;width:100%;transform:rotateX(5deg);transform-style:preserve-3d;background:#ffffff;box-shadow:0 3px 0 #d4d0c7,0 6px 0 #eee8df,0 9px 0 #c9c4ba,0 22px 35px #181b1826}.dm-book-stage.flat .dm-book{transform:none}.dm-book>.zg-spread,.dm-book>.zg-cover{width:100%;height:100%;box-shadow:none!important}.dm-book .zg-frame{outline:none!important}.dm-book .zg-fold{display:none}.dm-book-half{position:absolute;top:0;bottom:0;width:50%;overflow:hidden;background:#ffffff}.dm-book-half.left{left:0}.dm-book-half.right{right:0}.dm-book-half>div{position:absolute;top:0;left:0;width:200%;height:100%}.dm-book-half.right>div{left:-100%}.dm-book-half>div>.zg-spread,.dm-book-half>div>.zg-cover{width:100%;height:100%;box-shadow:none!important}.dm-book-gutter{position:absolute;left:calc(50% - 12px);top:0;bottom:0;width:24px;background:linear-gradient(90deg,transparent,#00000017 45%,#00000024 50%,#ffffff28 55%,transparent);pointer-events:none}.dm-turning-sheet{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;z-index:3}.dm-turning-sheet.forward{left:50%;transform-origin:left center;animation:dm-flip-forward .74s cubic-bezier(.32,.1,.38,1) forwards}.dm-turning-sheet.backward{left:0;transform-origin:right center;animation:dm-flip-backward .74s cubic-bezier(.32,.1,.38,1) forwards}.dm-sheet-face{position:absolute;inset:0;backface-visibility:hidden;background:#fff;overflow:hidden;box-shadow:0 0 20px #00000012}.dm-sheet-face.back{transform:rotateY(180deg)}.dm-sheet-face .dm-book-half{width:100%;left:0;right:auto}.dm-sheet-face:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#00000015,transparent 22%,#00000008);pointer-events:none}.dm-book-controls{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:6px 0 16px!important;padding:0!important;max-width:none!important}.dm-book-controls>div{text-align:center;display:flex;flex-direction:column;gap:4px;font-size:12px}.dm-book-controls span{font-size:10px;color:var(--dm-muted)}.dm-preview-checkout{padding:16px 0 0}.dm-preview-checkout p{color:var(--dm-muted)}
 @keyframes dm-flip-forward{to{transform:rotateY(-180deg)}}@keyframes dm-flip-backward{to{transform:rotateY(180deg)}}
-.dm-focus-dialog{width:min(900px,94vw);max-height:92dvh;overflow:auto;border:1px solid var(--dm-line);border-radius:16px;padding:24px;background:var(--dm-surface);color:var(--dm-ink)}.dm-focus-dialog::backdrop{background:#111a19b0}.dm-focus-dialog>header{display:flex;justify-content:space-between;gap:18px;margin-bottom:20px}.dm-focus-dialog p{font-size:11px;color:var(--dm-muted);margin-top:8px}.dm-focus-columns{display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:24px}.dm-focus-source{position:relative;display:block;width:fit-content;max-width:100%;margin:auto;padding:0;border:0;cursor:crosshair;background:transparent}.dm-focus-source>img{display:block;max-width:100%;max-height:50dvh;object-fit:contain}.dm-focus-source>span{position:absolute;color:#fff34b;filter:drop-shadow(0 1px 2px #000);transform:translate(-50%,-50%);pointer-events:none}.dm-focus-result{position:relative;overflow:hidden;border:1px solid var(--dm-line);background:#fff}.dm-focus-result img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.dm-focus-columns small{display:block;text-align:center;margin:10px;font-size:11px}.dm-focus-columns label{display:flex;flex-direction:column;gap:10px;font-size:11px;margin:15px 0}.dm-focus-dialog footer{display:flex;justify-content:flex-end;gap:10px;padding:18px 0 0;margin-top:15px;border-top:1px solid var(--dm-line)}
-.dm-focus-dialog{margin:auto}.dm-focus-result{max-height:42dvh;width:min(100%,300px);margin:auto}.dm-studio .zg-frame.empty>div,.dm-studio .zg-frame.empty .zg-frame-hit,.dm-studio .zg-frame.empty .zg-frame-hit>div{background:transparent}.dm-studio .zg-frame.empty .zg-frame-hit{outline:1px dashed #88888825;outline-offset:-1px}.dm-book .zg-empty-frame{display:none}
+.dm-studio .zg-frame.empty>div,.dm-studio .zg-frame.empty .zg-frame-hit,.dm-studio .zg-frame.empty .zg-frame-hit>div{background:transparent}.dm-studio .zg-frame.empty .zg-frame-hit{outline:1px dashed #88888825;outline-offset:-1px}.dm-book .zg-empty-frame{display:none}
 
 .dm-finishing-help{display:flex;align-items:center;justify-content:space-between;gap:12px}.dm-finishing-help .dm-icon{flex-shrink:0}
 /* Alerta de resolução por foto */
@@ -805,8 +804,6 @@ html[data-theme] .dm-studio .zg-logo-day{display:block!important}
 @keyframes dm-notice-drop{to{opacity:0;transform:translateY(28px) scale(.95)}}
 
 /* ===================== Superfícies (texturas fotográficas de fundo) ===================== */
-.dm-surface-none{width:100%;margin:6px 0 4px;padding:9px 12px;border:1px dashed var(--dm-line-strong);border-radius:10px;background:transparent;font-size:12px;color:var(--dm-muted);transition:border-color .2s,color .2s}
-.dm-surface-none.is-active{border-style:solid;border-color:var(--dm-ink);color:var(--dm-ink);font-weight:600}
 .dm-surface-group{margin-top:12px}
 .dm-surface-group>span{display:block;margin-bottom:7px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dm-muted)}
 .dm-surface-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -819,18 +816,10 @@ html[data-theme] .dm-studio .zg-logo-day{display:block!important}
 .dm-surface-grid small{padding:0 3px 2px;overflow:hidden;font-size:10px;line-height:1.2;white-space:nowrap;text-overflow:ellipsis;color:var(--dm-ink)}
 
 /* "Sem superfície" como um interruptor animado: dá para ver se está ligado ou não */
-.dm-studio .dm-surface-none{display:flex;align-items:center;gap:11px;margin:14px 0 4px;padding:10px 12px;border:1px solid var(--dm-line-strong);border-style:solid;border-radius:12px;background:var(--dm-surface);font-size:12.5px;font-weight:600;color:var(--dm-ink);text-align:left;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease}
-.dm-studio .dm-surface-none.is-active{border-color:#d9c900;background:#fffbe0;box-shadow:0 0 0 3px #fdf15340}
 .dm-switch{position:relative;flex-shrink:0;width:36px;height:20px;border-radius:20px;background:#d8d3c6;transition:background .35s ease}
 .dm-switch>i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:transform .45s cubic-bezier(.34,1.6,.64,1),width .2s ease}
-.dm-surface-none:active .dm-switch>i{width:20px}
-.dm-surface-none.is-active .dm-switch{background:#252720}
-.dm-surface-none.is-active .dm-switch>i{transform:translateX(16px);background:#fdf153}
-.dm-surface-none.is-active:active .dm-switch>i{transform:translateX(12px)}
-.dm-surface-none>em{margin-left:auto;padding:2px 9px;border-radius:20px;background:var(--dm-soft);font-size:10.5px;font-style:normal;font-weight:600;color:var(--dm-muted);animation:dm-switch-label .4s cubic-bezier(.34,1.6,.64,1) both}
-.dm-surface-none.is-active>em{background:#252720;color:#fdf153}
 @keyframes dm-switch-label{from{opacity:0;transform:translateY(5px) scale(.8)}}
-@media(prefers-reduced-motion:reduce){.dm-switch,.dm-switch>i,.dm-surface-none>em{transition:none;animation:none}}
+@media(prefers-reduced-motion:reduce){.dm-switch,.dm-switch>i{transition:none;animation:none}}
 
 /* Valor no meio dos botões − e + (tamanho e giro do ícone) */
 .dm-size-value{min-width:46px;padding:0 2px;text-align:center;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--dm-ink);animation:dm-switch-label .3s ease}
@@ -2100,3 +2089,852 @@ html[data-theme=true] .dm-check-summary.ok,.dm-studio[data-night=true] .dm-check
 .dm-studio .dm-icon-press .dm-icon-grid>button svg *{animation-duration:.8s;animation-delay:calc(var(--base) + var(--i) * 35ms + .06s)}
 .dm-studio .dm-icon-press .dm-icon-grid>button small{animation-delay:calc(var(--base) + var(--i) * 35ms + .25s)}
 .dm-studio .dm-icon-press .dm-icon-grid>button:after{animation-delay:calc(var(--base) + var(--i) * 35ms + .55s)}
+
+/* ===================== Foco da foto: visor de câmera, impressão CMYK e foco que trava no rosto ===================== */
+.dm-fx{width:min(720px,94vw);max-height:94dvh;margin:auto;padding:0;border:0;border-radius:20px;overflow:hidden;background:var(--dm-surface);color:var(--dm-ink);box-shadow:var(--dm-shadow-lg);animation:dm-fx-in .38s cubic-bezier(.2,.9,.3,1.15)}
+.dm-fx::backdrop{background:#111a19b8;backdrop-filter:blur(3px);animation:dm-pv-fade .3s}
+.dm-fx-top{position:relative;display:flex;align-items:center;justify-content:space-between;padding:14px 14px 13px 20px}
+.dm-fx-top:after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--zg-rays);transform-origin:left;animation:dm-fx-rays .8s .15s cubic-bezier(.3,.8,.2,1) both}
+.dm-fx-close{display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;background:none;color:var(--dm-muted);cursor:pointer;outline:none!important;transition:transform .25s,color .2s}
+.dm-fx-close:hover,.dm-fx-close:focus-visible{color:var(--dm-ink);transform:rotate(90deg)}
+.dm-fx-stage{display:grid;place-items:center;padding:18px;background:radial-gradient(circle at 50% 40%,#22221e,#0f0f0d);cursor:crosshair;touch-action:none;user-select:none;outline:none}
+.dm-fx-stage,.dm-fx-stage:focus-visible{outline:none}
+.dm-fx-photo{--h:min(60dvh,540px);position:relative;width:min(100%,calc(var(--h) * var(--ar)));aspect-ratio:var(--ar);overflow:hidden;border-radius:3px;box-shadow:0 12px 40px #0009}
+.dm-fx-photo>img{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;animation:dm-fx-reveal .7s cubic-bezier(.45,0,.55,1) both,dm-fx-develop 1.3s ease-out both}
+/* Cabeça de impressão: faixa ciano, magenta, amarelo e preto descendo pela foto */
+.dm-fx-print{position:absolute;left:-2%;right:-2%;top:0;height:12px;background:linear-gradient(180deg,var(--zg-blue) 0 25%,var(--zg-magenta) 0 50%,var(--zg-yellow) 0 75%,#1d1d1b 0);box-shadow:0 0 18px 4px #1aa8e866,0 0 30px 8px #e81aa540;pointer-events:none;opacity:0;animation:dm-fx-head .7s cubic-bezier(.45,0,.55,1) both}
+/* Janela: o que aparece no álbum fica claro; o resto, escurecido */
+.dm-fx-dim{position:absolute;inset:0;background:#0b0b0ab0;pointer-events:none;transition:opacity .4s}
+/* A janela anda por transform (só a placa de vídeo trabalha): pan leva a janela, a foto de dentro anda ao contrário */
+.dm-fx-pan,.dm-fx-aim{position:absolute;inset:0;pointer-events:none;will-change:transform;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.dm-fx-window{position:absolute;left:0;top:0;overflow:hidden;outline:1.5px solid #ffffffd9;transition:opacity .4s}
+.dm-fx-window>img{position:absolute;left:0;top:0;display:block;max-width:none;will-change:transform;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.dm-fx[data-phase=print] :is(.dm-fx-window,.dm-fx-dim){opacity:0}
+.dm-fx-window>i{position:absolute;inset:0;opacity:0;transition:opacity .25s;background:linear-gradient(90deg,transparent calc(33.33% - .5px),#fff8 0 calc(33.33% + .5px),transparent 0 calc(66.66% - .5px),#fff8 0 calc(66.66% + .5px),transparent 0),linear-gradient(180deg,transparent calc(33.33% - .5px),#fff8 0 calc(33.33% + .5px),transparent 0 calc(66.66% - .5px),#fff8 0 calc(66.66% + .5px),transparent 0)}
+.dm-fx-photo[data-moving] .dm-fx-window>i{opacity:1}
+.dm-fx-window>b{position:absolute;width:20px;height:20px;border:3px solid var(--dm-yellow);filter:drop-shadow(0 1px 2px #0008)}
+.dm-fx-window>b:nth-of-type(1){left:0;top:0;border-right:0;border-bottom:0;border-top-left-radius:4px}
+.dm-fx-window>b:nth-of-type(2){right:0;top:0;border-left:0;border-bottom:0;border-top-right-radius:4px}
+.dm-fx-window>b:nth-of-type(3){left:0;bottom:0;border-right:0;border-top:0;border-bottom-left-radius:4px}
+.dm-fx-window>b:nth-of-type(4){right:0;bottom:0;border-left:0;border-top:0;border-bottom-right-radius:4px}
+.dm-fx-photo[data-moving] :is(.dm-fx-pan,.dm-fx-aim,.dm-fx-window>img,.dm-fx-reticle){transition:none}
+/* Mira de foco automático: cantos que encolhem e travam, com anel nas cores Zangraf */
+.dm-fx-reticle{position:absolute;left:0;top:0;width:54px;height:54px;transform:translate(-50%,-50%);pointer-events:none;animation:dm-fx-af .6s cubic-bezier(.3,1.4,.4,1) both}
+.dm-fx-reticle:after{content:'';position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px;border-radius:50%;background:var(--dm-yellow);box-shadow:0 0 0 2px #0006,0 0 10px var(--dm-yellow)}
+.dm-fx-reticle>i{position:absolute;width:14px;height:14px;border:2.5px solid var(--dm-yellow);filter:drop-shadow(0 1px 1px #0009)}
+.dm-fx-reticle>i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
+.dm-fx-reticle>i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+.dm-fx-reticle>i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
+.dm-fx-reticle>i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.dm-fx-reticle>em{position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(var(--zg-red),var(--zg-yellow),var(--zg-green),var(--zg-blue),var(--zg-magenta),var(--zg-red));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));opacity:0;animation:dm-fx-ping .9s .25s ease-out both}
+.dm-fx[data-phase=print] .dm-fx-reticle{visibility:hidden}
+.dm-fx[data-phase=hunt] .dm-fx-reticle>i{animation:dm-fx-hunt .28s ease-in-out infinite alternate}
+.dm-fx-photo[data-moving] .dm-fx-reticle{animation:none}
+.dm-fx-photo[data-moving] .dm-fx-reticle>em{animation:none;opacity:0}
+.dm-fx-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.dm-fx[data-closing] .dm-fx-flash{animation:dm-fx-flash .3s ease-out}
+.dm-fx[data-closing]{animation:dm-fx-out .3s .05s ease-in both}
+/* Barra de baixo: zoom à esquerda, Automático e Aplicar à direita */
+.dm-fx-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 16px}
+.dm-fx-zoom{display:flex;align-items:center;gap:6px}
+.dm-fx-zoom button{display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:50%;background:var(--dm-soft);color:var(--dm-ink);cursor:pointer;transition:transform .15s,background .2s}
+.dm-fx-zoom button:hover:not(:disabled){background:var(--dm-line);transform:scale(1.08)}
+.dm-fx-zoom button:disabled{opacity:.35;cursor:default}
+.dm-fx-zoom input{width:140px;height:6px;margin:0 4px;border-radius:9px;appearance:none;-webkit-appearance:none;background:linear-gradient(90deg,var(--zg-blue),var(--zg-magenta)) 0/var(--p) 100% no-repeat,var(--dm-line);cursor:pointer}
+.dm-fx-zoom input::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--zg-blue);box-shadow:0 1px 4px #0004;transition:transform .15s}
+.dm-fx-zoom input::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--zg-blue);box-shadow:0 1px 4px #0004}
+.dm-fx-zoom input:active::-webkit-slider-thumb{transform:scale(1.2)}
+.dm-fx-actions{display:flex;gap:10px;margin-left:auto}
+.dm-fx-auto,.dm-fx-apply{display:flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;font:700 13px/1 Arial,Helvetica,sans-serif;cursor:pointer;transition:transform .15s,background .2s,border-color .2s,color .2s}
+.dm-fx-auto{border:1.5px solid var(--dm-line-strong);background:var(--dm-surface);color:var(--dm-ink)}
+.dm-fx-auto:hover{border-color:var(--zg-blue)}
+.dm-fx-auto[data-on]{border-color:var(--zg-blue);background:#1aa8e814;color:#0b77a8}
+.dm-fx-auto[data-busy] svg{animation:dm-fx-scan .7s ease-in-out infinite alternate}
+.dm-fx-apply{border:0;background:var(--dm-yellow);color:var(--dm-yellow-ink);box-shadow:0 2px 0 #d9c900}
+.dm-fx-apply:hover{background:var(--dm-yellow-hover);transform:translateY(-1px)}
+.dm-fx-auto:active,.dm-fx-apply:active{transform:scale(.96)}
+.dm-studio[data-night=true] .dm-fx-auto[data-on]{color:#6fcdf5}
+@keyframes dm-fx-in{from{opacity:0;transform:translateY(18px) scale(.96)}}
+@keyframes dm-fx-out{to{opacity:0;transform:scale(.97)}}
+@keyframes dm-fx-rays{from{transform:scaleX(0)}}
+@keyframes dm-fx-reveal{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+@keyframes dm-fx-develop{0%{filter:grayscale(1) brightness(1.35) blur(2px)}60%{filter:grayscale(.3) brightness(1.08) blur(0)}100%{filter:none}}
+@keyframes dm-fx-head{0%{top:-12px;opacity:1}92%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes dm-fx-af{0%{transform:translate(-50%,-50%) scale(1.7);opacity:0}45%{transform:translate(-50%,-50%) scale(.82);opacity:1}70%{transform:translate(-50%,-50%) scale(1.08)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes dm-fx-hunt{from{transform:scale(1)}to{transform:scale(1.35)}}
+@keyframes dm-fx-ping{0%{opacity:1;transform:scale(.5)}100%{opacity:0;transform:scale(2.3)}}
+@keyframes dm-fx-flash{0%{opacity:0}25%{opacity:.85}100%{opacity:0}}
+@keyframes dm-fx-scan{from{transform:scale(.9)}to{transform:scale(1.15)}}
+/* Rosto achado: o quadrado de foco abraça o rosto, com cantos maiores e sem o ponto no meio */
+.dm-fx-reticle[data-face]>i{width:max(14px,24%);height:max(14px,24%);border-width:3px}
+.dm-fx-reticle[data-face]:after{display:none}
+.dm-fx-reticle[data-face]>em{inset:-6px;border-radius:22%}
+.dm-fx-reticle[data-face]{transition:width .4s,height .4s}
+/* Procurando o rosto: feixe nas cores de impressão varrendo a foto */
+.dm-fx-photo:after{content:'';position:absolute;left:0;right:0;top:0;height:22%;background:linear-gradient(180deg,transparent,#1aa8e833 55%,#e81aa555 85%,#f5e21acc 98%,transparent);opacity:0;pointer-events:none}
+.dm-fx[data-busy] .dm-fx-photo:after{opacity:1;animation:dm-fx-beam .9s ease-in-out infinite alternate}
+/* Nenhum rosto: o botão balança de leve */
+.dm-fx-auto[data-missed]{animation:dm-fx-nope .45s ease-in-out}
+@keyframes dm-fx-beam{from{transform:translateY(-100%)}to{transform:translateY(455%)}}
+@keyframes dm-fx-nope{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+/* Título FOCO: Bebas Neue como os títulos das ferramentas, com reconhecimento facial na palavra */
+.dm-fx-title{margin:0;line-height:1}
+.dm-fx-word{position:relative;isolation:isolate;display:inline-flex;align-items:center;gap:.06em;padding:7px 14px 5px;font:400 40px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.08em}
+/* Letras: começam fora de foco e cinza; ficam nítidas e pretas quando o feixe passa */
+.dm-fx-word>b{position:relative;display:inline-block;font-weight:400;color:#bdb9ad;animation:dm-fx-blur .5s calc(.55s + var(--k) * .13s) cubic-bezier(.3,1.3,.5,1) both}
+.dm-fx-word>b:after{content:attr(data-text);position:absolute;inset:0;color:var(--dm-ink);opacity:0;animation:dm-fx-ink .35s calc(.62s + var(--k) * .13s) ease-out forwards}
+/* Cantos de foco: chegam grandes, procuram e travam em volta da palavra */
+.dm-fx-corner{position:absolute;width:12px;height:12px;border:2.5px solid var(--dm-yellow);filter:drop-shadow(0 1px 1px #2a2a1e55);animation:dm-fx-hunt-in .7s .1s cubic-bezier(.3,1.5,.5,1) both,dm-fx-lock-blink .5s 1.2s ease-in-out both}
+.dm-fx-corner:nth-of-type(1){left:0;top:0;border-right:0;border-bottom:0;border-top-left-radius:3px;--dx:-10px;--dy:-8px}
+.dm-fx-corner:nth-of-type(2){right:0;top:0;border-left:0;border-bottom:0;border-top-right-radius:3px;--dx:10px;--dy:-8px}
+.dm-fx-corner:nth-of-type(3){left:0;bottom:0;border-right:0;border-top:0;border-bottom-left-radius:3px;--dx:-10px;--dy:8px}
+.dm-fx-corner:nth-of-type(4){right:0;bottom:0;border-left:0;border-top:0;border-bottom-right-radius:3px;--dx:10px;--dy:8px}
+/* Feixe de reconhecimento passando pelas letras */
+.dm-fx-scanline{position:absolute;top:4px;bottom:4px;left:8px;width:3px;border-radius:3px;background:linear-gradient(180deg,#00aeef,#ec008c,#f5c400);box-shadow:0 0 10px 2px #00aeef80,0 0 18px 4px #ec008c40;opacity:0;animation:dm-fx-sweep .7s .5s cubic-bezier(.45,0,.55,1) both}
+/* Travou: moldura com as cores do logo se abrindo atrás da palavra */
+.dm-fx-lock{position:absolute;inset:-2px;z-index:-1;border:2px solid transparent;border-radius:8px;background:linear-gradient(var(--dm-surface),var(--dm-surface)) padding-box,var(--zg-rays) border-box;opacity:0;animation:dm-fx-lock .8s 1.15s ease-out both}
+/* Passar o mouse: refaz o foco */
+.dm-fx-title:hover .dm-fx-word>b{animation:dm-fx-blur .5s calc(.55s + var(--k) * .13s) cubic-bezier(.3,1.3,.5,1) both,dm-fx-refocus .55s calc(var(--k) * .06s) ease-in-out}
+.dm-fx-title:hover .dm-fx-corner{animation:dm-fx-hunt-in .7s .1s cubic-bezier(.3,1.5,.5,1) both,dm-fx-lock-blink .5s 1.2s ease-in-out both,dm-fx-breathe .55s ease-in-out}
+@keyframes dm-fx-blur{0%{opacity:0;filter:blur(7px);transform:scale(1.25)}60%{opacity:1;filter:blur(2px)}100%{opacity:1;filter:none;transform:none}}
+@keyframes dm-fx-ink{to{opacity:1}}
+@keyframes dm-fx-hunt-in{0%{opacity:0;transform:translate(calc(var(--dx) * 2.4),calc(var(--dy) * 2.4))}45%{opacity:1;transform:translate(calc(var(--dx) * -.3),calc(var(--dy) * -.3))}70%{transform:translate(calc(var(--dx) * .4),calc(var(--dy) * .4))}100%{opacity:1;transform:none}}
+@keyframes dm-fx-lock-blink{40%{border-color:#fff7a0;filter:drop-shadow(0 0 6px var(--dm-yellow))}}
+@keyframes dm-fx-sweep{0%{opacity:0;left:8px}15%{opacity:1}85%{opacity:1}100%{opacity:0;left:calc(100% - 11px)}}
+@keyframes dm-fx-lock{0%{opacity:.9;transform:scale(.92)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes dm-fx-refocus{45%{filter:blur(2.5px);transform:scale(1.06)}}
+@keyframes dm-fx-breathe{45%{transform:translate(var(--dx),var(--dy))}}
+@media(max-width:600px){.dm-fx-stage{padding:10px}.dm-fx-photo{--h:52dvh}.dm-fx-zoom input{width:96px}.dm-fx-actions{width:100%}.dm-fx-actions>button{flex:1;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.dm-fx,.dm-fx *,.dm-fx::backdrop{animation:none!important;transition:none!important}}
+
+/* ===================== Montar automático: fotos na mesa, reconhecimento de rostos, layouts recortados e impressão ===================== */
+.dm-bs{position:fixed;inset:0;z-index:400;display:grid;place-items:center;background:color-mix(in srgb,var(--dm-chrome) 70%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:dm-pv-fade .3s}
+.dm-bs-card{width:min(780px,94vw);border-radius:24px;overflow:hidden;background:var(--dm-surface);box-shadow:var(--dm-shadow-lg);animation:dm-bs-card .55s cubic-bezier(.2,.9,.3,1.18)}
+.dm-bs-head{position:relative;padding:22px 26px 16px}
+.dm-bs-head:after{content:'';position:absolute;left:26px;right:26px;bottom:0;height:3px;border-radius:3px;background:var(--zg-rays);transform-origin:left;animation:dm-fx-rays .9s .2s cubic-bezier(.3,.8,.2,1) both}
+.dm-bs-head h2{display:flex;flex-wrap:wrap;margin:0 0 14px;font:400 36px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.06em;color:var(--dm-ink)}
+.dm-bs-head h2 b{display:inline-block;font-weight:400;animation:dm-bs-letter .5s calc(var(--k) * 32ms) cubic-bezier(.3,1.5,.5,1) both}
+.dm-bs-steps{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.dm-bs-steps li{display:flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;border-radius:999px;background:var(--dm-soft);color:var(--dm-muted);font:700 12px/1 Arial,Helvetica,sans-serif;transition:background .3s,color .3s}
+.dm-bs-steps li>span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--dm-surface);color:var(--dm-faint);transition:background .3s,color .3s,transform .3s}
+.dm-bs-steps li[data-active]{background:color-mix(in srgb,var(--c) 14%,var(--dm-surface));color:var(--dm-ink)}
+.dm-bs-steps li[data-active]>span{background:var(--c);color:#fff;animation:dm-bs-pulse 1.2s ease-in-out infinite}
+.dm-bs-steps li[data-done]{color:var(--dm-ink)}
+.dm-bs-steps li[data-done]>span{background:var(--c);color:#fff;animation:dm-check-pop .35s cubic-bezier(.3,1.6,.5,1)}
+/* Palco: papel com pontinhos de retícula */
+.dm-bs-scene{position:relative;height:340px;margin:18px 22px 0;overflow:hidden;border-radius:16px;background:radial-gradient(#2a2a1e14 1px,transparent 1.3px) 0 0/14px 14px,linear-gradient(160deg,#f7f2e6,#efe8d8)}
+/* 1. Fotos caindo na mesa como fotografias reveladas */
+.dm-bs-table{position:absolute;inset:0}
+.dm-bs-toss{position:absolute;left:var(--x);top:var(--y);width:128px;aspect-ratio:4/3;object-fit:cover;border:6px solid #fff;border-bottom-width:20px;border-radius:2px;background:#fff;box-shadow:0 10px 22px #2a2a1e33;transform:rotate(var(--r));animation:dm-bs-toss .65s cubic-bezier(.2,.9,.3,1.12) both}
+.dm-bs-calendar{position:absolute;right:18px;bottom:16px;display:grid;justify-items:center;min-width:86px;padding:8px 12px 6px;border-radius:12px;background:#fff;box-shadow:0 8px 20px #2a2a1e26;border-top:8px solid var(--zg-red)}
+.dm-bs-calendar b{font:400 42px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;color:var(--dm-ink)}
+.dm-bs-calendar small{font:700 10px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dm-muted)}
+/* 2. Reconhecimento de rostos: foto grande, malha, feixe e foco travando no rosto */
+.dm-bs-faces{position:absolute;inset:0;display:grid;grid-template-rows:1fr auto;justify-items:center;align-items:center;gap:12px;padding:18px 18px 12px}
+.dm-bs-scan{position:relative;height:218px;max-width:100%;aspect-ratio:var(--ar);overflow:hidden;border-radius:4px;background:#151513;box-shadow:0 0 0 6px #fff,0 16px 34px #2a2a1e44}
+.dm-bs-scan>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:dm-bs-pop .35s ease-out both}
+.dm-bs-grid{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#ffffff1f 0 1px,transparent 1px 22px),repeating-linear-gradient(0deg,#ffffff1f 0 1px,transparent 1px 22px);mix-blend-mode:screen;pointer-events:none}
+.dm-bs-beam{position:absolute;left:0;right:0;top:0;height:34%;background:linear-gradient(180deg,transparent,#00aeef40 45%,#ec008c66 85%,#f5e21acc 97%,transparent);mix-blend-mode:screen;animation:dm-bs-beam 1.1s linear infinite}
+.dm-bs-face{position:absolute;animation:dm-bs-lock .5s cubic-bezier(.3,1.5,.5,1) both}
+.dm-bs-face>i{position:absolute;width:30%;height:30%;min-width:10px;min-height:10px;border:3px solid var(--dm-yellow);filter:drop-shadow(0 0 4px #fdf153aa)}
+.dm-bs-face>i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0}
+.dm-bs-face>i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0}
+.dm-bs-face>i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0}
+.dm-bs-face>i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0}
+.dm-bs-face>em{position:absolute;left:0;bottom:calc(100% + 5px);padding:2px 6px 1px;border-radius:3px;background:var(--dm-yellow);color:var(--dm-yellow-ink);font:400 13px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;font-style:normal;letter-spacing:.08em;white-space:nowrap;animation:dm-bs-tag .3s .25s ease-out both}
+/* Tira de filme com as fotos já vistas */
+.dm-bs-film{position:relative;width:100%;height:66px;overflow:hidden;border-radius:6px;background:#1c1c19}
+.dm-bs-film:before,.dm-bs-film:after{content:'';position:absolute;left:0;right:0;height:6px;background:repeating-linear-gradient(90deg,transparent 0 6px,#f3eee2cc 6px 11px,transparent 11px 16px);z-index:1}
+.dm-bs-film:before{top:2px}.dm-bs-film:after{bottom:2px}
+.dm-bs-film>div{display:flex;gap:6px;padding:11px 8px;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.dm-bs-film img{flex:none;width:52px;height:44px;object-fit:cover;border-radius:2px;opacity:.55;transition:opacity .3s}
+.dm-bs-film img[data-now]{opacity:1;outline:2px solid var(--dm-yellow);outline-offset:1px}
+/* 3. Layouts: quadros coloridos aparecem, a tesoura corta e as fotos encaixam */
+.dm-bs-layout{position:absolute;inset:0;display:grid;grid-template-rows:1fr auto;justify-items:center;align-items:center;padding:20px 20px 14px}
+.dm-bs-spread{position:relative;aspect-ratio:2.2;background:#fff;border-radius:3px;box-shadow:0 2px 4px #2a2a1e1a,0 14px 30px #2a2a1e2e}
+.dm-bs-layout>.dm-bs-spread{height:206px;max-width:100%}
+.dm-bs-frame{position:absolute;box-sizing:border-box;padding:2px}
+.dm-bs-frame>img{display:block;width:100%;height:100%;object-fit:cover}
+.dm-bs-spread[data-animate] .dm-bs-frame{animation:dm-bs-frame .45s var(--d) cubic-bezier(.3,1.4,.5,1) both}
+.dm-bs-spread[data-animate] .dm-bs-frame:before{content:'';position:absolute;inset:2px;z-index:1;border:2.5px dashed var(--c);animation:dm-bs-dash .7s calc(var(--d) + .1s) both;pointer-events:none}
+.dm-bs-spread[data-animate] .dm-bs-frame>img{animation:dm-bs-fill .42s calc(var(--d) + .22s) ease-out both}
+.dm-bs-fold{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,#0000,#00000024,#0000)}
+.dm-bs-cut{position:absolute;top:24px;left:12%;color:var(--dm-ink);filter:drop-shadow(0 2px 2px #0003);animation:dm-bs-cut .55s ease-in-out both}
+.dm-bs-thumbs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.dm-bs-thumbs .dm-bs-spread{height:34px;opacity:.5;transition:opacity .25s,transform .25s;box-shadow:0 2px 6px #2a2a1e26}
+.dm-bs-thumbs .dm-bs-spread.is-now{opacity:1;transform:translateY(-3px);outline:2px solid var(--zg-blue);outline-offset:2px}
+.dm-bs-thumbs .dm-bs-frame{padding:1px}
+/* 4. Impressora de quatro tintas */
+.dm-bs-print{position:absolute;inset:0;display:grid;place-items:center}
+.dm-bs-printer{position:relative;width:380px;height:318px}
+.dm-bs-feed{position:absolute;left:84px;right:84px;top:0;height:64px;border-radius:2px 2px 0 0;background:linear-gradient(#fff,#f1ede3);box-shadow:0 -2px 8px #2a2a1e1f;animation:dm-bs-feed .65s ease-in-out infinite}
+.dm-bs-body{position:absolute;z-index:2;left:0;right:0;top:44px;height:118px;border-radius:20px 20px 12px 12px;background:linear-gradient(180deg,#45463e,#24251f 60%,#1b1c18);box-shadow:0 14px 28px #2a2a1e55,inset 0 1px 0 #ffffff26}
+.dm-bs-body:after{content:'ZANGRAF';position:absolute;right:42px;bottom:31px;font:400 15px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.32em;color:#ffffff55}
+.dm-bs-carriage{position:absolute;top:18px;left:22px;display:flex;gap:5px;padding:6px 8px;border-radius:7px;background:linear-gradient(#6a6b60,#4a4b42);box-shadow:0 2px 4px #0006;animation:dm-bs-carriage .65s ease-in-out infinite alternate}
+.dm-bs-carriage i{width:10px;height:10px;border-radius:50%;box-shadow:inset 0 -2px 0 #0003}
+.dm-bs-carriage i:nth-child(1),.dm-bs-inks i:nth-child(1),.dm-bs-drops i:nth-child(1){background:#00aeef}
+.dm-bs-carriage i:nth-child(2),.dm-bs-inks i:nth-child(2),.dm-bs-drops i:nth-child(2){background:#ec008c}
+.dm-bs-carriage i:nth-child(3),.dm-bs-inks i:nth-child(3),.dm-bs-drops i:nth-child(3){background:#f5c400}
+.dm-bs-carriage i:nth-child(4),.dm-bs-inks i:nth-child(4),.dm-bs-drops i:nth-child(4){background:#231f20;box-shadow:0 0 0 1px #ffffff40}
+.dm-bs-slot{position:absolute;left:30px;right:30px;bottom:12px;height:8px;border-radius:4px;background:#0c0c0a;box-shadow:inset 0 2px 3px #000}
+.dm-bs-led{position:absolute;right:22px;bottom:31px;width:9px;height:9px;border-radius:50%;background:#19b33a;box-shadow:0 0 8px #19b33a;animation:dm-bs-led .65s steps(2) infinite}
+.dm-bs-inks{position:absolute;left:24px;bottom:28px;display:flex;gap:5px}
+.dm-bs-inks i{width:9px;height:20px;border-radius:3px;transform-origin:bottom;animation:dm-bs-ink 1.3s ease-in-out infinite alternate}
+.dm-bs-inks i:nth-child(2){animation-delay:.2s}.dm-bs-inks i:nth-child(3){animation-delay:.4s}.dm-bs-inks i:nth-child(4){animation-delay:.6s}
+.dm-bs-out{position:absolute;z-index:1;left:22px;right:22px;top:150px;height:168px}
+.dm-bs-sheet{position:absolute;left:12px;right:12px;top:0;display:grid;place-items:center;padding:8px;border-radius:2px;background:#fff;box-shadow:0 6px 16px #2a2a1e33;transform:translateY(0) rotate(var(--rot));transition:transform .5s ease-out,opacity .5s;animation:dm-bs-out .6s cubic-bezier(.2,.8,.2,1) both}
+.dm-bs-sheet[data-back="1"]{transform:translateY(16px) rotate(var(--rot));opacity:.85;z-index:-1;animation:none}
+.dm-bs-sheet[data-back="2"]{transform:translateY(30px) rotate(var(--rot));opacity:.55;z-index:-2;animation:none}
+.dm-bs-sheet .dm-bs-spread{height:118px;box-shadow:none}
+.dm-bs-drops{position:absolute;top:0;left:0;right:0;height:0;z-index:3}
+.dm-bs-drops i{position:absolute;top:0;width:7px;height:9px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:dm-bs-drop .55s ease-in both}
+.dm-bs-drops i:nth-child(1){left:24%}.dm-bs-drops i:nth-child(2){left:42%;animation-delay:.08s}.dm-bs-drops i:nth-child(3){left:58%;animation-delay:.16s}.dm-bs-drops i:nth-child(4){left:74%;animation-delay:.24s}
+/* Pronto: anéis de tinta e o check */
+.dm-bs-done{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px}
+.dm-bs-ring{position:absolute;left:50%;top:44%;width:120px;height:120px;margin:-60px;border-radius:50%;border:5px solid var(--c);opacity:0;animation:dm-bs-ring 1s var(--d,0s) ease-out both}
+.dm-bs-check{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:var(--dm-yellow);color:var(--dm-yellow-ink);box-shadow:0 2px 0 #d9c900,0 14px 30px #e4d30055;animation:dm-bs-check .55s cubic-bezier(.3,1.6,.5,1) both}
+.dm-bs-done strong{font:400 46px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.1em;color:var(--dm-ink);animation:dm-bs-letter .5s .2s cubic-bezier(.3,1.5,.5,1) both}
+/* Rodapé: o que está acontecendo e a barra nas cores do logo */
+.dm-studio .dm-bs-foot{display:block;padding:14px 26px 22px}
+.dm-bs-foot p{margin:0 0 10px;font:700 13px/1.4 Arial,Helvetica,sans-serif;color:var(--dm-muted);animation:dm-fx-in .35s ease-out both}
+.dm-bs-bar{position:relative;height:8px;overflow:hidden;border-radius:9px;background:var(--dm-soft)}
+.dm-bs-bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:9px;background:var(--zg-rays);background-size:780px 100%;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.dm-bs-bar>i:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fff9,transparent);background-size:40% 100%;background-repeat:no-repeat;animation:dm-bs-shine 1.4s linear infinite}
+/* Ícone da etapa ativa/concluída na cor de contraste (amarelo usa tinta escura) */
+.dm-bs-steps li{position:relative;overflow:hidden}
+.dm-bs-steps li[data-active]>span,.dm-bs-steps li[data-done]>span{color:var(--on)}
+/* Rostos + Reconhecimento facial ativos juntos: feixe de escaneamento passando pelos dois chips */
+.dm-bs-steps li[data-active]:after{content:'';position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--c) 45%,#fff0),transparent);animation:dm-bs-chip-scan 1.3s ease-in-out infinite;pointer-events:none}
+.dm-bs-steps li[data-step=recognition][data-active]{background:color-mix(in srgb,var(--zg-yellow) 30%,var(--dm-surface));color:var(--dm-ink)}
+.dm-bs-steps li[data-step=recognition][data-active]>span{animation:dm-bs-pulse-y 1.2s ease-in-out infinite}
+/* Pulso a cada rosto reconhecido (sincronizado com os cantos travando na foto) */
+.dm-bs-ping{position:absolute;left:4px;top:50%;width:24px;height:24px;margin-top:-12px;border-radius:50%;border:2px solid var(--zg-yellow);pointer-events:none;animation:dm-bs-ping .6s ease-out both}
+@keyframes dm-bs-chip-scan{from{transform:translateX(-120%)}to{transform:translateX(320%)}}
+@keyframes dm-bs-pulse-y{50%{transform:scale(1.15);box-shadow:0 0 0 5px #f5e21a55}}
+@keyframes dm-bs-ping{0%{opacity:1;transform:scale(.8)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes dm-bs-card{from{opacity:0;transform:translateY(24px) scale(.94)}}
+@keyframes dm-bs-letter{from{opacity:0;transform:translateY(-14px) scale(.7) rotate(-6deg);filter:blur(3px)}}
+@keyframes dm-bs-pulse{50%{transform:scale(1.15);box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 25%,transparent)}}
+@keyframes dm-bs-toss{from{opacity:0;transform:translate(var(--from),300px) rotate(calc(var(--r) * -4)) scale(1.35)}}
+@keyframes dm-bs-pop{from{opacity:0;transform:scale(1.08);filter:brightness(1.6) saturate(0)}}
+@keyframes dm-bs-beam{from{transform:translateY(-100%)}to{transform:translateY(300%)}}
+@keyframes dm-bs-lock{0%{opacity:0;transform:scale(1.7)}55%{opacity:1;transform:scale(.9)}100%{opacity:1;transform:none}}
+@keyframes dm-bs-tag{from{opacity:0;transform:translateY(5px)}}
+@keyframes dm-bs-frame{from{opacity:0;transform:scale(.4)}}
+@keyframes dm-bs-dash{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+@keyframes dm-bs-fill{from{clip-path:inset(0 100% 0 0);filter:saturate(0) brightness(1.5)}to{clip-path:inset(0);filter:none}}
+@keyframes dm-bs-cut{from{left:10%;transform:rotate(-10deg)}50%{transform:rotate(12deg)}to{left:86%;transform:rotate(-10deg)}}
+@keyframes dm-bs-feed{50%{transform:translateY(6px)}}
+@keyframes dm-bs-carriage{from{left:22px}to{left:calc(100% - 92px)}}
+@keyframes dm-bs-led{50%{background:#0d5e1f;box-shadow:none}}
+@keyframes dm-bs-ink{from{transform:scaleY(1)}to{transform:scaleY(.55)}}
+@keyframes dm-bs-out{from{transform:translateY(-130px) rotate(0);clip-path:inset(100% 0 0 0)}to{transform:translateY(0) rotate(var(--rot));clip-path:inset(0)}}
+@keyframes dm-bs-drop{from{opacity:1;transform:translateY(-6px) scale(.6)}to{opacity:0;transform:translateY(60px) scale(1)}}
+@keyframes dm-bs-ring{0%{opacity:.9;transform:scale(.5)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes dm-bs-check{from{transform:scale(0) rotate(-30deg)}}
+@keyframes dm-bs-shine{from{background-position:-40% 0}to{background-position:140% 0}}
+@media(max-width:600px){.dm-bs-head h2{font-size:28px}.dm-bs-scene{height:300px;margin:14px 12px 0}.dm-bs-printer{transform:scale(.82)}.dm-bs-layout>.dm-bs-spread{height:150px}.dm-bs-toss{width:96px}}
+@media(prefers-reduced-motion:reduce){.dm-bs,.dm-bs *{animation:none!important;transition:none!important}}
+
+/* ===================== Fundo: aplicar em esta lâmina ou em todas ===================== */
+.dm-studio .dm-bg-scope{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:-2px -4px 16px;padding:6px 4px 10px;background:var(--dm-surface)}
+/* Cada opção é um desenho: a lâmina aberta ou a pilha de lâminas, já com a cor de fundo escolhida */
+.dm-studio .dm-bg-scope>button{position:relative;display:grid;place-items:center;height:64px;padding:0;border:2px solid var(--dm-line);border-radius:16px;background:var(--dm-soft);color:var(--dm-muted);cursor:pointer;transition:border-color .2s,background .2s,color .2s,transform .2s,box-shadow .2s}
+.dm-studio .dm-bg-scope>button:hover{border-color:var(--dm-line-strong);color:var(--dm-ink);transform:translateY(-1px)}
+.dm-studio .dm-bg-scope>button[aria-checked=true]{border-color:#d9c900;background:#fffbe0;color:var(--dm-ink);box-shadow:0 0 0 4px #fdf15333,0 3px 0 #d9c900}
+.dm-bg-scope>button>svg{width:66px;height:42px;overflow:visible}
+.dm-bg-scope>button>svg rect{transition:fill .3s}
+/* Selo de "escolhido" no canto */
+.dm-bg-scope>button[aria-checked=true]:after{content:'';position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#252720 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fdf153' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/13px no-repeat;animation:dm-bg-check .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes dm-bg-check{from{transform:scale(0)}}
+/* Quantidade de lâminas na pilha */
+.dm-bg-scope>button>em{position:absolute;right:8px;bottom:6px;display:grid;place-items:center;min-width:22px;height:20px;padding:0 6px;border-radius:999px;background:var(--dm-line);color:var(--dm-muted);font:400 15px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;font-style:normal;letter-spacing:.04em;transition:background .25s,color .25s}
+.dm-bg-scope>button[aria-checked=true]>em{background:#252720;color:#fdf153}
+/* Ao escolher "todas", a pilha se abre em leque */
+.dm-bg-scope>button[aria-checked=true]>.dm-bg-stack>g{transition:transform .4s cubic-bezier(.3,1.5,.5,1)}
+.dm-bg-scope>button[aria-checked=true]>.dm-bg-stack>g:nth-child(1){transform:translate(3px,-2px)}
+.dm-bg-scope>button[aria-checked=true]>.dm-bg-stack>g:nth-child(3){transform:translate(-3px,2px)}
+.dm-bg-scope>button:not([aria-checked=true])>.dm-bg-stack>g{transition:transform .3s}
+/* Com "Todas" ligado, cada opção vira uma pilha de folhas: dá para ver que a escolha vale para várias lâminas */
+.dm-bg-scope[data-all]~.dm-surface-group .dm-surface-grid>button>span,.dm-bg-scope[data-all]~.dm-texture-grid>button>span{box-shadow:3px 3px 0 -1px var(--dm-surface),3px 3px 0 0 var(--dm-line-strong),6px 6px 0 -1px var(--dm-surface),6px 6px 0 0 var(--dm-line);transition:box-shadow .3s}
+.dm-bg-scope[data-all]~.dm-color-grid>button:not([aria-pressed=true]){box-shadow:3px 2px 0 -1px var(--dm-surface),3px 2px 0 0 var(--dm-line-strong),6px 4px 0 -1px var(--dm-surface),6px 4px 0 0 var(--dm-line)}
+@keyframes dm-bg-fan{0%{transform:scale(.6) rotate(-14deg)}60%{transform:scale(1.2) rotate(6deg)}100%{transform:none}}
+@media(prefers-reduced-motion:reduce){.dm-bg-scope>button,.dm-bg-scope>button>svg g,.dm-bg-scope>button:after{transition:none;animation:none}}
+
+/* Margem entre fotos: espaço fixo, só do tamanho do número em mm (cabe "50"), tudo dentro do cartão branco.
+   Normal: só o número. Mouse por cima: caixinha. Clique: campo para digitar no mesmo lugar. */
+.dm-studio .dm-space-mini .dm-cm{position:relative;flex:none;display:flex;width:23px;height:22px}
+.dm-studio .dm-space-mini label:has(.dm-cm){gap:4px;padding:6px 6px 6px 7px}
+.dm-studio .dm-space-mini .dm-cm-value{display:none}
+.dm-studio .dm-space-mini button.dm-cm-field{display:flex;align-items:center;justify-content:center;gap:0;width:100%;height:100%;margin:0;padding:0;border:1.5px solid transparent;border-radius:5px;background:none;color:var(--dm-muted);font:700 11px/1 Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums;cursor:text;transition:background .15s,border-color .15s,color .15s}
+.dm-studio .dm-space-mini button.dm-cm-field:is(:hover,:focus-visible):not(:disabled){border-color:var(--dm-line-strong);background:var(--dm-soft);color:var(--dm-ink);outline:none}
+.dm-studio .dm-space-mini button.dm-cm-field:disabled{cursor:default}
+.dm-studio .dm-space-mini input.dm-cm-field{position:absolute;inset:0;z-index:2;width:100%!important;min-width:0!important;height:100%;margin:0;padding:0 1px!important;border:1.5px solid var(--zg-blue)!important;border-radius:5px!important;background:var(--dm-surface);color:var(--dm-ink);font:700 11px/1 Arial,Helvetica,sans-serif;text-align:center;outline:none;box-shadow:0 0 0 3px #1aa8e826;animation:dm-cm-in .15s ease-out}
+@keyframes dm-cm-in{from{transform:scale(.92)}}
+
+/* Prévia 3D: arrastar para virar a página não seleciona texto nem imagens (sem o azul de seleção) */
+.dm-book-stage,.dm-book-stage *{-webkit-user-select:none;user-select:none;-webkit-user-drag:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.dm-book-stage ::selection{background:transparent}
+.dm-book-stage img{pointer-events:none}
+
+/* ===================== Prévia 3D no molde do álbum Anti-Risco (fotos de referência) =====================
+   Aberto: capa escura um pouco maior que as páginas (aparece em volta), páginas grossas layflat com vinco no meio.
+   Fechado: dobradura perto da lombada, lombada arredondada, miolo branco recuado e contracapa por baixo. */
+.dm-studio .dm-book{--board:#25261f;--board-edge:#3a3b33;--overhang:clamp(4px,.55vw,8px);border-radius:2px;
+ box-shadow:
+  0 0 0 var(--overhang) var(--board),
+  0 26px 44px calc(var(--overhang) - 2px) #181b1838}
+/* Borda da capa dobrada: um fio mais claro no contorno da placa, como o material virado na borda */
+.dm-studio .dm-book:not(.is-closed):not(.is-cover-turn):before{content:'';position:absolute;inset:calc(var(--overhang) * -1);z-index:-1;border-radius:4px;box-shadow:inset 0 0 0 1px var(--board-edge);pointer-events:none}
+/* Páginas: leve escurecido nas bordas externas e luz de cima, como papel fotográfico grosso */
+.dm-studio .dm-book:not(.is-closed):not(.is-cover-turn):after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,#00000012,transparent 3%,transparent 97%,#00000012)}
+/* Vinco central do layflat: fio escuro fino, sombra suave dos dois lados e um brilho na aresta */
+.dm-studio .dm-book-gutter{left:calc(50% - 22px);width:44px;z-index:4;background:linear-gradient(90deg,transparent,#00000008 25%,#0000001c 44%,#00000040 49.2%,#00000066 50%,#00000026 51%,#0000001a 54%,#00000008 75%,transparent)}
+.dm-studio .dm-book-gutter:before,.dm-studio .dm-book-gutter:after{content:'';position:absolute;left:50%;width:4px;height:6px;margin-left:-2px;background:radial-gradient(ellipse at center,#00000055,transparent 70%)}
+.dm-studio .dm-book-gutter:before{top:-2px}.dm-studio .dm-book-gutter:after{bottom:-2px}
+/* Folha virando: com espessura e sombra de papel grosso */
+.dm-studio .dm-sheet-face{box-shadow:0 0 0 1px #e9e4da,0 6px 18px #00000022}
+/* Capa fechada: miolo branco recuado + contracapa escura por baixo + lombada arredondada */
+.dm-studio .dm-book-half.is-cover{border-radius:3px 4px 4px 3px}
+.dm-studio .dm-book.is-closed[data-side=front] .dm-book-half.is-cover,.dm-studio .dm-book-half.right.is-cover{box-shadow:
+ 1px 2px 0 -2px #faf8f3,2px 3px 0 -2px #ddd8cd,3px 4px 0 -2px #f5f2eb,4px 5px 0 -2px #d9d3c8,5px 6px 0 -2px #f2efe7,6px 7px 0 -2px #d6d0c4,7px 8px 0 -2px #f0ede5,
+ 8px 10px 0 -1px #121211,
+ 0 24px 40px #181b1830}
+.dm-studio .dm-book.is-closed[data-side=back] .dm-book-half.is-cover,.dm-studio .dm-book-half.left.is-cover{box-shadow:
+ -1px 2px 0 -2px #faf8f3,-2px 3px 0 -2px #ddd8cd,-3px 4px 0 -2px #f5f2eb,-4px 5px 0 -2px #d9d3c8,-5px 6px 0 -2px #f2efe7,-6px 7px 0 -2px #d6d0c4,-7px 8px 0 -2px #f0ede5,
+ -8px 10px 0 -1px #121211,
+ 0 24px 40px #181b1830}
+/* Dobradura (sulco perto da lombada), borda do material e brilho fosco por cima da arte da capa */
+.dm-studio .dm-book-half.is-cover:after{content:'';position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;--g:5.2%;
+ background:
+  linear-gradient(90deg,transparent calc(var(--g) - 5px),#00000038 calc(var(--g) - 2px),#00000070 var(--g),#ffffff1f calc(var(--g) + 1.5px),#ffffff08 calc(var(--g) + 3px),transparent calc(var(--g) + 5px)),
+  linear-gradient(90deg,#00000038,transparent 3.5%);
+ box-shadow:inset 0 0 0 1px #00000038,inset 0 -1px 0 1px #0000001f}
+.dm-studio .dm-book-half.left.is-cover:after{background:
+  linear-gradient(270deg,transparent calc(var(--g) - 5px),#00000038 calc(var(--g) - 2px),#00000070 var(--g),#ffffff1f calc(var(--g) + 1.5px),#ffffff08 calc(var(--g) + 3px),transparent calc(var(--g) + 5px)),
+  linear-gradient(270deg,#00000038,transparent 3.5%)}
+/* Plano (2D): sem perspectiva, mas com o mesmo molde */
+.dm-studio .dm-book-stage.flat .dm-book{box-shadow:0 0 0 var(--overhang) var(--board),0 14px 28px #181b1826}
+
+/* Acabamento fosco anti-risco: sem reflexo nem brilho passando; a laminação deixa a arte um pouco mais suave */
+.dm-studio .dm-book-shine{display:none}
+.dm-studio .dm-book-half.is-cover .dm-cover-part{filter:saturate(.94) contrast(.96) brightness(1.01)}
+.dm-studio .dm-book-half.is-cover:before{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;background:#f4f1ea;opacity:.05;mix-blend-mode:screen}
+.dm-studio .dm-book:not(.is-closed):not(.is-cover-turn) .zg-spread{filter:saturate(.97) contrast(.98)}
+
+/* ===================== Dorso ===================== */
+/* Álbum fechado: a lateral da encadernação com a arte do dorso, arredondada e em perspectiva */
+.dm-book-spine{position:absolute;top:0;bottom:0;z-index:1;width:var(--sp);overflow:hidden;border-radius:6px 2px 2px 6px;pointer-events:none}
+.dm-book.is-closed[data-side=front] .dm-book-spine{right:50%;transform-origin:right center;transform:rotateY(-58deg)}
+.dm-book.is-closed[data-side=back] .dm-book-spine{left:50%;border-radius:2px 6px 6px 2px;transform-origin:left center;transform:rotateY(58deg)}
+.dm-spine-art{position:absolute;inset:0}
+.dm-spine-art:after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,#00000066,#00000014 22%,transparent 45%,transparent 60%,#00000024 82%,#00000073);box-shadow:inset 0 0 0 1px #00000038}
+/* Barra: contagem e miniaturas num bloco que some com animação no 4D (o botão desliza para o centro) */
+.dm-studio .dm-book-bar{justify-content:flex-end}
+
+/* ===================== Álbum em 4D: fechado, completo e girando livre (molde do Anti-Risco) =====================
+   Placas da capa com espessura, sobras em volta do miolo recuado, lombada curva em fatias e luz que acompanha o giro. */
+@property --ry{syntax:'<angle>';inherits:true;initial-value:0deg}
+.dm-studio .dm-book-stage-spine{perspective:1600px;padding:20px 6px 28px;overflow:visible}
+.dm-studio .dm-book-stage-spine:after{display:none}
+.dm-4d{display:grid;justify-items:center;gap:10px;width:100%}
+.dm-spine-view{--h:min(52vh,560px);position:relative;display:grid;justify-items:center;align-content:center;width:100%;min-height:calc(var(--h) + 90px);padding:34px 0 50px;cursor:grab;touch-action:none;animation:dm-spine-in .7s cubic-bezier(.2,.9,.3,1.1) both}
+.dm-spine-view:active{cursor:grabbing}
+/* Gira em torno do centro do volume (não da lombada), para o álbum ficar sempre no meio */
+.dm-spine-box{--sw:calc(var(--h) * var(--s));--fw:calc(var(--h) * var(--f));--bt:max(2px,calc(var(--sw) * .12));--ov:max(3px,calc(var(--h) * .012));position:relative;width:var(--sw);height:var(--h);transform-style:preserve-3d;will-change:transform;transform-origin:50% 50% calc(var(--fw) / -2);transition:transform .75s cubic-bezier(.22,.8,.2,1),--ry .75s cubic-bezier(.22,.8,.2,1)}
+.dm-spine-box.is-dragging{transition:none}
+/* Capa e verso */
+.dm-spine-face{position:absolute;top:0;height:100%;overflow:hidden;backface-visibility:visible}
+.dm-spine-face.front{left:100%;width:var(--fw);transform-origin:left center;transform:rotateY(90deg)}
+.dm-spine-face.back{right:100%;width:var(--fw);transform-origin:right center;transform:rotateY(-90deg)}
+.dm-spine-face .dm-cover-part{filter:saturate(.94) contrast(.96)}
+/* Dobradura com "ombro" logo depois do sulco, e o contorno do material */
+.dm-spine-face.front:after,.dm-spine-face.back:after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 0 1px #00000038}
+.dm-spine-face.front:after{background:linear-gradient(90deg,transparent calc(5.2% - 5px),#00000066 5.2%,#ffffff2e calc(5.2% + 2px),#ffffff12 calc(5.2% + 7px),transparent calc(5.2% + 10px)),linear-gradient(90deg,#00000038,transparent 4%)}
+.dm-spine-face.back:after{background:linear-gradient(270deg,transparent calc(5.2% - 5px),#00000066 5.2%,#ffffff2e calc(5.2% + 2px),#ffffff12 calc(5.2% + 7px),transparent calc(5.2% + 10px)),linear-gradient(270deg,#00000038,transparent 4%)}
+/* Luz que acompanha o giro (vinda da frente, um pouco à direita): cada lado escurece ao virar para longe */
+.dm-spine-face.front:before,.dm-spine-face.back:before{content:'';position:absolute;inset:0;z-index:3;background:#0b0b09;pointer-events:none}
+.dm-spine-face.front:before{opacity:calc((1 - max(0, cos(var(--ry)) * .35 - sin(var(--ry)) * .94)) * .5)}
+.dm-spine-face.back:before{opacity:calc((1 - max(0, sin(var(--ry)) * .94 - cos(var(--ry)) * .35)) * .5)}
+/* Lombada curva: cada fatia é um pedaço do arco; sombreado de cilindro fixo + luz do giro */
+.dm-4d-slice{position:absolute;top:0;height:100%;left:calc(var(--sw) * var(--x));width:calc(var(--sw) * var(--w) + .7px);overflow:hidden;transform:translateZ(calc(var(--sw) * var(--z))) rotateY(var(--a))}
+.dm-4d-slice>div{position:absolute;top:0;height:100%}
+.dm-4d-slice .dm-spine-art:after{display:none}
+.dm-4d-slice:before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:#0b0b09;opacity:calc((1 - cos(var(--a))) * 1.6)}
+.dm-4d-slice:nth-child(6):before,.dm-4d-slice:nth-child(7):before,.dm-4d-slice:nth-child(8):before{background:#fff;opacity:.05}
+.dm-4d-slice:after{content:'';position:absolute;inset:0;z-index:2;background:#0b0b09;pointer-events:none;opacity:calc((1 - max(0, sin(calc(var(--ry) + var(--a))) * .35 + cos(calc(var(--ry) + var(--a))) * .94)) * .55)}
+.dm-4d-slice:first-child{border-left:1px solid #00000030}
+/* Tampas da lombada (em cima e embaixo): o material da capa dobrado, arredondado */
+.dm-4d-cap{position:absolute;left:0;width:var(--sw);height:calc(var(--sw) * var(--lift) + 1px);background:color-mix(in srgb,var(--board,#25261f) 62%,#000)}
+.dm-4d-cap.top{top:0;transform-origin:top center;transform:translateZ(calc(var(--sw) * var(--lift))) rotateX(-90deg);border-radius:50% 50% 0 0/100% 100% 0 0}
+.dm-4d-cap.bottom{bottom:0;transform-origin:bottom center;transform:translateZ(calc(var(--sw) * var(--lift))) rotateX(90deg);border-radius:0 0 50% 50%/0 0 100% 100%}
+/* Placas da capa com espessura: face de dentro e bordas com o material dobrado */
+.dm-4d-el{position:absolute;display:block;backface-visibility:visible;pointer-events:none}
+.dm-4d-el.board-in{top:0;width:var(--fw);height:100%;transform-origin:left center;transform:rotateY(90deg);background:color-mix(in srgb,var(--board,#25261f) 45%,#000)}
+.dm-4d-el.board-in.back{left:var(--bt)}
+.dm-4d-el.board-in.front{left:calc(var(--sw) - var(--bt))}
+.dm-4d-el.board-top,.dm-4d-el.board-bottom{width:var(--bt);height:var(--fw);transform-origin:top center;transform:rotateX(-90deg);background:linear-gradient(90deg,#00000059,transparent 35%,#ffffff1f 55%,#00000040),var(--board,#25261f);border-radius:0 0 2px 2px}
+.dm-4d-el.board-top{top:0}
+.dm-4d-el.board-bottom{top:100%}
+.dm-4d-el.board-top.back,.dm-4d-el.board-bottom.back,.dm-4d-el.board-fore.back{left:0}
+.dm-4d-el.board-top.front,.dm-4d-el.board-bottom.front,.dm-4d-el.board-fore.front{left:calc(var(--sw) - var(--bt))}
+.dm-4d-el.board-fore{top:0;width:var(--bt);height:100%;transform:translateZ(calc(var(--fw) * -1));background:linear-gradient(90deg,#00000059,transparent 35%,#ffffff1a 55%,#00000040),var(--board,#25261f);border-radius:2px}
+/* Miolo: topo, base e frente brancos com as linhas das folhas, recuados das bordas das placas (as sobras) */
+.dm-4d-el.pages-top,.dm-4d-el.pages-bottom{left:var(--bt);width:calc(var(--sw) - var(--bt) * 2);height:calc(var(--fw) - var(--ov));transform-origin:top center;transform:rotateX(-90deg);
+ background:linear-gradient(180deg,#00000024,transparent 6%),linear-gradient(90deg,#0000002e,transparent 12%,transparent 88%,#0000002e),repeating-linear-gradient(90deg,#fbfaf6 0 1.6px,#d7d2c6 1.6px 2.2px)}
+.dm-4d-el.pages-top{top:var(--ov)}
+.dm-4d-el.pages-bottom{top:calc(100% - var(--ov))}
+.dm-4d-el.pages-fore{left:var(--bt);top:var(--ov);width:calc(var(--sw) - var(--bt) * 2);height:calc(100% - var(--ov) * 2);transform:translateZ(calc((var(--fw) - var(--ov)) * -1));
+ background:linear-gradient(90deg,#00000033,transparent 14%,transparent 86%,#00000033),linear-gradient(180deg,#0000001f,transparent 4%,transparent 96%,#0000001f),repeating-linear-gradient(90deg,#fbfaf6 0 1.6px,#d7d2c6 1.6px 2.2px)}
+.dm-4d-el.pages-fore:after,.dm-4d-el.board-fore:after{content:'';position:absolute;inset:0;background:#0b0b09;opacity:calc((1 - max(0, sin(var(--ry)) * -.35 - cos(var(--ry)) * .94)) * .45);border-radius:inherit}
+/* Sombra no chão, parada (não gira com o álbum) */
+.dm-4d-floor{position:absolute;left:50%;bottom:26px;width:calc(var(--h) * 1.2);height:30px;margin-left:calc(var(--h) * -.6);border-radius:50%;background:radial-gradient(ellipse,#2b2a1e47,transparent 70%);filter:blur(6px);pointer-events:none}
+@keyframes dm-spine-in{from{opacity:0;transform:scale(.9) rotateY(-30deg)}}
+/* Barra: contagem e miniaturas somem com animação no 4D; o botão fica no mesmo lugar (à direita) e vira "3D" */
+.dm-studio .dm-book-bar{justify-content:flex-end}
+.dm-book-extras{display:flex;align-items:center;gap:14px;flex:1 1 auto;min-width:0;max-width:100%;overflow:hidden;transition:opacity .35s ease,transform .45s cubic-bezier(.3,.7,.2,1),max-width .6s cubic-bezier(.4,0,.2,1) .1s}
+.dm-book-bar.is-4d .dm-book-extras{opacity:0;transform:translateY(18px) scale(.97);max-width:0;pointer-events:none}
+.dm-book-bar:not(.is-4d) .dm-book-extras{transition:opacity .4s ease .25s,transform .5s cubic-bezier(.2,.9,.3,1.1) .2s,max-width .6s cubic-bezier(.4,0,.2,1)}
+.dm-mode-swap{display:inline-flex;align-items:center;gap:6px;animation:dm-mode-swap .4s cubic-bezier(.3,1.5,.5,1)}
+@keyframes dm-mode-swap{from{opacity:0;transform:translateY(6px) scale(.8)}}
+.dm-studio .dm-book-mode.is-4d span{font:400 16px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.08em}
+.dm-studio .dm-book-mode.is-4d[aria-pressed=true]{background:var(--dm-yellow);border-color:#d9c900;color:var(--dm-yellow-ink)}
+.dm-studio .dm-book-mode.is-4d:hover svg{transform:rotate(-30deg)}
+@media(prefers-reduced-motion:reduce){.dm-spine-view,.dm-book-extras,.dm-mode-swap{animation:none;transition:none}.dm-spine-box{transition:none}}
+/* Capa/verso fechados: a arte ocupa só a sua metade (a regra das lâminas abertas dobra a largura e desloca) */
+.dm-book-half>div.dm-cover-part,.dm-book-half.right>div.dm-cover-part,.dm-book-half.left>div.dm-cover-part{left:0;right:auto;width:100%}
+/* Álbum fechado: sem a faixa do dorso na lateral; no canto de baixo, junto da lombada, a capa continua por dentro (preta) */
+.dm-book-spine{display:none}
+/* Encaixe exato: começa na borda de baixo da capa (0) e termina junto da placa de baixo (9 px), sem sobra */
+.dm-book-spine-foot{position:absolute;z-index:1;bottom:-9px;width:10px;height:9px;pointer-events:none;background:linear-gradient(180deg,#1b1b19,#0b0b0a 70%,#151513)}
+.dm-book[data-side=front] .dm-book-spine-foot{left:50%;border-radius:0 0 0 7px;box-shadow:inset 1px 0 0 #ffffff12,inset 0 -1px 2px #00000080}
+.dm-book[data-side=back] .dm-book-spine-foot{left:calc(50% - 10px);border-radius:0 0 7px 0;box-shadow:inset -1px 0 0 #ffffff12,inset 0 -1px 2px #00000080}
+
+/* ===================== Capa fechada vista de cima (fotos do Anti-Risco) =====================
+   Placa da capa com espessura (fio escuro na borda), miolo recuado com as folhas, placa de trás preta por baixo;
+   dobradura marcada com "ombro", faixa da lombada levemente destacada e a curva da lombada escurecendo na lateral. */
+.dm-studio .dm-book.is-closed[data-side=front] .dm-book-half.is-cover,.dm-studio .dm-book-half.right.is-cover{box-shadow:
+ 1px 1.5px 0 0 #121211,
+ 2px 3px 0 -2px #faf8f3,3px 4px 0 -2px #dcd7cc,4px 5px 0 -2px #f6f3ec,5px 6px 0 -2px #d8d2c6,6px 7px 0 -2px #f3f0e8,7px 8px 0 -2px #d3cdc1,
+ 8px 10px 0 0 #121211,
+ 0 24px 40px #181b1830}
+.dm-studio .dm-book.is-closed[data-side=back] .dm-book-half.is-cover,.dm-studio .dm-book-half.left.is-cover{box-shadow:
+ -1px 1.5px 0 0 #121211,
+ -2px 3px 0 -2px #faf8f3,-3px 4px 0 -2px #dcd7cc,-4px 5px 0 -2px #f6f3ec,-5px 6px 0 -2px #d8d2c6,-6px 7px 0 -2px #f3f0e8,-7px 8px 0 -2px #d3cdc1,
+ -8px 10px 0 0 #121211,
+ 0 24px 40px #181b1830}
+/* Sulco da dobradura a 1,5 cm da lombada (--hinge vem da medida real da capa) */
+.dm-studio .dm-book-half.is-cover:after{--g:var(--hinge,6%);background:
+  linear-gradient(90deg,transparent calc(var(--g) - 8px),#00000024 calc(var(--g) - 4px),#00000075 calc(var(--g) - .5px),#ffffff3d calc(var(--g) + 1.5px),#ffffff17 calc(var(--g) + 6px),transparent calc(var(--g) + 13px)),
+  linear-gradient(90deg,#00000066,#00000026 1.2%,transparent 3%),
+  linear-gradient(90deg,transparent 3%,#ffffff0d 4%,#ffffff0d calc(var(--g) - 9px),transparent calc(var(--g) - 7px));
+ box-shadow:inset -1px 0 0 #ffffff14,inset 0 -1px 0 #00000059,inset 0 0 0 1px #00000040}
+.dm-studio .dm-book-half.left.is-cover:after{background:
+  linear-gradient(270deg,transparent calc(var(--g) - 8px),#00000024 calc(var(--g) - 4px),#00000075 calc(var(--g) - .5px),#ffffff3d calc(var(--g) + 1.5px),#ffffff17 calc(var(--g) + 6px),transparent calc(var(--g) + 13px)),
+  linear-gradient(270deg,#00000066,#00000026 1.2%,transparent 3%),
+  linear-gradient(270deg,transparent 3%,#ffffff0d 4%,#ffffff0d calc(var(--g) - 9px),transparent calc(var(--g) - 7px));
+ box-shadow:inset 1px 0 0 #ffffff14,inset 0 -1px 0 #00000059,inset 0 0 0 1px #00000040}
+/* Peça preta da lombada no canto de baixo: acompanha a placa de trás (10 px) */
+.dm-book-spine-foot{bottom:-10px;height:10px}
+/* Anti-Risco: debruagem de 1,5 cm dos dois lados do dorso — pontilhado na borda de fora e sombreado bem leve (só aviso; a arte continua) */
+.dm-hinge-guide{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none}
+.dm-hinge-guide>i{position:absolute;top:0;bottom:0;width:var(--z);background:repeating-linear-gradient(135deg,#c0392b12 0 3px,transparent 3px 9px)}
+.dm-hinge-guide>i:first-child{left:0;border-left:1.5px dashed #c0392bcc}
+.dm-hinge-guide>i:last-child{right:0;border-right:1.5px dashed #c0392bcc}
+
+/* ===================== Capa fechada: só a capa levanta na animação; miolo, placa de trás e canto da lombada ficam parados ===================== */
+.dm-book-block{position:absolute;top:0;bottom:0;width:50%;z-index:0;border-radius:3px 4px 4px 3px;background:#f6f3ec;pointer-events:none}
+.dm-book[data-side=front] .dm-book-block{left:50%;box-shadow:
+ 2px 3px 0 -2px #faf8f3,3px 4px 0 -2px #dcd7cc,4px 5px 0 -2px #f6f3ec,5px 6px 0 -2px #d8d2c6,6px 7px 0 -2px #f3f0e8,7px 8px 0 -2px #d3cdc1,
+ 8px 10px 0 0 #121211,0 24px 40px #181b1830}
+.dm-book[data-side=back] .dm-book-block{left:0;border-radius:4px 3px 3px 4px;box-shadow:
+ -2px 3px 0 -2px #faf8f3,-3px 4px 0 -2px #dcd7cc,-4px 5px 0 -2px #f6f3ec,-5px 6px 0 -2px #d8d2c6,-6px 7px 0 -2px #f3f0e8,-7px 8px 0 -2px #d3cdc1,
+ -8px 10px 0 0 #121211,0 24px 40px #181b1830}
+/* A capa leva só a espessura da própria placa (fio escuro), que se move junto quando ela levanta */
+.dm-studio .dm-book.is-closed[data-side=front] .dm-book-half.is-cover{z-index:2;box-shadow:1px 1.5px 0 0 #121211}
+.dm-studio .dm-book.is-closed[data-side=back] .dm-book-half.is-cover{z-index:2;box-shadow:-1px 1.5px 0 0 #121211}
+.dm-book .dm-book-spine-foot{z-index:1}
+/* Guias sempre nítidas. Com foto: a parte da foto que passa para fora da guia de margem fica escurecida
+   (é o que não aparece no álbum); no dorso e na debruagem ficam só os pontilhados, sem preenchimento por cima da foto. */
+.dm-studio .zg-safe-guide{border:1.5px dashed #8a2a1c}
+.dm-paper-wrap[data-has-photo] .zg-safe-guide{box-shadow:0 0 0 200vmax #0c0b0a73}
+.dm-finishing-line{border-width:1.5px}
+.dm-paper-wrap[data-has-photo] .dm-finishing-line{box-shadow:0 0 0 200vmax #0c0b0a73}
+.dm-paper-wrap[data-has-photo] .dm-finishing-band{display:none}
+.dm-paper-wrap[data-has-photo] .dm-spine-guide{background:transparent}
+.dm-spine-guide{border-left-width:1.5px;border-right-width:1.5px;filter:drop-shadow(0 0 1px #fff)}
+.dm-paper-wrap[data-has-photo] .dm-hinge-guide>i{background:none}
+.dm-hinge-guide>i{filter:drop-shadow(0 0 1px #fff)}
+
+/* ===================== 4D: entrada animada (giro + pouso) e flutuação ===================== */
+/* A caixa de fora só aparece (sem transform), para não achatar o álbum 3D durante a entrada */
+@keyframes dm-spine-in{from{opacity:0}}
+.dm-spine-view{animation-duration:.45s}
+.dm-4d-float{position:relative;transform-style:preserve-3d}
+.dm-spine-view.is-landed .dm-4d-float{animation:dm-4d-float 4.6s ease-in-out infinite}
+.dm-spine-view.is-holding .dm-4d-float{animation-play-state:paused}
+@keyframes dm-4d-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+/* Sombra no chão: cresce na entrada e "respira" com a flutuação */
+.dm-4d-floor{animation:dm-4d-floor-in 1.7s cubic-bezier(.3,.6,.3,1) both}
+.dm-spine-view.is-landed .dm-4d-floor{animation:dm-4d-floor-breathe 4.6s ease-in-out infinite}
+.dm-spine-view.is-holding .dm-4d-floor{animation-play-state:paused}
+@keyframes dm-4d-floor-in{0%{opacity:0;transform:scale(.25)}62%{opacity:.7;transform:scale(.8)}100%{opacity:1;transform:none}}
+@keyframes dm-4d-floor-breathe{0%,100%{transform:none;opacity:1}50%{transform:scale(.88);opacity:.75}}
+/* Pouso: anel nas cores do logo se abrindo no chão */
+.dm-4d-ring{position:absolute;left:50%;bottom:20px;width:calc(var(--h) * .9);height:40px;margin-left:calc(var(--h) * -.45);border-radius:50%;pointer-events:none;opacity:0;
+ background:conic-gradient(var(--zg-red),var(--zg-yellow),var(--zg-green),var(--zg-blue),var(--zg-magenta),var(--zg-red));
+ -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));
+ animation:dm-4d-ring .9s cubic-bezier(.2,.8,.3,1) 1.1s both}
+@keyframes dm-4d-ring{0%{opacity:.95;transform:scale(.35)}100%{opacity:0;transform:scale(1.55)}}
+@media(prefers-reduced-motion:reduce){.dm-4d-float,.dm-4d-floor,.dm-4d-ring{animation:none!important}.dm-4d-ring{display:none}}
+
+/* ===================== Capa ↔ lâminas: virada mais bonita ===================== */
+/* Capa fechada parada (sem o "pulinho") */
+.dm-book.is-closed[data-side=front] .dm-book-half.is-cover{animation:none}
+/* A capa vira um pouco mais devagar; o livro desliza para o centro no mesmo tempo */
+.dm-studio .dm-book.is-cover-turn{transition-duration:var(--turn-ms)}
+.dm-book.is-cover-turn .dm-turning-sheet.forward{animation:dm-cover-open var(--turn-ms) cubic-bezier(.45,.05,.3,1) forwards}
+.dm-book.is-cover-turn .dm-turning-sheet.backward{animation:dm-cover-close var(--turn-ms) cubic-bezier(.45,.05,.3,1) forwards}
+@keyframes dm-cover-open{0%{transform:rotateY(0)}12%{transform:rotateY(-6deg)}100%{transform:rotateY(-180deg)}}
+@keyframes dm-cover-close{0%{transform:rotateY(0)}12%{transform:rotateY(6deg)}100%{transform:rotateY(180deg)}}
+/* Na folha que vira só a própria sombra (o miolo fica parado embaixo) */
+.dm-studio .dm-sheet-face .dm-book-half.is-cover{box-shadow:none}
+/* Luz na folha virando: escurece ao levantar, clareia ao deitar do outro lado */
+.dm-sheet-face:before{content:'';position:absolute;inset:0;z-index:4;background:#0b0b09;opacity:0;pointer-events:none}
+.dm-turning-sheet .dm-sheet-face.front:before{animation:dm-face-dim var(--turn-ms,760ms) ease-in forwards}
+.dm-turning-sheet .dm-sheet-face.back:before{animation:dm-face-undim var(--turn-ms,760ms) ease-out forwards}
+/* Bem de leve: a folha não pode parecer "apagada" enquanto vira e deita do outro lado */
+@keyframes dm-face-dim{0%{opacity:0}50%{opacity:.12}100%{opacity:.12}}
+@keyframes dm-face-undim{0%{opacity:.12}45%{opacity:.06}100%{opacity:0}}
+/* Sombra projetada: some da página que aparece e chega na página onde a folha vai deitar */
+.dm-turn-shade{position:absolute;top:0;bottom:0;width:50%;z-index:2;pointer-events:none;opacity:0}
+.dm-turn-shade.right{left:50%;background:linear-gradient(90deg,#00000040,#00000014 22%,transparent 45%)}
+.dm-turn-shade.left{left:0;background:linear-gradient(270deg,#00000040,#00000014 22%,transparent 45%)}
+.dm-turn-shade.from{animation:dm-shade-from var(--turn-ms,760ms) ease-out forwards}
+.dm-turn-shade.to{animation:dm-shade-to var(--turn-ms,760ms) ease-in forwards}
+@keyframes dm-shade-from{0%{opacity:.9}55%{opacity:0}100%{opacity:0}}
+@keyframes dm-shade-to{0%,50%{opacity:0}85%{opacity:.35}100%{opacity:0}}
+/* Miolo, placa de trás e canto preto: somem ao abrir, voltam ao fechar (suave) */
+.dm-book-block[data-anim=out],.dm-book-spine-foot[data-anim=out]{animation:dm-closed-out var(--turn-ms) ease forwards}
+.dm-book-block[data-anim=in],.dm-book-spine-foot[data-anim=in]{animation:dm-closed-in var(--turn-ms) ease forwards}
+@keyframes dm-closed-out{0%,40%{opacity:1}85%,100%{opacity:0}}
+@keyframes dm-closed-in{0%,30%{opacity:0}80%,100%{opacity:1}}
+/* ===== Capa do tamanho certo: a placa é maior que as páginas pela mesma sobra (--overhang) que aparece
+   em volta das lâminas com o álbum aberto. Assim a borda escura do álbum aberto É a capa, e não surge do nada. ===== */
+/* Capa fechada: página + sobra em cima, embaixo e na lateral de fora */
+.dm-studio .dm-book.is-closed[data-side=front] .dm-book-half.right.is-cover{top:calc(var(--overhang) * -1);bottom:calc(var(--overhang) * -1);right:calc(var(--overhang) * -1);width:calc(50% + var(--overhang))}
+.dm-studio .dm-book.is-closed[data-side=back] .dm-book-half.left.is-cover{top:calc(var(--overhang) * -1);bottom:calc(var(--overhang) * -1);left:calc(var(--overhang) * -1);width:calc(50% + var(--overhang))}
+/* Virando a capa: a folha é a placa inteira (com a sobra); o lado da dobra fica fixo no meio */
+.dm-studio .dm-book.is-cover-turn .dm-turning-sheet{top:calc(var(--overhang) * -1);height:calc(100% + var(--overhang) * 2);width:calc(50% + var(--overhang))}
+.dm-studio .dm-book.is-cover-turn .dm-turning-sheet.backward{left:calc(var(--overhang) * -1)}
+/* Face que é a capa: a arte ocupa a placa inteira */
+.dm-studio .dm-book.is-cover-turn .dm-sheet-face:has(>.dm-book-half.is-cover)>.dm-book-half{inset:0;width:100%}
+/* Face que é página: a placa escura por baixo e a página por cima, com a sobra em cima, embaixo e do lado de fora */
+.dm-studio .dm-book.is-cover-turn .dm-sheet-face:not(:has(>.dm-book-half.is-cover)){background:var(--board);box-shadow:none}
+.dm-studio .dm-book.is-cover-turn .dm-sheet-face:not(:has(>.dm-book-half.is-cover))>.dm-book-half{top:var(--overhang);bottom:var(--overhang);width:auto}
+.dm-studio .dm-book.is-cover-turn .dm-turning-sheet.forward>.dm-sheet-face.front>.dm-book-half,.dm-studio .dm-book.is-cover-turn .dm-turning-sheet.backward>.dm-sheet-face.back>.dm-book-half{left:0;right:var(--overhang)}
+.dm-studio .dm-book.is-cover-turn .dm-turning-sheet.forward>.dm-sheet-face.back>.dm-book-half,.dm-studio .dm-book.is-cover-turn .dm-turning-sheet.backward>.dm-sheet-face.front>.dm-book-half{left:var(--overhang);right:0}
+.dm-studio .dm-book.is-cover-turn .dm-sheet-face:not(:has(>.dm-book-half.is-cover)):after{display:none}
+/* A outra placa (contracapa ao abrir pela frente; capa ao abrir pelo verso) já está por baixo desde o começo, do mesmo tamanho */
+.dm-studio .dm-book.is-cover-turn:after{content:'';position:absolute;top:0;bottom:0;left:50%;width:50%;z-index:-1;pointer-events:none;border-radius:2px;background:#f6f3ec;
+ box-shadow:0 0 0 var(--overhang) var(--board),0 26px 44px calc(var(--overhang) - 2px) #181b1838}
+.dm-studio .dm-book.is-cover-turn[data-side=back]:after{left:0}
+.dm-studio .dm-book.is-cover-turn:before{display:none}
+@media(prefers-reduced-motion:reduce){.dm-book-block,.dm-book-spine-foot,.dm-turn-shade,.dm-sheet-face:before,.dm-book.is-cover-turn:before,.dm-book.is-cover-turn:after{animation:none!important}}
+
+/* ===================== Dorso e debruagem: marcas de dobra finas, no estilo de arquivo de gráfica =====================
+   Dentro do álbum: linha fina tracejada (1 px) com leve contorno claro; fora do álbum: a linha continua lisa,
+   como marca de dobra (14 px no dorso, 8 px na debruagem). O preenchimento (página vazia) fica só dentro do álbum. */
+.dm-spine-guide{--c:#2b2a22;--out:14px;top:calc(var(--out) * -1);bottom:calc(var(--out) * -1);padding:var(--out) 0;box-sizing:border-box;background-clip:content-box;border:0!important;filter:none}
+.dm-hinge-guide{--c:#c0563f;--out:8px;top:calc(var(--out) * -1);bottom:calc(var(--out) * -1)}
+.dm-hinge-guide>i{border:0!important;padding:var(--out) 0;box-sizing:border-box;background-clip:content-box;filter:none}
+.dm-spine-guide:before,.dm-spine-guide:after,.dm-hinge-guide>i:after{content:'';position:absolute;top:0;bottom:0;width:1px;pointer-events:none;
+ background:
+  linear-gradient(var(--c),var(--c)) 0 0/100% var(--out) no-repeat,
+  linear-gradient(var(--c),var(--c)) 0 100%/100% var(--out) no-repeat,
+  repeating-linear-gradient(180deg,var(--c) 0 4px,transparent 4px 8px) 0 var(--out)/100% calc(100% - var(--out) * 2) no-repeat;
+ filter:drop-shadow(0 0 .6px #ffffffe6)}
+.dm-spine-guide:before{left:0}
+.dm-spine-guide:after{right:0}
+.dm-hinge-guide>i:first-child:after{left:0}
+.dm-hinge-guide>i:last-child:after{right:0}
+/* Etiqueta do dorso mais discreta, no tom da marca */
+.dm-spine-guide>span{top:calc(var(--out) + 8px);background:#ffffffe0;color:#2b2a22;box-shadow:0 1px 3px #0000001f}
+/* Debruagem com foto: véu branco suave (aparece menos, é menos importante). Dorso e o resto da capa ficam normais. */
+.dm-paper-wrap[data-has-photo] .dm-hinge-guide>i{background:#ffffff5c;background-clip:content-box}
+
+/* ===================== Abertura da prévia: impressora → caixa → Zangraf → caminhão → casa → surpresa =====================
+   Tudo no mesmo relógio de 8 s (keyframes em % = ms/80). Medidas em cqw/cqh da cena, para caber em qualquer tela. */
+.dm-intro-dialog{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#cbe8f7;overflow:hidden;animation:dm-in-open .35s ease both;transition:opacity .5s ease}
+.dm-intro-dialog::backdrop{background:#cbe8f7}
+.dm-intro-dialog[data-leaving]{opacity:0;pointer-events:none}
+.dm-intro-dialog[data-leaving]::backdrop{opacity:0;transition:opacity .5s ease}
+@keyframes dm-in-open{from{opacity:0}}
+.dm-intro-spacer{height:min(62vh,580px)}
+.dm-intro{position:absolute;inset:0;overflow:hidden;isolation:isolate;user-select:none;-webkit-user-select:none;background:linear-gradient(180deg,#9fd3f2,#cbe8f7 45%,#fdf4dc)}
+/* A cena é sempre 16:9 e cobre a tela inteira (em tela em pé, cabe inteira no meio) */
+.dm-in-stage{position:absolute;left:50%;top:50%;width:max(100vw,177.78dvh);height:max(100dvh,56.25vw);transform:translate(-50%,-50%);overflow:hidden;container-type:size}
+@media (max-aspect-ratio:1/1){.dm-in-stage{width:100vw;height:56.25vw}}
+.dm-intro *{box-sizing:border-box}
+.dm-in-sky{position:absolute;inset:0;background:linear-gradient(180deg,#9fd3f2 0%,#cbe8f7 45%,#fdf4dc 78%)}
+.dm-in-sun{position:absolute;right:9cqw;top:9cqh;width:9cqw;height:9cqw;border-radius:50%;background:radial-gradient(circle,#fff6c4 0 38%,#ffe27a 55%,#ffe27a00 72%)}
+.dm-in-clouds{position:absolute;inset:0 -60% 0 0;animation:dm-in-par1 8s both}
+.dm-in-clouds>i{position:absolute;width:13cqw;height:4.4cqw;border-radius:99px;background:#fff;box-shadow:3.5cqw -1.6cqw 0 .4cqw #fff,7cqw -.4cqw 0 -.2cqw #fff;opacity:.92}
+.dm-in-hills{position:absolute;left:0;right:-150%;bottom:24cqh;height:22cqh;animation:dm-in-par2 8s both;
+ background:radial-gradient(60% 120% at 10% 100%,#8cc97e 60%,transparent 61%),radial-gradient(50% 140% at 35% 100%,#74b768 60%,transparent 61%),radial-gradient(55% 110% at 62% 100%,#8cc97e 60%,transparent 61%),radial-gradient(60% 130% at 88% 100%,#6aaf5f 60%,transparent 61%)}
+@keyframes dm-in-par1{0%,32.5%{transform:translateX(0)}41.25%,46.25%{transform:translateX(-14cqw)}71.25%,100%{transform:translateX(-40cqw)}}
+@keyframes dm-in-par2{0%,32.5%{transform:translateX(0)}41.25%,46.25%{transform:translateX(-40cqw)}71.25%,100%{transform:translateX(-118cqw)}}
+/* Mundo: 4 cenas lado a lado; a câmera anda com o caminhão */
+.dm-in-world{position:absolute;top:0;bottom:0;left:0;width:400cqw;transform-origin:0 72cqh;animation:dm-in-cam 8s both}
+/* Abre com zoom na Indigo, se afasta quando o álbum sai voando e depois segue a viagem */
+@keyframes dm-in-cam{0%{transform:translateX(0) scale(1.55);animation-timing-function:linear}10.5%{transform:translateX(0) scale(1.47);animation-timing-function:cubic-bezier(.5,0,.3,1)}14.5%,32.5%{transform:translateX(0) scale(1);animation-timing-function:cubic-bezier(.6,0,.3,1)}41.25%,46.25%{transform:translateX(-100cqw) scale(1);animation-timing-function:cubic-bezier(.45,0,.35,1)}71.25%,100%{transform:translateX(-292cqw) scale(1)}}
+.dm-in-sec{position:absolute;top:0;bottom:0;width:100cqw}
+.dm-in-sec.a{left:0}.dm-in-sec.b{left:100cqw;z-index:1}.dm-in-sec.c{left:200cqw}.dm-in-sec.d{left:300cqw}
+.dm-in-road{position:absolute;left:100cqw;right:0;bottom:0;height:26cqh;
+ background:linear-gradient(180deg,#7cc06d 0 15%,#5e9f52 15% 18%,#55585a 18% 21%,#3d4043 21% 72%,#55585a 72% 75%,#7cc06d 75%)}
+.dm-in-road:after{content:'';position:absolute;left:0;right:0;top:45%;height:3px;background:repeating-linear-gradient(90deg,#fff 0 4cqw,transparent 4cqw 8cqw)}
+.dm-in-road:before{content:'';position:absolute;left:0;right:0;top:18%;height:3px;background:repeating-linear-gradient(90deg,#e8221e 0 20%,#19b33a 0 40%,#f5e21a 0 60%,#1aa8e8 0 80%,#e81aa5 0 100%);background-size:20cqw 3px}
+/* A: dentro da Zangraf */
+/* Cena A: dentro da fábrica */
+.dm-in-inside{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.dm-in-rays{animation:dm-in-rays 2.4s ease-in-out infinite alternate}
+@keyframes dm-in-rays{from{opacity:.6}to{opacity:1}}
+.dm-in-flicker{animation:dm-in-flicker 2.6s steps(1) infinite}
+@keyframes dm-in-flicker{0%,100%{opacity:1}8%{opacity:.55}10%{opacity:1}12%{opacity:.7}14%{opacity:1}}
+.dm-in-banner{transform-box:view-box;transform-origin:1400px 212px;animation:dm-in-sway 3s ease-in-out infinite alternate}
+@keyframes dm-in-sway{from{transform:rotate(-.8deg)}to{transform:rotate(.8deg)}}
+.dm-in-minute{transform-box:view-box;transform-origin:748px 338px;animation:dm-in-tick 1.3s linear infinite}
+.dm-in-hour{transform-box:view-box;transform-origin:748px 338px;animation:dm-in-tick 15.6s linear infinite}
+@keyframes dm-in-tick{to{transform:rotate(360deg)}}
+.dm-in-printer-wrap{position:absolute;left:2cqw;bottom:24.5cqh;width:50cqw;height:19.8cqw;z-index:2}
+.dm-in-printer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 10px 16px #0000003d)}
+/* HP Indigo 12000: cilindros girando enquanto imprime, folhas indo para o empilhador, barra do monitor enchendo */
+.dm-in-drum{animation:dm-in-spin .36s linear 4}
+.dm-in-drum.rev{animation-direction:reverse}
+@keyframes dm-in-spin{to{transform:rotate(360deg)}}
+.dm-in-glow{animation:dm-in-glow .7s ease-in-out 2 alternate}
+@keyframes dm-in-glow{to{fill:#7fd6ff}}
+.dm-in-bar{transform-box:fill-box;transform-origin:left;animation:dm-in-bar 1.2s linear both}
+@keyframes dm-in-bar{from{transform:scaleX(0)}}
+.dm-in-pile{transform-box:view-box;transform-origin:0 132px;animation:dm-in-pile 1.2s ease-out both}
+@keyframes dm-in-pile{to{transform:scaleY(.82)}}
+.dm-in-led{animation:dm-in-led .5s steps(2) infinite}
+.dm-in-andon{animation:dm-in-andon .6s steps(2) infinite}
+@keyframes dm-in-andon{50%{fill:#7dff9a}}
+/* Folha sugada do alimentador para dentro da máquina */
+.dm-in-lift{opacity:0;animation:dm-in-lift .34s ease-in both}
+.dm-in-lift.l0{animation-delay:0s}.dm-in-lift.l1{animation-delay:.34s}.dm-in-lift.l2{animation-delay:.68s}
+@keyframes dm-in-lift{0%{opacity:1;transform:none}35%{opacity:1;transform:translate(0,-6px)}100%{opacity:1;transform:translate(84px,-6px) scaleX(.2)}}
+.dm-in-laser{animation:dm-in-laser .45s ease-in-out 3 alternate}
+@keyframes dm-in-laser{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+@keyframes dm-in-led{50%{fill:#0d5e1f}}
+.dm-in-sheet{animation:dm-in-sheet .42s cubic-bezier(.3,.6,.4,1) both}
+.dm-in-sheet.s1{animation-delay:.12s}.dm-in-sheet.s2{animation-delay:.46s}.dm-in-sheet.s3{animation-delay:.8s}
+@keyframes dm-in-sheet{0%{transform:translate(-22px,0)}55%{transform:translate(60px,-2px)}100%{transform:translate(92px,-14px)}}
+.dm-in-table{position:absolute;left:56cqw;bottom:16cqh;width:32cqw;height:20cqw;z-index:1;
+ background:linear-gradient(#cfd4da,#9aa3ad) 0 0/100% 1.4cqw no-repeat,linear-gradient(#5c6670,#5c6670) 0 1.4cqw/100% .5cqw no-repeat,linear-gradient(#5c6670,#5c6670) 5% 0/1.2cqw 100% no-repeat,linear-gradient(#5c6670,#5c6670) 95% 0/1.2cqw 100% no-repeat,linear-gradient(#5c6670,#5c6670) 0 78%/100% .6cqw no-repeat}
+/* Na mesa: pistola de fita e caixas desmontadas na prateleira de baixo */
+.dm-in-tape-gun{position:absolute;right:4cqw;top:-2.6cqw;width:3.6cqw;height:2.6cqw;border-radius:50% 50% 4px 4px;background:radial-gradient(circle at 50% 45%,#c6a46a 0 28%,#7a5a2c 30% 42%,#e94e1b 44%)}
+.dm-in-flat{position:absolute;left:8%;right:8%;top:calc(78% - 2.4cqw);height:2.4cqw;background:repeating-linear-gradient(180deg,#c99558 0 .5cqw,#a87442 .5cqw .6cqw);border-radius:2px}
+/* Álbum indo da impressora para a caixa */
+.dm-in-album-trip{position:absolute;z-index:3;width:7cqw;height:9.5cqw;left:41cqw;bottom:calc(24.5cqh + 11cqw);opacity:0;animation:dm-in-album 8s both}
+@keyframes dm-in-album{
+ 0%,13.5%{opacity:0;left:41cqw;bottom:calc(24.5cqh + 11cqw);transform:scale(.35)}
+ 13.75%{opacity:1;transform:scale(.35);animation-timing-function:cubic-bezier(.2,.8,.3,1)}
+ 16.5%{left:47cqw;bottom:calc(26cqh + 28cqw);transform:scale(1.1) rotate(-14deg);animation-timing-function:ease-in-out}
+ 20%{left:60cqw;bottom:calc(26cqh + 31cqw);transform:scale(1) rotate(10deg);animation-timing-function:ease-in}
+ 23%{left:68.5cqw;bottom:calc(26cqh + 21cqw);transform:rotate(0)}
+ 25.5%{opacity:1;left:68.5cqw;bottom:calc(16cqh + 21cqw)}
+ 26%,100%{opacity:0;left:68.5cqw;bottom:calc(16cqh + 21cqw)}}
+.dm-in-album-body{position:relative;display:block;width:100%;height:100%;border-radius:2px 5px 5px 2px;background:#222;box-shadow:2px 3px 0 #f4f0e7,4px 5px 0 #121211,0 10px 22px #00000059}
+.dm-in-album-cover{position:absolute;inset:0;overflow:hidden;border-radius:inherit}
+.dm-in-album-spine{position:absolute;left:0;top:0;bottom:0;width:10%;background:linear-gradient(90deg,#00000080,#0000001a);border-radius:2px 0 0 2px}
+.dm-in-album-pages{display:none}
+/* Caixa: papelão kraft, etiqueta da Zangraf e fita */
+.dm-in-box{position:relative;display:block;width:100%;height:100%}
+.dm-in-box-front{position:absolute;inset:0;border-radius:4px;background:linear-gradient(160deg,#d8a86e,#c08a50 60%,#a87442);box-shadow:inset 0 0 0 2px #00000014,inset 0 -6px 12px #00000026,0 10px 20px #00000040;overflow:hidden;z-index:2}
+.dm-in-tape{position:absolute;left:0;right:0;top:0;height:22%;background:linear-gradient(180deg,#e9cf9f,#d9b77f);box-shadow:0 1px 2px #0000002e;transform-origin:left;transform:scaleX(0)}
+.dm-in-label{position:absolute;left:10%;right:30%;top:32%;bottom:14%;display:grid;align-content:center;justify-items:center;gap:4%;padding:4%;border-radius:4px;background:#fffdf7;box-shadow:0 1px 3px #0000002e}
+.dm-in-label img{width:82%}
+.dm-in-label b{font:400 min(1.1cqw,12px)/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.08em;white-space:nowrap;color:#25261f}
+.dm-in-barcode{width:80%;height:12%;background:repeating-linear-gradient(90deg,#25261f 0 2px,transparent 2px 3px,#25261f 3px 4px,transparent 4px 7px)}
+.dm-in-fragile{position:absolute;right:5%;bottom:10%;font:400 min(1cqw,10px)/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.1em;color:#7a2a14;writing-mode:vertical-rl;transform:rotate(180deg);font-style:normal}
+.dm-in-flap{position:absolute;top:-36%;width:50%;height:38%;background:linear-gradient(180deg,#e2b47a,#c99558);box-shadow:inset 0 0 0 2px #00000012;z-index:1}
+.dm-in-flap.left{left:0;transform-origin:0 100%;border-radius:4px 0 0 0}
+.dm-in-flap.right{right:0;transform-origin:100% 100%;border-radius:0 4px 0 0}
+/* Caixa da embalagem: abas abertas → álbum cai → fecham → fita → pula para o caminhão */
+.dm-in-box-trip{position:absolute;z-index:4;width:12cqw;height:9cqw;left:66cqw;bottom:calc(16cqh + 20cqw);animation:dm-in-boxtrip 8s both}
+.dm-in-box-trip .dm-in-flap.left{animation:dm-in-flapL 8s both}
+.dm-in-box-trip .dm-in-flap.right{animation:dm-in-flapR 8s both}
+.dm-in-box-trip .dm-in-tape{animation:dm-in-tape 8s both}
+@keyframes dm-in-flapL{0%,26.25%{transform:rotate(-125deg)}29%,100%{transform:rotate(0) scaleY(.12)}}
+@keyframes dm-in-flapR{0%,26.25%{transform:rotate(125deg)}29%,100%{transform:rotate(0) scaleY(.12)}}
+@keyframes dm-in-tape{0%,29%{transform:scaleX(0)}31%,100%{transform:scaleX(1)}}
+@keyframes dm-in-boxtrip{
+ 0%,32.5%{opacity:1;left:66cqw;bottom:calc(16cqh + 20cqw);transform:none;animation-timing-function:cubic-bezier(.3,.6,.4,1)}
+ 36.5%{left:112cqw;bottom:calc(26cqh + 32cqw);transform:rotate(16deg) scale(.95);animation-timing-function:cubic-bezier(.5,0,.7,.4)}
+ 40.5%{left:155cqw;bottom:calc(10cqh + 13cqw);transform:rotate(-6deg) scale(.8)}
+ 42.5%{opacity:1;left:158cqw;bottom:calc(10cqh + 7cqw);transform:scale(.7)}
+ 43.5%,100%{opacity:0;left:158cqw;bottom:calc(10cqh + 7cqw);transform:scale(.6)}}
+/* B: Zangraf */
+.dm-in-factory{position:absolute;left:4cqw;bottom:8cqh;width:82cqw;height:42cqw;overflow:visible;filter:drop-shadow(0 10px 18px #0000002a)}
+.dm-in-flag{transform-origin:408px 30px;animation:dm-in-flag 1.1s ease-in-out infinite alternate}
+@keyframes dm-in-flag{0%{transform:skewY(-4deg) scaleX(.96)}100%{transform:skewY(5deg) scaleX(1.02)}}
+/* C: estrada */
+.dm-in-tree{position:absolute;bottom:26cqh;width:8cqw;height:13cqw;transform-origin:bottom center}
+.dm-in-tree>b{position:absolute;left:44%;bottom:0;width:12%;height:40%;background:#7a5230;border-radius:2px}
+.dm-in-tree>i{position:absolute;border-radius:50%;background:#3d9a4f}
+.dm-in-tree>i:first-child{left:5%;right:5%;top:0;height:65%}
+.dm-in-tree>i:nth-child(2){left:22%;right:-8%;top:22%;height:52%;background:#2f8743}
+.dm-in-sign{position:absolute;left:52%;bottom:26cqh;padding:.8cqw 1.4cqw;border-radius:5px;background:#19b33a;color:#fff;font:400 min(2cqw,18px)/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.12em;box-shadow:0 4px 10px #0000002e;transform:translateY(-10cqh)}
+.dm-in-sign:after{content:'';position:absolute;left:46%;top:100%;width:8%;height:10cqh;background:#8a8a82}
+/* D: casa */
+.dm-in-house{position:absolute;left:58cqw;bottom:24cqh;width:30cqw;height:27.3cqw;overflow:visible;filter:drop-shadow(0 10px 16px #0000002a)}
+/* Caminhão */
+.dm-in-truck{position:absolute;z-index:5;left:153cqw;bottom:9cqh;width:30cqw;height:17.8cqw;animation:dm-in-truck 8s both}
+.dm-in-truck-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 10px #00000040)}
+@keyframes dm-in-truck{
+ 0%,46.25%{left:153cqw;animation-timing-function:cubic-bezier(.45,0,.35,1)}
+ 71.25%,75.5%{left:300cqw;animation-timing-function:cubic-bezier(.5,0,.8,.5)}
+ 84%,100%{left:430cqw}}
+.dm-in-truck-body{animation:dm-in-bump .28s ease-in-out infinite alternate}
+@keyframes dm-in-bump{to{transform:translateY(-1.6px)}}
+.dm-in-wheel{animation:dm-in-wheel .5s linear 3.7s infinite}
+@keyframes dm-in-wheel{to{transform:rotate(360deg)}}
+.dm-in-puff{position:absolute;left:-2cqw;bottom:2cqw;width:2.6cqw;height:2.6cqw;border-radius:50%;background:#d9d6cf;opacity:0;animation:dm-in-puff 1s ease-out infinite}
+.dm-in-puff.p1{animation-delay:3.4s}.dm-in-puff.p2{animation-delay:3.73s}.dm-in-puff.p3{animation-delay:4.06s}
+@keyframes dm-in-puff{0%{opacity:.8;transform:scale(.4)}100%{opacity:0;transform:translate(-5cqw,-3cqw) scale(1.6)}}
+/* Caixa saindo do caminhão e pulando até a porta */
+.dm-in-box-drop{position:absolute;z-index:6;width:12cqw;height:9cqw;left:302cqw;bottom:calc(10cqh + 6cqw);opacity:0;animation:dm-in-boxdrop 8s both}
+.dm-in-box-drop .dm-in-flap{transform:scaleY(.12)}.dm-in-box-drop .dm-in-tape{transform:none}
+@keyframes dm-in-boxdrop{
+ 0%,72%{opacity:0;left:302cqw;bottom:calc(10cqh + 6cqw);transform:scale(.7)}
+ 72.5%{opacity:1;transform:scale(.75);animation-timing-function:cubic-bezier(.3,.6,.4,1)}
+ 74%{left:338cqw;bottom:calc(26cqh + 16cqw);transform:rotate(-16deg) scale(.95);animation-timing-function:cubic-bezier(.5,0,.8,.4)}
+ 75.5%{left:368cqw;bottom:23cqh;transform:rotate(3deg) scale(1.05,.86)}
+ 76.5%{bottom:calc(23cqh + 3cqw);transform:none}
+ 77.5%,100%{opacity:1;left:368cqw;bottom:23cqh;transform:none}}
+/* Close: a caixa na porta abre e joga o álbum na tela */
+.dm-in-close{position:absolute;inset:0;z-index:20;opacity:0;pointer-events:none;background:radial-gradient(70% 60% at 50% 55%,#fff9e8,#efe2c8 70%,#d9c6a4);animation:dm-in-close 8s both}
+@keyframes dm-in-close{0%,78.75%{opacity:0}80.5%,100%{opacity:1}}
+.dm-in-close-box{position:absolute;left:33cqw;width:34cqw;height:25.5cqw;bottom:14cqh;animation:dm-in-bigbox 8s both}
+.dm-in-close-box .dm-in-tape{transform:none}
+.dm-in-close-box .dm-in-flap.left{animation:dm-in-bigflapL 8s both}
+.dm-in-close-box .dm-in-flap.right{animation:dm-in-bigflapR 8s both}
+@keyframes dm-in-bigbox{
+ 0%,78.75%{transform:translateY(-80cqh)}
+ 81%{transform:translateY(0) scale(1.06,.9);animation-timing-function:ease-out}
+ 82%{transform:translateY(-3cqh)}
+ 82.5%{transform:none}
+ 83.2%{transform:rotate(-3deg)}84%{transform:rotate(3deg)}84.8%{transform:rotate(-2.5deg)}85.6%{transform:rotate(2deg)}
+ 86.25%{transform:scale(1.04,.95)}
+ 88%,100%{transform:none}}
+@keyframes dm-in-bigflapL{0%,86%{transform:scaleY(.12)}87.5%{transform:rotate(-150deg)}90%,100%{transform:rotate(-118deg)}}
+@keyframes dm-in-bigflapR{0%,86%{transform:scaleY(.12)}87.5%{transform:rotate(150deg)}90%,100%{transform:rotate(118deg)}}
+.dm-in-burst{position:absolute;left:50cqw;bottom:calc(14cqh + 25cqw);width:0;height:0}
+.dm-in-burst>i{position:absolute;left:-1.2cqw;bottom:0;width:2.4cqw;height:12cqw;border-radius:50% 50% 50% 50%/30% 30% 70% 70%;background:var(--c);transform-origin:50% 100%;transform:rotate(var(--a)) scaleY(0);opacity:0;animation:dm-in-drop 8s both}
+@keyframes dm-in-drop{0%,86.5%{opacity:0;transform:rotate(var(--a)) translateY(0) scaleY(0)}89%{opacity:1;transform:rotate(var(--a)) translateY(-6cqw) scaleY(1)}93%,100%{opacity:0;transform:rotate(var(--a)) translateY(-16cqw) scaleY(.4)}}
+.dm-in-confetti{position:absolute;left:50cqw;bottom:calc(14cqh + 24cqw);width:0;height:0}
+.dm-in-confetti>i{position:absolute;width:1.2cqw;height:.7cqw;border-radius:1px;opacity:0;animation:dm-in-confetti 8s both;animation-delay:var(--d)}
+@keyframes dm-in-confetti{0%,86.5%{opacity:0;transform:none}88%{opacity:1;transform:translate(calc(var(--x) * .5),-30cqh) rotate(var(--r))}100%{opacity:.9;transform:translate(var(--x),10cqh) rotate(calc(var(--r) * 3))}}
+.dm-in-fly{position:absolute;left:41cqw;bottom:calc(14cqh + 6cqw);width:18cqw;height:24cqw;perspective:800px;opacity:0;animation:dm-in-fly 8s both}
+.dm-in-fly .dm-in-album-body{animation:dm-in-flyspin 8s both}
+@keyframes dm-in-fly{0%,87%{opacity:0;transform:translateY(8cqh) scale(.35)}88%{opacity:1}92%{transform:translateY(-34cqh) scale(1.2)}96.25%{transform:translateY(-14cqh) scale(2.1)}100%{opacity:1;transform:translateY(-12cqh) scale(2.6)}}
+@keyframes dm-in-flyspin{0%,87.5%{transform:rotateY(0) rotateZ(-8deg)}96.25%{transform:rotateY(720deg) rotateZ(4deg)}100%{transform:rotateY(720deg)}}
+.dm-in-flash{position:absolute;inset:0;z-index:30;background:#fff;opacity:0;pointer-events:none;animation:dm-in-flash 8s both}
+@keyframes dm-in-flash{0%,95%{opacity:0}100%{opacity:1}}
+/* Legendas de cada etapa e progresso */
+.dm-in-captions{position:absolute;left:24px;top:22px;z-index:25}
+.dm-in-captions>span{position:absolute;left:0;top:0;display:flex;align-items:center;gap:9px;padding:8px 14px 7px 10px;border-radius:999px;background:#ffffffe8;box-shadow:0 4px 14px #0000001f;white-space:nowrap;font:400 18px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.12em;color:#25261f;opacity:0}
+.dm-in-captions>span>i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 30%,transparent)}
+.dm-in-captions .c0{animation:dm-in-c0 8s both}.dm-in-captions .c1{animation:dm-in-c1 8s both}.dm-in-captions .c2{animation:dm-in-c2 8s both}
+.dm-in-captions .c3{animation:dm-in-c3 8s both}.dm-in-captions .c4{animation:dm-in-c4 8s both}.dm-in-captions .c5{animation:dm-in-c5 8s both}
+@keyframes dm-in-c0{0%{opacity:0;transform:translateY(-8px)}2%,16.5%{opacity:1;transform:none}18.75%,100%{opacity:0;transform:translateY(8px)}}
+@keyframes dm-in-c1{0%,18.75%{opacity:0;transform:translateY(-8px)}20.5%,31.5%{opacity:1;transform:none}33.75%,100%{opacity:0;transform:translateY(8px)}}
+@keyframes dm-in-c2{0%,33.75%{opacity:0;transform:translateY(-8px)}35.5%,44%{opacity:1;transform:none}46.25%,100%{opacity:0;transform:translateY(8px)}}
+@keyframes dm-in-c3{0%,46.25%{opacity:0;transform:translateY(-8px)}48%,70%{opacity:1;transform:none}72%,100%{opacity:0;transform:translateY(8px)}}
+@keyframes dm-in-c4{0%,72%{opacity:0;transform:translateY(-8px)}73.5%,80.5%{opacity:1;transform:none}82.5%,100%{opacity:0;transform:translateY(8px)}}
+@keyframes dm-in-c5{0%,82.5%{opacity:0;transform:translateY(-8px) scale(.8)}84.5%,95%{opacity:1;transform:none}100%{opacity:0}}
+.dm-in-progress{position:absolute;left:20px;right:96px;bottom:16px;z-index:25;height:5px;border-radius:9px;background:#ffffff99;overflow:hidden}
+.dm-in-progress>i{display:block;height:100%;border-radius:9px;background:var(--zg-rays);animation:dm-in-progress 8s linear both}
+@keyframes dm-in-progress{from{width:0}to{width:100%}}
+.dm-studio .dm-in-skip{position:absolute;right:18px;bottom:10px;z-index:26;height:30px;padding:0 14px;border:0;border-radius:999px;background:#25261fcc;color:#fff;font:700 12px/1 Arial,Helvetica,sans-serif;cursor:pointer;transition:background .2s}
+.dm-studio .dm-in-skip:hover{background:#25261f}
+/* Botão de som da abertura; pulsa chamando atenção quando o navegador bloqueou o áudio */
+.dm-studio .dm-in-sound{position:absolute;right:86px;bottom:10px;z-index:26;display:inline-flex;align-items:center;gap:6px;height:30px;min-width:30px;padding:0 8px;border:0;border-radius:999px;background:#25261fcc;color:#fff;font:700 12px/1 Arial,Helvetica,sans-serif;cursor:pointer;transition:background .2s}
+.dm-studio .dm-in-sound:hover{background:#25261f}
+.dm-studio .dm-in-sound.is-blocked{padding:0 14px;background:#e81aa5;animation:dm-in-sound-pulse 1s ease-in-out infinite}
+@keyframes dm-in-sound-pulse{50%{box-shadow:0 0 0 8px #e81aa540}}
+
+/* ===================== Pré-view: título com o olho piscando, chave 3D/4D e só duas ações ===================== */
+.dm-studio .dm-preview-dialog.dm-pv{padding:20px 28px 24px;border-radius:26px;background:var(--dm-surface)}
+.dm-pv-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 2px!important}
+.dm-pv-title{display:flex;align-items:center;gap:12px;margin:0;line-height:1}
+/* Olho: entra abrindo, depois pisca (às vezes duas vezes) e olha para os lados */
+.dm-pv-eye{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--dm-yellow);color:var(--dm-yellow-ink,#25261f);box-shadow:0 6px 16px #e4d30055;animation:dm-pv-eye-in .6s cubic-bezier(.3,1.6,.5,1) both}
+.dm-pv-eye svg{animation:dm-pv-blink 4.2s ease-in-out 1.2s infinite;transform-origin:center}
+.dm-pv-eye svg circle{animation:dm-pv-look 6s ease-in-out 1.6s infinite}
+@keyframes dm-pv-eye-in{from{transform:scale(0) rotate(-90deg)}}
+@keyframes dm-pv-blink{0%,84%,90%,94%,100%{transform:scaleY(1)}87%,92%{transform:scaleY(.08)}}
+@keyframes dm-pv-look{0%,20%,100%{transform:none}30%,45%{transform:translateX(-2.5px)}55%,70%{transform:translateX(2.5px)}}
+/* Letras caindo e ficando nítidas, uma de cada vez, com a faixa nas cores do logo por baixo */
+.dm-pv-word{position:relative;display:inline-flex;padding-bottom:7px;font:400 40px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.07em;color:var(--dm-ink)}
+.dm-pv-word>b{display:inline-block;font-weight:400;animation:dm-pv-letter .55s calc(.25s + var(--k) * 55ms) cubic-bezier(.3,1.5,.5,1) both}
+.dm-pv-word>i{position:absolute;left:0;right:.07em;bottom:0;height:4px;border-radius:4px;background:var(--zg-rays);transform-origin:left;animation:dm-pv-rays .7s .8s cubic-bezier(.6,0,.2,1) both}
+@keyframes dm-pv-letter{from{opacity:0;transform:translateY(-18px) scale(.6) rotate(-8deg);filter:blur(4px)}}
+@keyframes dm-pv-rays{from{transform:scaleX(0)}}
+.dm-pv-title:hover .dm-pv-word>b{animation:dm-pv-letter .55s calc(var(--k) * 40ms) cubic-bezier(.3,1.5,.5,1) both}
+.dm-pv-title:hover .dm-pv-eye svg{animation:dm-pv-blink .5s ease-in-out}
+/* Sem a contagem "Capa 1/12": as miniaturas já dizem onde está */
+.dm-pv .dm-book-count{display:none}
+.dm-pv .dm-book-bar{gap:18px;padding:6px 0 0}
+/* Chave 3D / 4D */
+.dm-mode-toggle{position:relative;flex-shrink:0;display:inline-flex;padding:4px;border-radius:999px;background:var(--dm-soft);box-shadow:inset 0 1px 3px #0000001a;isolation:isolate}
+.dm-studio .dm-mode-toggle>button{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;width:84px;height:42px;padding:0;border:0;border-radius:999px;background:none;color:var(--dm-muted);font:400 20px/1 'Bebas Neue','Arial Narrow',Arial,sans-serif;letter-spacing:.08em;cursor:pointer;transition:color .3s}
+.dm-studio .dm-mode-toggle>button:hover:not([aria-pressed=true]){color:var(--dm-ink)}
+.dm-studio .dm-mode-toggle>button[aria-pressed=true]{color:#25261f}
+.dm-mode-knob{position:absolute;z-index:0;left:4px;top:4px;width:84px;height:42px;border-radius:999px;background:var(--dm-yellow);box-shadow:0 4px 12px #d9c90066,inset 0 -2px 0 #0000001a;transition:transform .5s cubic-bezier(.5,1.6,.4,.9)}
+.dm-mode-toggle[data-mode='4d'] .dm-mode-knob{transform:translateX(84px)}
+/* ao trocar: a bolinha estica no caminho e solta um anel nas cores do logo */
+.dm-mode-toggle[data-mode='3d'] .dm-mode-knob{animation:dm-knob-squish3 .5s ease-out}.dm-mode-toggle[data-mode='4d'] .dm-mode-knob{animation:dm-knob-squish4 .5s ease-out}
+.dm-mode-knob:after{content:'';position:absolute;inset:-3px;border-radius:inherit;border:3px solid transparent;background:var(--zg-rays) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);opacity:0}
+.dm-mode-toggle[data-mode='3d'] .dm-mode-knob:after{animation:dm-knob-ring3 .6s .28s ease-out}.dm-mode-toggle[data-mode='4d'] .dm-mode-knob:after{animation:dm-knob-ring4 .6s .28s ease-out}
+@keyframes dm-knob-squish3{0%{scale:1}35%{scale:1.18 .82}70%{scale:.95 1.06}100%{scale:1}}
+@keyframes dm-knob-squish4{0%{scale:1}35%{scale:1.18 .82}70%{scale:.95 1.06}100%{scale:1}}
+@keyframes dm-knob-ring3{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.35,1.6)}}
+@keyframes dm-knob-ring4{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.35,1.6)}}
+.dm-mode-ico{display:inline-grid;place-items:center}
+.dm-mode-toggle>button[aria-pressed=true] .dm-mode-ico.is-3d{animation:dm-ico-cube .7s .1s cubic-bezier(.3,1.4,.5,1)}
+.dm-mode-toggle>button[aria-pressed=true] .dm-mode-ico.is-4d{animation:dm-ico-orbit .8s .1s cubic-bezier(.3,1.3,.5,1)}
+@keyframes dm-ico-cube{0%{transform:perspective(60px) rotateY(0) scale(1)}50%{transform:perspective(60px) rotateY(180deg) scale(1.3)}100%{transform:perspective(60px) rotateY(360deg) scale(1)}}
+@keyframes dm-ico-orbit{0%{transform:rotate(0) scale(1)}50%{transform:rotate(200deg) scale(1.3)}100%{transform:rotate(360deg) scale(1)}}
+.dm-studio .dm-mode-toggle>button:disabled{cursor:default}
+/* Duas ações, grandes */
+.dm-pv-actions{display:flex;justify-content:center;gap:14px;margin-top:18px}
+.dm-studio .dm-pv-btn{position:relative;display:inline-flex;align-items:center;gap:12px;min-width:min(320px,100%);height:62px;padding:0 24px 0 9px;border-radius:20px;font:700 16px/1.1 Arial,Helvetica,sans-serif;cursor:pointer;overflow:hidden;transition:transform .25s cubic-bezier(.3,1.5,.5,1),box-shadow .25s,background .25s,border-color .25s}
+.dm-studio .dm-pv-btn:active:not(:disabled){transform:scale(.96)}
+.dm-pv-btn-icon{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:14px;transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+.dm-pv-btn-text{flex:1;text-align:left}
+/* Enviar para aprovar: claro, avião azul que decola ao passar o mouse */
+.dm-studio .dm-pv-send{border:1.5px solid var(--dm-line);background:var(--dm-surface);color:var(--dm-ink);box-shadow:0 6px 18px #0000000f}
+.dm-pv-send .dm-pv-btn-icon{background:#e3f5fd;color:#0095d6}
+.dm-studio .dm-pv-send:hover,.dm-studio .dm-pv-send.active{border-color:#00aeef;box-shadow:0 10px 24px #00aeef2e;transform:translateY(-2px)}
+.dm-pv-send:hover .dm-pv-btn-icon svg,.dm-pv-send.active .dm-pv-btn-icon svg{animation:dm-pv-fly .7s cubic-bezier(.5,0,.3,1)}
+@keyframes dm-pv-fly{0%{transform:none}45%{transform:translate(26px,-26px) rotate(-10deg);opacity:0}46%{transform:translate(-22px,22px);opacity:0}100%{transform:none;opacity:1}}
+/* Finalizar compra: amarelo, brilho passando e a seta empurrando */
+.dm-studio .dm-pv-buy{border:0;background:linear-gradient(180deg,#fff36a,var(--dm-yellow));color:#25261f;box-shadow:0 10px 26px #e4d30066,inset 0 -3px 0 #0000001a}
+.dm-pv-buy .dm-pv-btn-icon{background:#25261f;color:var(--dm-yellow)}
+.dm-pv-btn-arrow{flex-shrink:0;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.dm-studio .dm-pv-buy:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 14px 32px #e4d30080,inset 0 -3px 0 #0000001a}
+.dm-pv-buy:hover:not(:disabled) .dm-pv-btn-arrow{transform:translateX(5px)}
+.dm-pv-buy:hover:not(:disabled) .dm-pv-btn-icon{transform:rotate(-10deg) scale(1.08)}
+.dm-pv-buy:after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(100deg,transparent,#ffffffc0,transparent);transform:skewX(-20deg);animation:dm-pv-shine 3.4s 1.4s ease-in-out infinite;pointer-events:none}
+@keyframes dm-pv-shine{0%,60%{left:-40%}100%{left:130%}}
+.dm-studio .dm-pv-buy:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.dm-pv-buy:disabled:after{display:none}
+.dm-pv .dm-pv-btn:focus-visible{outline:3px solid #00aeef;outline-offset:3px}
+@media(max-width:700px){.dm-pv-actions{flex-direction:column;align-items:stretch}.dm-studio .dm-pv-btn{min-width:0}.dm-pv-word{font-size:32px}.dm-pv-eye{width:40px;height:40px}.dm-studio .dm-mode-toggle>button{width:64px;font-size:17px}.dm-mode-knob{width:64px}.dm-mode-toggle[data-mode='4d'] .dm-mode-knob{transform:translateX(64px)}}
+@media(prefers-reduced-motion:reduce){.dm-pv-eye,.dm-pv-eye svg,.dm-pv-eye svg circle,.dm-pv-word>b,.dm-pv-word>i,.dm-mode-knob,.dm-mode-knob:after,.dm-mode-ico,.dm-pv-buy:after{animation:none!important}.dm-mode-knob{transition:none}}
+/* Na pré-view tudo cabe na tela sem rolar: o 4D acompanha a altura disponível */
+.dm-pv .dm-spine-view{--h:clamp(220px,calc(100dvh - 490px),540px)}
+.dm-studio .dm-preview-dialog.dm-pv>header h2.dm-pv-title{overflow:visible;white-space:nowrap}

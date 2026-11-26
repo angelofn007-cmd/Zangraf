@@ -12,31 +12,34 @@ import {ALBUM_THEMES,applyThemeBackground,applyThemeCover} from '@/lib/album-the
 import {DecorativeIcon} from './diagrammer-decoration';
 import {AlbumFlipbook} from './diagrammer-flipbook';
 import {PhotoFocus} from './diagrammer-focus';
+import {BuildShow,type BuildShowState} from './diagrammer-build-show';
 import {CoverFinishingGuides} from './cover-finishing-guides';
 import {PHOTO_EFFECTS,isNeutralAdjust,photoFilterCss,photoWarmthLayer,type PhotoAdjust} from '@/lib/photo-adjust';
 import {coverLabel,coverMarginDescription} from '@/lib/cover-production';
-import { frameGeometry, changeLayout, createProject, createSpread, defaultCover, defaultBackCover, defaultPrintSpec, emptySlot, fillEmptyFrames, moveSpread, removePhoto, duplicateSpread, removeSpread, rectangles, loadProject, saveProjectRevision, validateProjectForPrint, LAYOUTS, MAX_PHOTOS, MAX_SPREADS, type LayoutProject, type LayoutName, type Photo, type Slot, type AlbumText, type FrameRect, type Spread, spreadRectangles, newAlbumText, projectSpec, projectPageIndices, combinedCover, copyProject, isReusableSpread, purgeExpiredProjects, PROJECT_LIFETIME_DAYS } from '@/lib/layout-projects';
+import { frameGeometry, changeLayout, createProject, createSpread, defaultCover, defaultBackCover, defaultPrintSpec, emptySlot, moveSpread, removePhoto, duplicateSpread, removeSpread, rectangles, loadProject, saveProjectRevision, validateProjectForPrint, LAYOUTS, MAX_PHOTOS, MAX_SPREADS, type LayoutProject, type LayoutName, type Photo, type Slot, type AlbumText, type FrameRect, type Spread, spreadRectangles, newAlbumText, projectSpec, projectPageIndices, combinedCover, copyProject, isReusableSpread, purgeExpiredProjects, PROJECT_LIFETIME_DAYS } from '@/lib/layout-projects';
 import {configuredSheetCount} from '@/lib/print-rules';
-import {autoLayoutProject,readExifDate} from '@/lib/auto-album';
-import {slotForFocus} from '@/lib/photo-focus';
+import {pushHistory,restoreAlbum} from '@/lib/album-history';
+import {autoLayoutProject,readExifDate,dateFromName} from '@/lib/auto-album';
+import {detectFaces,type DetectedFace} from '@/lib/face-detect';
+import {interestMap,autoFrame,subjectFromFaces,type InterestMap,type PhotoSubject} from '@/lib/photo-saliency';
 
 /** Data em que a foto foi tirada; o EXIF fica no começo do arquivo, então basta ler os primeiros 256 KB. */
 async function photoTakenAt(blob:Blob):Promise<number|undefined>{
  try{return readExifDate(await blob.slice(0,256*1024).arrayBuffer());}catch{return undefined;}
 }
-type FaceBox={boundingBox:{x:number;y:number;width:number;height:number}};
-/** Centros dos rostos da foto (0–1), do maior para o menor, quando o navegador oferece detecção de rostos. */
-async function findFaces(blob:Blob):Promise<{x:number;y:number}[]>{
- const Detector=(window as unknown as {FaceDetector?:new(options:{fastMode:boolean;maxDetectedFaces:number})=>{detect:(source:ImageBitmap)=>Promise<FaceBox[]>}}).FaceDetector;
- if(!Detector)return [];
- const bitmap=await createImageBitmap(blob).catch(()=>null);if(!bitmap)return [];
+/** Rostos da foto (do maior para o menor); `undefined` quando não há detector disponível. */
+const findFaces=(blob:Blob)=>detectFaces(blob);
+/** Mapa do que importa na foto (pele, detalhes), lido de uma miniatura de até 48 px. */
+async function photoInterest(blob:Blob,options?:{skin?:boolean}):Promise<InterestMap|undefined>{
+ const bitmap=await createImageBitmap(blob).catch(()=>null);if(!bitmap)return undefined;
  try{
-  const faces=await new Detector({fastMode:true,maxDetectedFaces:10}).detect(bitmap);
-  return faces.sort((a,b)=>b.boundingBox.width*b.boundingBox.height-a.boundingBox.width*a.boundingBox.height)
-   .map(face=>({x:(face.boundingBox.x+face.boundingBox.width/2)/bitmap.width,y:(face.boundingBox.y+face.boundingBox.height/2)/bitmap.height}));
- }catch{return [];}finally{bitmap.close();}
+  const ratio=Math.min(1,48/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*ratio));canvas.height=Math.max(1,Math.round(bitmap.height*ratio));
+  const context=canvas.getContext('2d',{willReadFrequently:true});if(!context)return undefined;
+  context.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  return interestMap(context.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height,options);
+ }catch{return undefined;}finally{bitmap.close();}
 }
-async function largestFace(blob:Blob){return (await findFaces(blob))[0];}
 import { readCart, writeCart, unlinkProjects } from '@/lib/cart';
 import { products } from '@/lib/products';
 import { AlbumCover, AlbumSpread, type PhotoSizes } from './diagrammer-preview';
@@ -46,6 +49,31 @@ import './diagrammer.css';
 
 type SaveState = 'pending' | 'saving' | 'saved' | 'error';
 const PHOTO_LIMIT = MAX_PHOTO_BYTES;
+/** Anti-Risco: faixa de debruagem (dobradura) de cada lado do dorso, em mm. */
+const HINGE_MM = 15;
+/** Passos guardados no desfazer (o primeiro, ponto de partida, sempre fica). */
+const HISTORY_LIMIT = 80;
+
+/**
+ * Número em milímetros que vira campo de texto ao clicar: digita, Enter confirma, Esc cancela.
+ * Só números inteiros, entre 0 e `max`, como o controle deslizante.
+ */
+function MmField({value,max,label,disabled,onCommit}:{value:number;max:number;label:string;disabled?:boolean;onCommit:(mm:number)=>void}){
+ const [draft,setDraft]=useState<string|null>(null);
+ function commit(){
+  if(draft===null)return;
+  const parsed=Number(draft.replace(/\s|mm/gi,'').replace(',','.'));
+  setDraft(null);
+  if(!Number.isFinite(parsed))return;
+  const mm=Math.min(max,Math.max(0,Math.round(parsed)));
+  if(mm!==value)onCommit(mm);
+ }
+ // O campo de digitar fica por cima do número (não empurra o controle deslizante).
+ if(draft!==null)return <span className="dm-cm"><input className="dm-cm-field is-editing" autoFocus inputMode="numeric" aria-label={`${label} em milímetros`} value={draft}
+  onFocus={e=>e.currentTarget.select()} onChange={e=>setDraft(e.target.value)} onBlur={commit}
+  onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();commit();}else if(e.key==='Escape'){e.preventDefault();setDraft(null);}e.stopPropagation();}}/></span>;
+ return <span className="dm-cm"><button type="button" className="dm-cm-field" disabled={disabled} title={`Digitar ${label.toLowerCase()} em mm (até ${max})`} aria-label={`${label}: ${value} mm. Clique para digitar`} onClick={e=>{e.preventDefault();setDraft(String(value));}}>{value}</button></span>;
+}
 
 /** Número entre 0 e 1 fixo para cada foto (embaralha o painel sem mudar a cada clique). */
 function photoSeed(id: string) { let h = 2166136261; for (let k = 0; k < id.length; k++) { h ^= id.charCodeAt(k); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10007) / 10007; }
@@ -227,6 +255,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const [handleDx,setHandleDx]=useState(0);
  const [iconId,setIconId]=useState<string>();
  const [focusOpen,setFocusOpen]=useState(false);
+ /** Fundo: aplicar a escolha só na lâmina aberta ou em todas as lâminas. */
+ const [bgAll,setBgAll]=useState(false);
+ // Ao sair do painel Fundo, volta para "Esta lâmina" (evita aplicar em todas sem querer depois).
+ useEffect(()=>{if(panel!=='background')setBgAll(false);},[panel]);
  const [backgroundTab,setBackgroundTab]=useState<'colors'|'themes'>('colors');
  const [iconCategory,setIconCategory]=useState('Todos');
  const [iconSearch,setIconSearch]=useState('');
@@ -234,6 +266,14 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
 
 
  const [textId,setTextId]=useState<string>();
+ // Texto recém-criado: o campo "Seu texto" abre com tudo selecionado, e a primeira tecla já substitui o texto de exemplo.
+ const [freshTextId,setFreshTextId]=useState<string>();
+ const textField=useRef<HTMLTextAreaElement>(null);
+ useEffect(()=>{
+  if(!freshTextId||freshTextId!==textId)return;
+  const frame=requestAnimationFrame(()=>{const el=textField.current;if(!el)return;el.focus({preventScroll:true});el.select();setFreshTextId(undefined);});
+  return()=>cancelAnimationFrame(frame);
+ },[freshTextId,textId]);
  // O catálogo completo de fontes só carrega quando a ferramenta de texto é aberta.
  useEffect(()=>{if(panel==='text'&&panelOpen)void Promise.all(ALBUM_FONTS.map(f=>ensureFont(f.family))).catch(()=>undefined);},[panel,panelOpen]);
  const [zoom,setZoom]=useState(100);
@@ -265,21 +305,75 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
  },[positionOpen]);
  // Rostos encontrados por foto (0–1), usados na checagem da dobra quando o navegador detecta rostos.
- const [faceMap,setFaceMap]=useState<Map<string,{x:number;y:number}[]>>(()=>new Map());
+ const [faceMap,setFaceMap]=useState<Map<string,DetectedFace[]>>(()=>new Map());
+ /** Assunto de cada foto (rostos ou mapa de interesse), calculado uma vez por foto. */
+ const subjects=useRef(new Map<string,PhotoSubject|null>());
+ const [subjectsReady,setSubjectsReady]=useState(0);
+ const [buildShow,setBuildShow]=useState<BuildShowState|null>(null);
+ /** Recortes já calculados (foto + formato do quadro + zoom), para não refazer a cada edição. */
+ const framings=useRef(new Map<string,{x:number;y:number}>());
+ async function photoSubject(photo:Photo,fresh=false):Promise<PhotoSubject|null>{
+  if(fresh){
+   // Procurar de novo (botão Automático): esquece o que já tinha sido achado para esta foto.
+   subjects.current.delete(photo.id);
+   for(const key of [...framings.current.keys()])if(key.startsWith(photo.id+'|'))framings.current.delete(key);
+  }
+  if(subjects.current.has(photo.id))return subjects.current.get(photo.id)!;
+  // Rostos de verdade (detector); sem rosto, o que tem mais detalhe e cor. Cor de pele só conta
+  // quando não há detector, porque aí ela é a única pista de pessoa na foto.
+  const faces=(fresh?undefined:faceMap.get(photo.id))??await findFaces(photo.preview||photo.blob);
+  const fromFaces=faces?.length?subjectFromFaces(faces):undefined;
+  const subject=fromFaces??await photoInterest(photo.thumbnail||photo.preview||photo.blob,{skin:faces===undefined}).then(map=>map?{map}:null)??null;
+  subjects.current.set(photo.id,subject);return subject;
+ }
  useEffect(()=>{
   const current=projectRef.current;
-  if(!printOpen||!current||!('FaceDetector' in window))return;
+  if(!printOpen||!current)return;
   const used=new Set(current.spreads.flatMap(s=>s.slots.map(slot=>slot.photoId)).filter((id):id is string=>!!id));
   const pending=current.photos.filter(p=>used.has(p.id)&&!faceMap.has(p.id));
   if(!pending.length)return;
   let active=true;
   void (async()=>{
    const found=new Map(faceMap);
-   for(const photo of pending){if(!active)return;found.set(photo.id,await findFaces(photo.preview||photo.blob));}
+   for(const photo of pending){if(!active)return;const faces=await findFaces(photo.preview||photo.blob);if(!faces)return;found.set(photo.id,faces);}
    if(active)setFaceMap(found);
   })();
   return()=>{active=false;};
  },[printOpen,faceMap]);
+ // Enquadramento automático: toda foto que a pessoa não posicionou à mão fica com o rosto
+ // (ou o que importa) no centro do quadro, e é reenquadrada quando o quadro muda de formato.
+ useEffect(()=>{
+  const current=projectRef.current;if(!current)return;
+  const photos=new Map(current.photos.map(p=>[p.id,p]));
+  const automatic=(s:Slot)=>!!s.photoId&&s.auto!==false&&(s.auto===true||(s.x===50&&s.y===50));
+  const missing=[...new Set(current.spreads.flatMap(sp=>sp.slots.filter(automatic).map(s=>s.photoId!)))].filter(id=>!subjects.current.has(id));
+  if(missing.length){
+   let active=true;
+   void (async()=>{
+    for(const id of missing){if(!active)return;const photo=photos.get(id);if(photo)await photoSubject(photo);else subjects.current.set(id,null);}
+    if(active)setSubjectsReady(n=>n+1);
+   })();
+   return()=>{active=false;};
+  }
+  const spec=projectSpec(current,0);let changed=false;
+  const spreads=current.spreads.map(sp=>{
+   const rects=spreadRectangles(sp);let touched=false;
+   const slots=sp.slots.map((s,i)=>{
+    if(!automatic(s)||!rects[i])return s;
+    const photo=photos.get(s.photoId!),subject=subjects.current.get(s.photoId!);
+    if(!photo?.width||!photo.height||!subject)return s;
+    const image=frameGeometry(rects[i],spec,true,sp.spacing).image;
+    const key=`${s.photoId}|${(image.w/image.h).toFixed(3)}|${s.zoom||1}`;
+    let position=framings.current.get(key);
+    if(!position){const framed=autoFrame(s,photo.width,photo.height,image.w,image.h,subject);position={x:framed.x,y:framed.y};framings.current.set(key,position);}
+    const next={...s,...position,auto:true};
+    if(s.auto===true&&Math.abs(next.x-s.x)<.5&&Math.abs(next.y-s.y)<.5)return s;
+    touched=true;return next;
+   });
+   if(!touched)return sp;changed=true;return {...sp,slots};
+  });
+  if(changed)apply({...current,spreads});
+ },[project,subjectsReady]);
  const [layoutCount,setLayoutCount]=useState(2);
  const [showMarginNotice,setShowMarginNotice]=useState(true);
  const [noticeLeaving,setNoticeLeaving]=useState(false);
@@ -383,6 +477,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  /** Salvar: guarda no navegador e, se a pessoa ainda não entrou, leva ao login e volta para este álbum. */
  async function saveAlbum(){
   if(!await persist())return;
+  // Salvou: o desfazer passa a começar daqui (não volta para antes do salvamento).
+  setPast([]);setFuture([]);
   if(requireLoginToSave){
    setNotice('Entre na sua conta para salvar o álbum. Você volta para cá em seguida.');
    const destination=window.location.pathname+window.location.search;
@@ -508,11 +604,21 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   dirtyRef.current = true;
   setProject(changed); setSaveState('pending'); setSaveError('');
  }
+ /** Guarda um passo do álbum para o desfazer. O primeiro (o álbum ao abrir ou ao salvar) nunca é descartado. */
+ function pushPast(state:LayoutProject){
+  setPast(items=>pushHistory(items,state,HISTORY_LIMIT));
+ }
  function edit(next: LayoutProject) {
   if (busy || !project) return;
-  setPast(items => [...items.slice(-39), project]); setFuture([]); apply(next); setNotice('');
+  pushPast(project); setFuture([]); apply(next); setNotice('');
  }
- function restore(next: LayoutProject) {
+ /**
+  * Desfazer/refazer mexem só no álbum (lâminas, quadros, capas, textos, fundos).
+  * As fotos enviadas continuam todas na biblioteca: a lista de fotos é a atual mais as que o passo
+  * restaurado ainda tinha (desfazer uma exclusão traz a foto de volta; desfazer nunca tira foto).
+  */
+ function restore(target: LayoutProject) {
+  const next=restoreAlbum(target,projectRef.current);
   apply(next); setActivePage(index => projectPageIndices(next).includes(index)?index:projectPageIndices(next)[0]); setSlotIndex(0); setNotice('');
  }
  function undo() { if (!project || !past.length || busy) return; setFuture(items => [project, ...items]); restore(past[past.length - 1]); setPast(items => items.slice(0, -1)); }
@@ -552,7 +658,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     setImporting(state=>state&&state.done<index+1?{...state,done:index+1}:state);
    }
    if (photos.length) {
-    setPast(items => [...items.slice(-39), current]); setFuture([]);
+    // Enviar fotos não é um passo do álbum: não entra no desfazer.
     apply({ ...current, photos: [...current.photos, ...photos] });
    }
    // Fim: a animação comemora; só aparece aviso se algum arquivo ficou de fora.
@@ -567,6 +673,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  if (!project) return <section className="dm-start"><span className="zg-eyebrow">ESTÚDIO ZANGRAF</span><h1>{notice?'Não foi possível abrir este álbum.':'Preparando sua personalização.'}</h1><p role="status">{notice || 'Carregando o produto e as medidas escolhidas…'}</p>{notice&&<Link className="button" href="/carrinho">Voltar ao carrinho <ArrowRight size={16}/></Link>}</section>;
  const pageIndices=projectPageIndices(project);
  const wrapMode=project.productionModel?.coverMode==='wrap';
+ // Modelos Anti-Risco têm 1,5 cm de debruagem depois do dorso (o nome do modelo é normalizado para "Anti-Risco").
+ const isAntiRisco=/anti-?risco/i.test(project.productionModel?.name||'');
  const noCover=project.productionModel?.coverMode==='none';
  const legacyMargin=/anti[ -]?r{1,2}isco/i.test(project.productionModel?.name||'')?25:/1500/.test(project.productionModel?.name||'')?3:0;
  const coverMargins=project.productionModel?.coverMargins||(legacyMargin?{topMm:legacyMargin,rightMm:legacyMargin,bottomMm:legacyMargin,leftMm:legacyMargin}:undefined);
@@ -588,6 +696,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const texture=(activePage<0?cover.texture:project.spreads[activePage]?.texture)||'none';
  const pageRatio = spec ? spec.widthMm / spec.heightMm : 1;
  const spread = activePage >= 0 ? project.spreads[activePage] : cover.composition||null;
+ // Com foto na página aberta, as guias ficam mais apagadas: são só referência e não saem impressas.
+ const hasPhotoHere=activePage<0?coverHasPhoto||!!cover.backgroundPhotoId:!!spread?.slots.some(s=>s.photoId)||!!spread?.backgroundPhotoId;
  const slot = spread ? spread.slots[slotIndex] || spread.slots[0] : cover.photo;
  const usedIds = new Set(project.spreads.flatMap(item => item.slots.map(frame => frame.photoId)).filter(Boolean));
  for(const c of [frontCover,backCover])for(const f of c.composition?.slots||[])if(f.photoId)usedIds.add(f.photoId);
@@ -618,6 +728,9 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const canRemoveSpread = project.spreads.length > (countLocked ? configuredCount : 1);
 
  function updateSlot(patch: Partial<Slot>, frame = slotIndex) {
+  // Mudou a posição da mesma foto à mão: o enquadramento automático deixa de mexer nela.
+  const before=activePage<0?(spread?spread.slots[frame]:cover.photo):project!.spreads[activePage]?.slots[frame];
+  if(before&&patch.auto===undefined&&(!('photoId' in patch)||patch.photoId===before.photoId)&&((patch.x!==undefined&&patch.x!==before.x)||(patch.y!==undefined&&patch.y!==before.y)))patch={...patch,auto:false};
   // Foto entrando na capa: mostra as duas barras da capa (edição + dorso) juntas.
   if(activePage<0&&patch.photoId)setFrameFocus(true);
   if(activePage<0&&spread)replaceSpread({...spread,slots:spread.slots.map((s,i)=>i===frame?{...s,...patch}:s)});
@@ -761,19 +874,18 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   if(!spineMm||texts.length>=20)return;
   const size=14,lineMm=size*25.4/72*1.25;
   const t:AlbumText={...newAlbumText(),text:'Nossa história',rotation:90,fontSize:size,align:'center',width:currentSpec.heightMm*.8/currentSpec.widthMm*100,x:50-lineMm/currentSpec.widthMm*50,y:10};
-  updateTexts([...texts,t]);setTextId(t.id);setPanel('text');setPanelOpen(true);
+  updateTexts([...texts,t]);setTextId(t.id);setFreshTextId(t.id);setPanel('text');setPanelOpen(true);
+ }
+ /** Finalizar: com algo impedindo a impressão abre a revisão; senão, a entrega animada e a prévia (3D/4D) com enviar para aprovar e finalizar compra. */
+ function finishAlbum(){
+  if(printOpen){setPrintOpen(false);return;}
+  if(issueErrors||projectPrintError||formatError){setPrintOpen(true);return;}
+  setPreviewPage(-1);setShareOpen(false);setShowPreview(true);
  }
  async function continueOrder(){
   if(!project!.cartItemId){setNotice('Este projeto não está vinculado ao carrinho. Configure seu álbum na loja para fazer o pedido.');return;}
   if(projectPrintError||formatError){setNotice(projectPrintError||formatError);return;}
   if(await persist())window.location.assign('/pagamento');
- }
- function autoFill() {
-  const result = fillEmptyFrames(project!);
-  if (!result.placed) { setNotice('Não há quadros vazios e fotos inéditas disponíveis. Adicione uma lâmina ou mais fotos.'); return; }
-  edit(result.project);
-  
-  if (activePage < 0) selectPage(0);
  }
  /** "Montar o álbum para mim": ordena por data, separa em momentos, escolhe layouts e centraliza rostos. */
  async function autoBuildAlbum(onlyIds?:string[]){
@@ -793,31 +905,50 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   }
   if(current.spreads.some(s=>s.slots.some(slot=>slot.photoId))&&!window.confirm('Montar o álbum inteiro automaticamente? As fotos das lâminas serão reorganizadas (textos e capas continuam). Você pode desfazer depois.'))return;
   setBusy(true);
+  // Show da montagem: cada etapa aparece enquanto ela acontece de verdade; no fim, layouts e impressão.
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait=(ms:number)=>new Promise<void>(resolve=>window.setTimeout(resolve,reduced?0:ms));
+  const ids=current.photos.map(p=>p.id),total=ids.length;
   try{
    const takenAt:Record<string,number|undefined>={};let found=0;
-   for(const photo of current.photos){
-    takenAt[photo.id]=photo.takenAt??await photoTakenAt(photo.blob);
+   setBuildShow({stage:'read',ids,index:0,total});
+   for(const [i,photo] of current.photos.entries()){
+    takenAt[photo.id]=photo.takenAt??await photoTakenAt(photo.blob)??dateFromName(photo.name);
     if(takenAt[photo.id]!==undefined)found++;
+    // As primeiras fotos caem na mesa com calma; depois o contador corre.
+    if(i<12||i%4===0||i===total-1){setBuildShow({stage:'read',ids,index:i+1,total});await wait(i<12?70:0);}
    }
-   const faces=new Map<string,{x:number;y:number}>();
-   if('FaceDetector' in window){
-    for(const photo of current.photos){
-     const face=await largestFace(photo.preview||photo.blob);if(face)faces.set(photo.id,face);
-    }
+   // Assunto de cada foto: rostos (quando o navegador detecta) ou pele, detalhes e cores (qualquer navegador).
+   const known=new Map<string,PhotoSubject>();let facesFound=0;
+   for(const [i,photo] of current.photos.entries()){
+    const started=performance.now();
+    const subject=await photoSubject(photo);if(subject)known.set(photo.id,subject);
+    if(subject?.faces)facesFound++;
+    setBuildShow({stage:'faces',ids,index:i+1,total,photoId:photo.id,aspect:photo.width&&photo.height?photo.width/photo.height:1.5,faces:subject?.faces,facesFound});
+    // Já reconhecidas antes (cache): segura um instante nas primeiras para dar para ver o foco travando.
+    if(i<8)await wait(Math.max(0,(subject?.faces?520:260)-(performance.now()-started)));
    }
+   const faces=new Set([...known].filter(([,subject])=>subject.face).map(([id])=>id));
    const sizes=new Map(current.photos.map(p=>[p.id,p]));
    const result=autoLayoutProject(current,takenAt,projectSpec(current,0),(id,slot,w,h)=>{
-    const face=faces.get(id),photo=sizes.get(id);
-    return face&&photo?.width&&photo.height?slotForFocus(slot,photo.width,photo.height,w,h,face):slot;
-   });
+    const photo=sizes.get(id),subject=known.get(id);
+    return photo?.width&&photo.height&&subject?autoFrame(slot,photo.width,photo.height,w,h,subject):slot;
+   },faces);
+   const preview=result.project.spreads.map(sp=>({frames:spreadRectangles(sp),ids:sp.slots.map(slot=>slot.photoId)}));
+   setBuildShow({stage:'layout',ids,index:total,total,spreads:preview,moments:result.moments,facesFound});
+   await wait(Math.min(3400,900+preview.length*280));
+   setBuildShow({stage:'print',ids,index:total,total,spreads:preview,facesFound});
+   await wait(2600);
    // Guarda as datas lidas para não precisar ler de novo.
    const photos=full.photos.map(p=>p.takenAt===undefined&&takenAt[p.id]!==undefined?{...p,takenAt:takenAt[p.id]}:p);
-   setPast(items=>[...items.slice(-39),full]);setFuture([]);setSelectPhotos(false);setPickedPhotos([]);
+   pushPast(full);setFuture([]);setSelectPhotos(false);setPickedPhotos([]);
    apply({...result.project,photos});
    setActivePage(0);setSlotIndex(0);setTextId(undefined);setIconId(undefined);
    if(result.leftover)setNotice(`${result.leftover} ${result.leftover===1?'foto não coube':'fotos não couberam'} no álbum e continuam nas suas fotos.`);
+   setBuildShow({stage:'done',ids,index:total,total,facesFound});
+   await wait(1100);
   }catch{setNotice('Não foi possível montar o álbum automaticamente. Tente novamente.');}
-  finally{setBusy(false);}
+  finally{setBusy(false);setBuildShow(null);}
  }
  function previousPage() { selectPage(pageIndices[Math.max(0,pageIndices.indexOf(activePage)-1)]); }
  function nextPage() { selectPage(pageIndices[Math.min(pageIndices.length-1,pageIndices.indexOf(activePage)+1)]); }
@@ -829,7 +960,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?{...s,texts:next}:s)});
  }
  function updateText(id:string,patch:Partial<AlbumText>){updateTexts(texts.map(t=>t.id===id?{...t,...patch}:t));}
- function addText(preset:'title'|'subtitle'|'body'='title',font?:AlbumFont){if(texts.length>=20)return;const t={...newAlbumText(),fontFamily:font||(preset==='title'?'Playfair Display':preset==='subtitle'?'Montserrat':'Lora'),text:preset==='title'?'Nossa história':preset==='subtitle'?'Momentos para guardar':'Escreva aqui a sua mensagem.',fontSize:preset==='title'?36:preset==='subtitle'?22:14};updateTexts([...texts,t]);setTextId(t.id);setIconId(undefined);setPanel('text');setPanelOpen(true);}
+ function addText(preset:'title'|'subtitle'|'body'='title',font?:AlbumFont){if(texts.length>=20)return;const t={...newAlbumText(),fontFamily:font||(preset==='title'?'Playfair Display':preset==='subtitle'?'Montserrat':'Lora'),text:preset==='title'?'Nossa história':preset==='subtitle'?'Momentos para guardar':'Escreva aqui a sua mensagem.',fontSize:preset==='title'?36:preset==='subtitle'?22:14};updateTexts([...texts,t]);setTextId(t.id);setFreshTextId(t.id);setIconId(undefined);setPanel('text');setPanelOpen(true);}
  function updateFrame(index:number,rect:FrameRect){if(spread)replaceSpread({...spread,layout:'livre',frames:spreadRectangles(spread).map((r,i)=>i===index?rect:r)});}
  function addFrame(){const base=spread||{...createSpread('respiro'),slots:[{...cover.photo}]};if(base.slots.length>=12)return;replaceSpread({...base,layout:'livre',frames:[...spreadRectangles(base),{x:.28,y:.2,w:.35,h:.55}],slots:[...base.slots,emptySlot()]});setSlotIndex(base.slots.length);setPhotoMode('position');setTextId(undefined);}
  function removeFrame(){if(!spread||spread.slots.length<=1)return;replaceSpread({...spread,layout:'livre',frames:spreadRectangles(spread).filter((_,i)=>i!==slotIndex),slots:spread.slots.filter((_,i)=>i!==slotIndex)});setSlotIndex(0);}
@@ -860,20 +991,20 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   else if(selectedText){updateText(selectedText.id,{x:Math.max(0,Math.min(100-selectedText.width,selectedText.x+dx*amount)),y:Math.max(0,Math.min(95,selectedText.y+dy*amount))})}
   else if(spread){const r=spreadRectangles(spread)[slotIndex];if(r)updateFrame(slotIndex,{...r,x:Math.max(0,Math.min(1-r.w,r.x+dx*amount/100)),y:Math.max(0,Math.min(1-r.h,r.y+dy*amount/100))});}
  }
+ /** Lâminas que recebem a escolha de fundo: a aberta, ou todas com "Todas as lâminas" ligado. */
+ const bgScope=activePage>=0&&bgAll;
+ const bgTarget=(i:number)=>bgScope||i===activePage;
+ /** Depois de aplicar em todas, avisa (o aviso some sozinho). */
+ function bgDone(){if(bgScope)setNotice(`Aplicado em todas as ${project!.spreads.length} lâminas. Você pode desfazer.`);}
  function setBackground(color:string,side:'all'|'right'='all'){
   // Escolher uma cor tira a textura de superfície, para a cor aparecer.
   if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,color,surface:undefined,backgroundPhotoId:undefined}});
-  else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?(side==='right'?{...s,rightBackground:color}:{...s,background:color,rightBackground:undefined,surface:undefined,backgroundPhotoId:undefined}):s)});
+  else{edit({...project!,spreads:project!.spreads.map((s,i)=>(side==='right'?i===activePage:bgTarget(i))?(side==='right'?{...s,rightBackground:color}:{...s,background:color,rightBackground:undefined,surface:undefined,backgroundPhotoId:undefined}):s)});if(side!=='right')bgDone();}
  }
  /** Coloca uma textura fotográfica (mármore, linho, metal, papel) no fundo da área atual. */
  function setSurface(surface?:SurfaceName){
   if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,surface,backgroundPhotoId:surface?undefined:cover.backgroundPhotoId}});
-  else edit({...project!,spreads:project!.spreads.map((s,i)=>i===activePage?{...s,surface,rightBackground:surface?undefined:s.rightBackground,backgroundPhotoId:surface?undefined:s.backgroundPhotoId}:s)});
- }
- function surfaceForAll(surface?:SurfaceName){
-  if(!window.confirm(surface?'Usar esta textura no fundo de todas as lâminas? Fotos e textos continuam. Você pode desfazer.':'Tirar a textura de todas as lâminas?'))return;
-  edit({...project!,spreads:project!.spreads.map(s=>({...s,surface,rightBackground:surface?undefined:s.rightBackground}))});
-  
+  else{edit({...project!,spreads:project!.spreads.map((s,i)=>bgTarget(i)?{...s,surface,rightBackground:surface?undefined:s.rightBackground,backgroundPhotoId:surface?undefined:s.backgroundPhotoId}:s)});bgDone();}
  }
  function saveLayout(){if(!spread)return;const name=window.prompt('Nome deste layout:','Meu layout');if(!name?.trim())return;const next=[{id:crypto.randomUUID(),name:name.trim().slice(0,60),spread:{...spread,texts:activePage<0?cover.texts:spread.texts,background:activePage<0?cover.color:spread.background,slots:spread.slots.map(emptySlot)}},...savedLayouts].slice(0,20);try{localStorage.setItem('zangraf-personal-layouts-v1',JSON.stringify(next));setSavedLayouts(next)}catch{setNotice('Não foi possível salvar o layout neste navegador.')}}
  function useSavedLayout(source:Spread){if(!window.confirm('Aplicar este layout à área atual? Você pode desfazer.'))return;replaceSpread({...source,id:spread?.id||crypto.randomUUID(),texts:source.texts?.map(t=>({...t,id:crypto.randomUUID()})),slots:source.slots.map((_,j)=>spread?.slots[j]||emptySlot())});setSlotIndex(0);setTextId(undefined);}
@@ -887,7 +1018,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   updateIcon(selectedIcon.id,{sizeMm:size,x:Math.min(selectedIcon.x,100-size/(currentSpec.widthMm*(activePage<0?1:2))*100),y:Math.min(selectedIcon.y,100-size/currentSpec.heightMm*100)});
  }
  function addIcon(kind:string){if(icons.length>=30)return;const icon={id:crypto.randomUUID(),kind,x:wrapMode&&activePage<0?70:45,y:40,sizeMm:20,rotation:0,color:'#68563e'};updateIcons([...icons,icon]);setIconId(icon.id);setTextId(undefined);}
- function changeTexture(value:TextureName){if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,texture:value}});else if(spread)replaceSpread({...spread,texture:value});}
+ function changeTexture(value:TextureName){if(activePage<0)edit({...project!,[backMode?'backCover':'cover']:{...cover,texture:value}});else if(bgScope){edit({...project!,spreads:project!.spreads.map(s=>({...s,texture:value}))});bgDone();}else if(spread)replaceSpread({...spread,texture:value});}
  function applyThemePages(id:string){edit(applyThemeBackground(project!,id));}
  function applyThemeCoverOption(id:string,index:number){edit(applyThemeCover(project!,id,index));if(activePage>=0)setActivePage(projectPageIndices(project!)[0]);}
  /** Importa uma imagem só para o fundo da página aberta (não entra nas fotos do álbum). */
@@ -902,14 +1033,15 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     const photo:Photo={id:crypto.randomUUID(),name:file.name,blob:file,preview,thumbnail,width:bitmap.width,height:bitmap.height,background:true};
     const base=projectRef.current!;const withPhoto={...base,photos:[...base.photos,photo]};
     if(activePage<0)edit({...withPhoto,[backMode?'backCover':'cover']:{...cover,backgroundPhotoId:photo.id,surface:undefined}});
-    else edit({...withPhoto,spreads:withPhoto.spreads.map((s,i)=>i===activePage?{...s,backgroundPhotoId:photo.id,surface:undefined,rightBackground:undefined}:s)});
+    else{edit({...withPhoto,spreads:withPhoto.spreads.map((s,i)=>bgTarget(i)?{...s,backgroundPhotoId:photo.id,surface:undefined,rightBackground:undefined}:s)});bgDone();}
    }finally{bitmap.close();}
   }catch{setNotice('Não foi possível abrir essa imagem.');}
   finally{setBusy(false);if(bgInput.current)bgInput.current.value='';}
  }
  function setBackgroundImage(id?:string,all=false){
   if(activePage<0&&!all){edit({...project!,[backMode?'backCover':'cover']:{...cover,backgroundPhotoId:id}});return;}
-  edit({...project!,spreads:project!.spreads.map((s,i)=>all||i===activePage?{...s,backgroundPhotoId:id,surface:id?undefined:s.surface}:s)});
+  edit({...project!,spreads:project!.spreads.map((s,i)=>all||bgTarget(i)?{...s,backgroundPhotoId:id,surface:id?undefined:s.surface}:s)});
+  if(bgScope||all)bgDone();
  }
  function setSpacing(kind:'marginMm'|'gapMm',value:number){if(!spread)return;replaceSpread({...spread,spacing:{marginMm:spread.spacing?.marginMm??0,gapMm:spread.spacing?.gapMm??2,[kind]:value}});}
  /** Exclui de uma vez as fotos marcadas em "Selecionar várias" (e tira dos quadros onde estavam). */
@@ -992,8 +1124,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
  const tabs=[{id:'photos',label:'Fotos',icon:ImagePlus},{id:'layouts',label:'Layouts',icon:LayoutTemplate},{id:'background',label:'Fundo',icon:Palette},{id:'text',label:'Texto',icon:Type},{id:'icons',label:'Ícones',icon:Sparkles},{id:'tone',label:'Tonalidade',icon:SunMoon}] as const;
  const title=activePage===-1?(wrapMode?'Capa inteira':'Capa frente'):backMode?'Capa verso':`Lâmina ${activePage+1}`;
  const textProps={selectedText:textId,onTextSelect:(id:string)=>{setIconId(undefined);setTextId(id);setPanel('text');setPanelOpen(true)},onTextChange:updateText,selectedIcon:iconId,onIconSelect:(id:string)=>{setIconId(id);setTextId(undefined);setPanel('icons');setPanelOpen(true)},onIconChange:updateIcon};
- // Sem detecção de rostos no navegador, a checagem da dobra vira um aviso para conferir.
- const issues=checkAlbum(project,'FaceDetector' in globalThis?id=>faceMap.get(id):undefined);
+ // Rosto no dorso da capa inteira só é checado quando o navegador detecta rostos.
+ const issues=checkAlbum(project,faceMap.size?id=>faceMap.get(id):undefined);
  const issueErrors=issues.filter(i=>i.level==='error').length,issueWarnings=issues.length-issueErrors;
  // Pontinho nas miniaturas: vermelho para corrigir, amarelo para conferir (fotos na dobra são comuns e não marcam).
  const pageFlags=new Map<number,'error'|'warning'>();
@@ -1005,7 +1137,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
   setNotice(`${ISSUE_INFO[issue.kind].title} · ${pageLabel(project!,issue.page)}: ${ISSUE_INFO[issue.kind].hint}`);
  }
  return <div className="zg-studio dm-studio">
-  <header className="dm-topbar"><a href="/" className="dm-brand" aria-label="Voltar ao site Zangraf" onClick={async e=>{e.preventDefault();if(await persist())window.location.assign('/')}}><img className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={112} height={60}/><span>ESTÚDIO</span></a><div className="dm-top-divider"/><div className="dm-name"><input aria-label="Nome do álbum" value={project.name} maxLength={100} disabled={busy} onChange={e=>edit({...project,name:e.target.value})}/><span className={'dm-save '+saveState}><span/>{saveState==='saved'?'Salvo neste navegador':saveState==='saving'?'Salvando…':saveState==='error'?'Falha ao salvar':'Salvamento automático'}</span></div><div className="dm-top-actions"><div className="dm-top-tools"><button className="dm-icon" title="Salvar e voltar ao carrinho" aria-label="Salvar e voltar ao carrinho" onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}><ShoppingBag size={18}/></button><button className="dm-icon" aria-label="Desfazer" title="Desfazer · Ctrl/⌘ Z" disabled={!past.length||busy} onClick={undo}><Undo2 size={19}/></button><button className="dm-icon" aria-label="Refazer" title="Refazer · Ctrl/⌘ Shift Z" disabled={!future.length||busy} onClick={redo}><Redo2 size={19}/></button></div><button className="dm-button dm-save-button" onClick={()=>void saveAlbum()} disabled={busy}><Save size={16}/><span>Salvar</span></button><button className="dm-button" disabled={busy} onClick={()=>{setPreviewPage(-1);setShowPreview(true)}}><Eye size={17}/><span>Prévia 3D</span></button><button className="dm-button primary" disabled={busy} onClick={()=>setPrintOpen(v=>!v)}><ArrowRight size={17}/><span>Finalizar álbum</span></button></div></header>
+  <header className="dm-topbar"><a href="/" className="dm-brand" aria-label="Voltar ao site Zangraf" onClick={async e=>{e.preventDefault();if(await persist())window.location.assign('/')}}><img className="zg-logo-day" src="/brand/zangraf.png" alt="Zangraf" width={112} height={60}/><span>ESTÚDIO</span></a><div className="dm-top-divider"/><div className="dm-name"><input aria-label="Nome do álbum" value={project.name} maxLength={100} disabled={busy} onChange={e=>edit({...project,name:e.target.value})}/><span className={'dm-save '+saveState}><span/>{saveState==='saved'?'Salvo neste navegador':saveState==='saving'?'Salvando…':saveState==='error'?'Falha ao salvar':'Salvamento automático'}</span></div><div className="dm-top-actions"><div className="dm-top-tools"><button className="dm-icon" title="Salvar e voltar ao carrinho" aria-label="Salvar e voltar ao carrinho" onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}><ShoppingBag size={18}/></button><button className="dm-icon" aria-label="Desfazer" title="Desfazer · Ctrl/⌘ Z" disabled={!past.length||busy} onClick={undo}><Undo2 size={19}/></button><button className="dm-icon" aria-label="Refazer" title="Refazer · Ctrl/⌘ Shift Z" disabled={!future.length||busy} onClick={redo}><Redo2 size={19}/></button></div><button className="dm-button dm-save-button" onClick={()=>void saveAlbum()} disabled={busy}><Save size={16}/><span>Salvar</span></button><button className="dm-button primary" disabled={busy} onClick={finishAlbum}><ArrowRight size={17}/><span>Finalizar álbum</span></button></div></header>
   {saveError&&<div className="dm-error" role="alert">{saveError}<button onClick={()=>void persist()}>Tentar novamente</button></div>}
   <div className={`dm-body ${panelOpen?'':'panel-collapsed'}`}>
    <nav className="dm-rail" aria-label="Ferramentas do diagramador">{tabs.map(tab=><button key={tab.id} data-tab={tab.id} aria-pressed={panel===tab.id&&panelOpen} className={panel===tab.id&&panelOpen?'active':''} onClick={()=>{setPanelOpen(panel===tab.id?!panelOpen:true);setPanel(tab.id)}}><tab.icon size={23}/><span>{tab.label}</span></button>)}</nav>
@@ -1074,7 +1206,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
     {panel==='layouts'&&(()=>{
      const pageRatio=currentSpec.widthMm/currentSpec.heightMm;
      const shape=pageRatio<.9?'vertical':pageRatio>1.1?'horizontal':'quadrado';
-     const effectiveSpacing=(_layout:PhotoLayout)=>DEFAULT_SPACING;
+     // Só nas miniaturas: margem e espaço entre fotos bem maiores que os reais (4 mm e 2 mm somem no tamanho do card).
+     const thumbSide=Math.min(currentSpec.widthMm*(activePage<0?1:2),currentSpec.heightMm);
+     const thumbSpacing={marginMm:Math.max(DEFAULT_SPACING.marginMm,thumbSide*.06),gapMm:Math.max(DEFAULT_SPACING.gapMm,thumbSide*.045)};
+     const effectiveSpacing=(_layout:PhotoLayout)=>thumbSpacing;
      const thumbSpec={...currentSpec,widthMm:currentSpec.widthMm*(activePage<0?.5:1)};
      const thumbFrames=(layout:PhotoLayout)=>layout.frames.map(rect=>{const t=frameGeometry(rect,thumbSpec,activePage>=0,effectiveSpacing(layout)).trim;return {x:t.x/(thumbSpec.widthMm*2),y:t.y/thumbSpec.heightMm,w:t.w/(thumbSpec.widthMm*2),h:t.h/thumbSpec.heightMm};});
      const sameFrames=(layout:PhotoLayout)=>!!spread&&JSON.stringify(spreadRectangles(spread))===JSON.stringify(layout.frames);
@@ -1087,7 +1222,11 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <strong>{layout.name}</strong>
       {best?<small className="dm-layout-flag best"><Sparkles size={11} aria-hidden="true"/>Melhor para suas fotos</small>:sameFrames(layout)?<small className="dm-layout-flag"><Check size={11} aria-hidden="true"/>Em uso</small>:lowResolution?<small className="dm-layout-flag warn"><CircleAlert size={11} aria-hidden="true"/>Pode perder nitidez</small>:null}
      </button>;
-     const marginCm=(spread?.spacing?.marginMm||0)/10,gapCm=(spread?.spacing?.gapMm??2)/10;
+     // Medidas em milímetros inteiros: margem até 50 mm, espaço entre fotos até 40 mm
+     // (menos em álbuns pequenos, onde o desenho limita a 20% do lado menor).
+     const marginMm=Math.round(spread?.spacing?.marginMm||0),gapMm=Math.round(spread?.spacing?.gapMm??2);
+     const spaceLimit=Math.floor(Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*.2);
+     const maxMarginMm=Math.min(50,spaceLimit),maxGapMm=Math.min(40,spaceLimit);
      return <div className="dm-layouts-v2">
       <h2 className="dm-print-title" aria-label="Layouts"><span className="dm-print-word is-letters" aria-hidden="true">{Array.from('LAYOUTS').map((ch,k)=><b key={k} style={{['--k' as string]:k,['--ink' as string]:['#e8221e','#19b33a','#f5c400','#1aa8e8','#e81aa5'][k%5]}}>{ch}</b>)}</span><span className="dm-print-head" aria-hidden="true"><i/></span><span className="dm-print-marks" aria-hidden="true"/></h2>
       {/* Quantas fotos: quadros de um filme fotográfico */}
@@ -1095,8 +1234,8 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <span className="dm-section-label">Ajustar margem entre fotos</span>
       {/* Respiro: dois controles compactos, com ícones em vez de explicação */}
       <div className="dm-space-mini" aria-label="Espaçamento">
-       <label title="Margem externa"><span className="dm-space-ico outer" aria-hidden="true"><i/></span><input aria-label="Margem externa em centímetros" type="range" min={0} max={Math.min(5,Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*.02)} step={.05} disabled={!spread} value={marginCm} onChange={e=>setSpacing('marginMm',Number(e.target.value)*10)}/><output>{marginCm.toLocaleString('pt-BR')}</output></label>
-       <label title="Espaço entre fotos"><span className="dm-space-ico gap" aria-hidden="true"><i/><i/></span><input aria-label="Espaço entre fotos em centímetros" type="range" min={0} max={Math.min(5,Math.min(currentSpec.widthMm*2,currentSpec.heightMm)*.01)} step={.05} disabled={!spread} value={gapCm} onChange={e=>setSpacing('gapMm',Number(e.target.value)*10)}/><output>{gapCm.toLocaleString('pt-BR')}</output></label>
+       <label title="Margem externa"><span className="dm-space-ico outer" aria-hidden="true"><i/></span><input aria-label="Margem externa em milímetros" type="range" min={0} max={maxMarginMm} step={1} disabled={!spread} value={Math.min(marginMm,maxMarginMm)} onChange={e=>setSpacing('marginMm',Number(e.target.value))}/><MmField label="Margem externa" value={marginMm} max={maxMarginMm} disabled={!spread} onCommit={mm=>setSpacing('marginMm',mm)}/></label>
+       <label title="Espaço entre fotos"><span className="dm-space-ico gap" aria-hidden="true"><i/><i/></span><input aria-label="Espaço entre fotos em milímetros" type="range" min={0} max={maxGapMm} step={1} disabled={!spread} value={Math.min(gapMm,maxGapMm)} onChange={e=>setSpacing('gapMm',Number(e.target.value))}/><MmField label="Espaço entre fotos" value={gapMm} max={maxGapMm} disabled={!spread} onCommit={mm=>setSpacing('gapMm',mm)}/></label>
       </div>
       {!!pickedPhotos.length&&<p className="dm-callout">As {pickedPhotos.length} fotos selecionadas serão colocadas no layout escolhido.</p>}
       <div className="dm-layout-grid dm-layout-print" key={layoutCount}>{[...recommended.map((item,i)=>card(item,i===0)),...others.map(item=>card(item))]}</div>
@@ -1107,7 +1246,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      const fontButton=(font:typeof ALBUM_FONTS[number])=><button key={font.family} type="button" aria-pressed={selectedText?.fontFamily===font.family} disabled={busy||(!selectedText&&texts.length>=20)} title={selectedText?`Usar ${font.family} no texto selecionado`:`Adicionar texto em ${font.family}`} onClick={()=>pickFont(font.family)}><span style={{fontFamily:`"${font.family}"`}}>{font.label}</span><small>{font.style} · {font.family}</small></button>;
      return <><HandwrittenTitle instant={!introOn}/>
       <button className="dm-button primary full" disabled={busy||texts.length>=20} onClick={()=>addText()}><Plus size={18}/>Adicionar texto</button>
-      {selectedText?<label>Seu texto<textarea autoFocus rows={3} maxLength={600} value={selectedText.text} onChange={e=>updateText(selectedText.id,{text:e.target.value})}/></label>:null}
+      {selectedText?<label>Seu texto<textarea ref={textField} autoFocus rows={3} maxLength={600} value={selectedText.text} onChange={e=>updateText(selectedText.id,{text:e.target.value})}/></label>:null}
       {texts.length>1&&<><h3 className="dm-tone-heading">Textos nesta {activePage<0?'capa':'lâmina'}</h3>{texts.map(t=><button className={'dm-text-list '+(textId===t.id?'active':'')} key={t.id} onClick={()=>setTextId(t.id)}><Type size={14}/>{t.text||'Texto vazio'}</button>)}</>}
       <h3 className="dm-tone-heading">{selectedText?'Trocar a fonte':'Fontes principais'}</h3>
       <div className="dm-font-presets">{ALBUM_FONTS.slice(0,8).map(fontButton)}</div>
@@ -1126,18 +1265,29 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
        <span className="dm-theme-label">Fundo das lâminas</span>
        <button type="button" className="dm-theme-pages" onClick={()=>applyThemePages(theme.id)}><span style={{background:theme.page.color,...(theme.page.surface?{backgroundImage:`url(${surfaceUrl(theme.page.surface,true)})`}:{})}} className={'texture-swatch '+(theme.page.texture||'none')}/><span><strong>Aplicar em todas as lâminas</strong><small>As fotos não mudam de lugar</small></span></button>
       </div>;})():<>
+     {/* Onde o fundo vai: desenhos sem texto, pintados com a cor atual — uma lâmina aberta ou a pilha de todas */}
+     {activePage>=0&&(()=>{const fill=spread?.background||'#ffffff',n=project.spreads.length;
+      const sheet=(x:number,y:number,key?:number)=><g key={key}><rect x={x} y={y} width="44" height="24" rx="2.5" fill={fill} stroke="currentColor" strokeWidth="2"/><line x1={x+22} y1={y+2} x2={x+22} y2={y+22} stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" opacity=".55"/></g>;
+      return <div className="dm-bg-scope" role="radiogroup" aria-label="Aplicar o fundo em" data-all={bgAll||undefined}>
+       <button type="button" role="radio" aria-checked={!bgAll} aria-label="Só nesta lâmina" title="Só nesta lâmina" onClick={()=>setBgAll(false)}>
+        <svg viewBox="0 0 64 40" aria-hidden="true">{sheet(10,8)}</svg>
+       </button>
+       <button type="button" role="radio" aria-checked={bgAll} aria-label={`Em todas as ${n} lâminas`} title={`Em todas as ${n} lâminas`} onClick={()=>setBgAll(true)}>
+        <svg viewBox="0 0 64 40" aria-hidden="true" className="dm-bg-stack">{[2,1,0].map(k=>sheet(10+k*4,8-k*4,k))}</svg>
+        <em>{n}</em>
+       </button>
+      </div>;})()}
      <div className="dm-color-grid dm-ink-swatches">{palette.map((color,i)=><button key={color} style={{background:color,['--i' as string]:i}} aria-label={`Fundo ${color}`} aria-pressed={(activePage<0?cover.color:spread?.background||'#ffffff')===color&&!(activePage<0?cover.backgroundPhotoId:spread?.backgroundPhotoId)} onClick={()=>setBackground(color)}/>)}</div>
      <label className="dm-color-input">Escolher outra cor<input type="color" value={activePage<0?cover.color:spread?.background||'#ffffff'} onChange={e=>setBackground(e.target.value)}/></label>
      {(()=>{const bgId=activePage<0?cover.backgroundPhotoId:spread?.backgroundPhotoId;const thumb=bgId?thumbUrls[bgId]:undefined;
       return <div className={'dm-bg-image'+(thumb?' has-image':'')}>
        <input ref={bgInput} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e=>void importBackground(e.target.files?.[0])}/>
-       {thumb?<><span className="dm-bg-thumb" style={{backgroundImage:`url(${thumb})`}}/><span className="dm-bg-actions"><strong>Imagem de fundo</strong>{activePage>=0&&<button type="button" className="dm-link" onClick={()=>setBackgroundImage(bgId,true)}>Usar em todas as lâminas</button>}<button type="button" className="dm-link" onClick={()=>bgInput.current?.click()}>Trocar imagem</button></span><button type="button" className="dm-icon" aria-label="Tirar imagem de fundo" onClick={()=>setBackgroundImage(undefined)}><X size={15}/></button></>
+       {thumb?<><span className="dm-bg-thumb" style={{backgroundImage:`url(${thumb})`}}/><span className="dm-bg-actions"><strong>Imagem de fundo</strong>{bgScope&&<button type="button" className="dm-link" onClick={()=>setBackgroundImage(bgId)}>Aplicar em todas</button>}<button type="button" className="dm-link" onClick={()=>bgInput.current?.click()}>Trocar imagem</button></span><button type="button" className="dm-icon" aria-label="Tirar imagem de fundo" onClick={()=>setBackgroundImage(undefined)}><X size={15}/></button></>
        :<button type="button" className="dm-bg-import" disabled={busy} onClick={()=>bgInput.current?.click()}><ImagePlus size={20}/><span><strong>Importar imagem de fundo</strong><small>JPG, PNG ou WebP</small></span></button>}
       </div>;})()}
      {(()=>{const current=activePage<0?cover.surface:spread?.surface;return <>
-      <button type="button" role="switch" className={'dm-surface-none'+(current?'':' is-active')} aria-checked={!current} onClick={()=>setSurface(undefined)}><span className="dm-switch" aria-hidden="true"><i/></span><span>Sem superfície</span><em key={current?'off':'on'}>{current?'Desligado':'Ligado'}</em></button>
       {SURFACE_GROUPS.map(group=><div key={group} className="dm-surface-group"><span>{group}</span><div className="dm-surface-grid">{SURFACES.filter(s=>s.group===group).map((s,i)=><button key={s.id} type="button" aria-pressed={current===s.id} title={s.name} style={{['--i' as string]:i}} onClick={()=>setSurface(s.id)}><span style={{backgroundImage:`url(${surfaceUrl(s.id,true)})`}}/><small>{s.name}</small></button>)}</div></div>)}
-      {activePage>=0&&<button type="button" className="dm-button full" onClick={()=>surfaceForAll(current)}>{current?'Usar esta superfície em todas as lâminas':'Tirar a superfície de todas as lâminas'}</button>}</>;})()}
+      </>;})()}
       <h3>Texturas</h3><div className="dm-texture-grid">{TEXTURES.map(t=><button key={t.id} aria-pressed={texture===t.id} onClick={()=>changeTexture(t.id)}><span className={'texture-swatch '+t.id} style={{backgroundColor:activePage<0?cover.color:spread?.background||'#ffffff'}}/><small>{t.name}</small></button>)}</div></>}</>}
    </div></aside>
    <section className="dm-workbench" aria-label="Área de edição">
@@ -1170,7 +1320,7 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <button className="dm-button small" onClick={()=>{setTextId(undefined);setPanel('photos')}}>Concluir<Check size={14}/></button></>:<>{spread&&<div className="dm-segment-inline" role="group" aria-label="Modo de edição"><button type="button" className="dm-tool-mode" aria-label="Enquadrar foto" title="Arraste a foto dentro do quadro para enquadrar" aria-pressed={photoMode==='crop'} onClick={()=>setPhotoMode('crop')}><Crop size={15}/>Enquadrar</button><button type="button" className="dm-tool-mode" aria-label="Mover" title="Mover a foto pela lâmina e mudar o tamanho" aria-pressed={photoMode==='position'} onClick={()=>setPhotoMode('position')}><MousePointer2 size={15}/>Mover</button></div>}
      {selectedPhoto&&<><label className="dm-inline-range" title="Zoom da foto"><ZoomIn size={15} aria-hidden="true"/><input aria-label="Zoom da foto" type="range" min="1" max="3" step=".02" value={slot.zoom||1} onChange={e=>updateSlot({zoom:Number(e.target.value)})}/></label><button className="dm-button small" title="Escolher o ponto principal da foto, como um rosto" onClick={()=>setFocusOpen(true)}><Focus size={15}/>Foco</button><button type="button" className="dm-icon dm-frame-remove" aria-label="Tirar a foto deste quadro" title="Tirar a foto deste quadro (ela continua na biblioteca)" onClick={()=>{updateSlot(emptySlot())}}><Trash2 size={17}/></button></>}
      <div className="dm-position-control"><button className="dm-icon" aria-label="Mais opções" title="Mais opções" aria-haspopup="menu" aria-expanded={positionOpen} onClick={()=>setPositionOpen(v=>!v)}><Ellipsis size={19}/></button>{positionOpen&&<div className="dm-position-menu dm-more-menu" role="menu">
-      {selectedPhoto&&<><strong>Foto</strong><button role="menuitemcheckbox" aria-checked={!!slot.flipX} onClick={()=>updateSlot({flipX:!slot.flipX})}><FlipHorizontal2 size={15}/>Espelhar na horizontal{slot.flipX&&<Check size={14}/>}</button><button role="menuitemcheckbox" aria-checked={!!slot.flipY} onClick={()=>updateSlot({flipY:!slot.flipY})}><FlipVertical2 size={15}/>Espelhar na vertical{slot.flipY&&<Check size={14}/>}</button><button role="menuitem" onClick={()=>{updateSlot({x:50,y:50,zoom:1});setPositionOpen(false)}}><RotateCcw size={15}/>Centralizar e tirar o zoom</button><button role="menuitem" className="danger" onClick={()=>{updateSlot(emptySlot());setPositionOpen(false)}}><ImageOff size={15}/>Tirar a foto do quadro</button></>}
+      {selectedPhoto&&<><strong>Foto</strong><button role="menuitemcheckbox" aria-checked={!!slot.flipX} onClick={()=>updateSlot({flipX:!slot.flipX})}><FlipHorizontal2 size={15}/>Espelhar na horizontal{slot.flipX&&<Check size={14}/>}</button><button role="menuitemcheckbox" aria-checked={!!slot.flipY} onClick={()=>updateSlot({flipY:!slot.flipY})}><FlipVertical2 size={15}/>Espelhar na vertical{slot.flipY&&<Check size={14}/>}</button><button role="menuitem" onClick={()=>{updateSlot({x:50,y:50,zoom:1,auto:false});setPositionOpen(false)}}><RotateCcw size={15}/>Centralizar e tirar o zoom</button><button role="menuitem" className="danger" onClick={()=>{updateSlot(emptySlot());setPositionOpen(false)}}><ImageOff size={15}/>Tirar a foto do quadro</button></>}
       {spread&&<><strong>Quadro</strong><button role="menuitem" disabled={spread.slots.length>=12} onClick={()=>{duplicateSelected();setPositionOpen(false)}}><Copy size={15}/>Duplicar quadro<kbd>Ctrl D</kbd></button><button role="menuitem" onClick={()=>{reorderFrame(true);setPositionOpen(false)}}><Layers3 size={15}/>Trazer para frente</button><button role="menuitem" onClick={()=>{reorderFrame(false);setPositionOpen(false)}}><Layers3 size={15}/>Enviar para trás</button><button role="menuitem" className="danger" disabled={spread.slots.length<=1} onClick={()=>{removeFrame();setPositionOpen(false)}}><Trash2 size={15}/>Excluir quadro</button>
        <strong>Alinhar à lâmina</strong><div className="dm-align-grid">{(['left','center','right','top','middle','bottom'] as const).map((alignment,i)=><button key={alignment} role="menuitem" onClick={()=>alignFrame(alignment)}>{['Esquerda','Centro','Direita','Topo','Meio','Base'][i]}</button>)}</div></>}
       <hr/><button role="menuitem" onClick={()=>{addText();setPositionOpen(false)}}><Type size={15}/>Adicionar texto</button>
@@ -1184,8 +1334,10 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
       <div className="dm-replace-grid">{list.map(photo=><button type="button" key={photo.id} className={(photo.id===current?'is-current ':'')+(usedIds.has(photo.id)?'is-used':'')} disabled={photo.id===current} title={photo.name} onClick={()=>replaceWith(photo.id)}><img src={thumbUrls[photo.id]} alt={photo.name} draggable={false}/>{photo.id===current&&<span>Atual</span>}</button>)}</div>
       <button type="button" className="dm-replace-upload" disabled={busy} onClick={()=>fileInput.current?.click()}><Upload size={16}/>{busy?'Carregando…':'Enviar nova foto'}</button>
      </section></div>;})()}
-    <div className="dm-canvas-scroll" ref={canvasViewport} onPointerDownCapture={e=>{const t=e.target as HTMLElement;if(t.closest('.zg-frame,.zg-cover-photo'))setFrameFocus(true);else if(!t.closest('.dm-paper-wrap .zg-spread,.dm-paper-wrap .zg-cover,.dm-contextbar,.zg-text-hit,.zg-icon-hit,button,input')){setFrameFocus(false);setTextId(undefined);setIconId(undefined);setPositionOpen(false)}}} onDragOver={e=>{if(activePage>=0&&e.dataTransfer.types.includes('application/x-zangraf-photo'))e.preventDefault()}} onDrop={e=>{e.preventDefault();const id=e.dataTransfer.getData('application/x-zangraf-photo');if(id)appendPhoto(id)}}><div className="dm-canvas-center"><div className="dm-paper-wrap" style={{width:Math.max(140,Math.min(workspaceSize.width-56,(workspaceSize.height-60)*currentRatio,2000))*zoom/100}}><div className="dm-page-caption"><span>{title}</span><span>{activePage<0?specLabel(currentSpec,true):specLabel(currentSpec,true,true)}</span></div>{activePage<0?<div className="dm-cover-stage"><AlbumCover cover={cover} urls={urls} spec={currentSpec} ratio={currentRatio} back={backMode} guides={false} selected={textId||iconId||!frameFocus?undefined:slotIndex} onSelect={i=>{setSlotIndex(i);setTextId(undefined);setIconId(undefined)}} mode={photoMode} onPhotoDrop={(id,i)=>dropPhoto(i??slotIndex,id,false)} onSlotChange={(i,patch)=>updateSlot(patch,i)} onFrameChange={updateFrame} onSlotSwap={swapSlots} onReplaceRequest={requestReplace} photoSizes={photoSizes} onCropRequest={()=>setPhotoMode('crop')} {...textProps}/>{guides&&<CoverFinishingGuides spec={currentSpec} margins={coverMargins}/>}
-{wrapMode&&spineMm>0&&guides&&<div className="dm-spine-guide" aria-label={`Dorso de ${formatCm(spineMm)} cm`} style={{left:(50-spineMm/currentSpec.widthMm*50)+'%',width:(spineMm/currentSpec.widthMm*100)+'%'}}><span>DORSO</span></div>}</div>:<AlbumSpread spread={spread!} urls={urls} spec={currentSpec} ratio={currentRatio} guides={guides} mode={photoMode} selected={textId||iconId||!frameFocus?undefined:slotIndex} onSelect={index=>{setSlotIndex(index);setTextId(undefined);setIconId(undefined)}} onPhotoDrop={(index,id)=>dropPhoto(index,id,false)} onSlotChange={(index,patch)=>updateSlot(patch,index)} onFrameChange={updateFrame} onSlotSwap={swapSlots} onReplaceRequest={requestReplace} photoSizes={photoSizes} onCropRequest={()=>setPhotoMode('crop')} {...textProps}/>}{activePage<0&&wrapMode&&<div className="dm-cover-labels"><span>VERSO</span><span>DORSO · CENTRO</span><span>FRENTE</span></div>}</div></div></div>
+    <div className="dm-canvas-scroll" ref={canvasViewport} onPointerDownCapture={e=>{const t=e.target as HTMLElement;if(t.closest('.zg-frame,.zg-cover-photo'))setFrameFocus(true);else if(!t.closest('.dm-paper-wrap .zg-spread,.dm-paper-wrap .zg-cover,.dm-contextbar,.zg-text-hit,.zg-icon-hit,button,input')){setFrameFocus(false);setTextId(undefined);setIconId(undefined);setPositionOpen(false)}}} onDragOver={e=>{if(activePage>=0&&e.dataTransfer.types.includes('application/x-zangraf-photo'))e.preventDefault()}} onDrop={e=>{e.preventDefault();const id=e.dataTransfer.getData('application/x-zangraf-photo');if(id)appendPhoto(id)}}><div className="dm-canvas-center"><div className="dm-paper-wrap" data-has-photo={hasPhotoHere||undefined} style={{width:Math.max(140,Math.min(workspaceSize.width-56,(workspaceSize.height-60)*currentRatio,2000))*zoom/100}}><div className="dm-page-caption"><span>{title}</span><span>{activePage<0?specLabel(currentSpec,true):specLabel(currentSpec,true,true)}</span></div>{activePage<0?<div className="dm-cover-stage"><AlbumCover cover={cover} urls={urls} spec={currentSpec} ratio={currentRatio} back={backMode} guides={false} selected={textId||iconId||!frameFocus?undefined:slotIndex} onSelect={i=>{setSlotIndex(i);setTextId(undefined);setIconId(undefined)}} mode={photoMode} onPhotoDrop={(id,i)=>dropPhoto(i??slotIndex,id,false)} onSlotChange={(i,patch)=>updateSlot(patch,i)} onFrameChange={updateFrame} onSlotSwap={swapSlots} onReplaceRequest={requestReplace} photoSizes={photoSizes} onCropRequest={()=>setPhotoMode('crop')} {...textProps}/>{guides&&<CoverFinishingGuides spec={currentSpec} margins={coverMargins}/>}
+{wrapMode&&spineMm>0&&guides&&<div className="dm-spine-guide" aria-label={`Dorso de ${formatCm(spineMm)} cm`} style={{left:(50-spineMm/currentSpec.widthMm*50)+'%',width:(spineMm/currentSpec.widthMm*100)+'%'}}><span>DORSO</span></div>}
+{/* Anti-Risco: 1,5 cm de debruagem (dobradura) de cada lado do dorso — pontilhado só de aviso, a arte continua ali */}
+{wrapMode&&spineMm>0&&guides&&isAntiRisco&&<div className="dm-hinge-guide" role="img" aria-label="Debruagem de 1,5 cm de cada lado do dorso: evite colocar textos ou rostos nessa faixa" title="Debruagem de 1,5 cm: evite textos ou rostos aqui (a arte continua aparecendo na capa)" style={{left:(50-(spineMm/2+HINGE_MM)/currentSpec.widthMm*100)+'%',width:((spineMm+HINGE_MM*2)/currentSpec.widthMm*100)+'%',['--z' as string]:(HINGE_MM/(spineMm+HINGE_MM*2)*100)+'%'}}><i/><i/></div>}</div>:<AlbumSpread spread={spread!} urls={urls} spec={currentSpec} ratio={currentRatio} guides={guides} mode={photoMode} selected={textId||iconId||!frameFocus?undefined:slotIndex} onSelect={index=>{setSlotIndex(index);setTextId(undefined);setIconId(undefined)}} onPhotoDrop={(index,id)=>dropPhoto(index,id,false)} onSlotChange={(index,patch)=>updateSlot(patch,index)} onFrameChange={updateFrame} onSlotSwap={swapSlots} onReplaceRequest={requestReplace} photoSizes={photoSizes} onCropRequest={()=>setPhotoMode('crop')} {...textProps}/>}{activePage<0&&wrapMode&&<div className="dm-cover-labels"><span>VERSO</span><span>DORSO · CENTRO</span><span>FRENTE</span></div>}</div></div></div>
     </div>
     <div className="dm-pages-toolbar"><div><button className="dm-icon" title="Lâmina anterior" aria-label="Lâmina anterior" disabled={activePage===pageIndices[0]} onClick={previousPage}><ChevronLeft size={17}/></button><strong>{title}</strong><button className="dm-icon" title="Lâmina seguinte" aria-label="Próxima lâmina" disabled={activePage===pageIndices.at(-1)} onClick={nextPage}><ChevronRight size={17}/></button></div><button type="button" className={'dm-strip-toggle'+(stripCollapsed?' is-collapsed':'')} aria-expanded={!stripCollapsed} aria-label={stripCollapsed?'Mostrar as lâminas maiores':'Mostrar as lâminas menores'} title={stripCollapsed?'Mostrar as lâminas maiores':'Mostrar as lâminas menores'} onClick={()=>setStripCollapsed(v=>!v)}><ChevronUp size={15}/><span>Lâminas</span></button></div>
     <div className={'dm-strip-wrap'+(stripCollapsed?' is-collapsed':'')}>
@@ -1205,11 +1357,23 @@ export function Diagrammer({ projectId, cartItemId, requireLoginToSave = false }
      {list.length>40&&<p>E mais {list.length-40}.</p>}
     </details>;})}
   </div><button className="dm-button primary full" disabled={busy||!!projectPrintError||!!formatError||!project.cartItemId} onClick={async()=>{if(await persist())window.location.assign('/carrinho')}}>Ir para o carrinho <ArrowRight size={16}/></button><button className="dm-link dm-preview-link" onClick={()=>{setPreviewPage(-1);setShowPreview(true);setPrintOpen(false)}}><Eye size={16}/>Ver prévia completa do álbum</button><ApprovalPanel project={project} busy={busy} onGoToPage={index=>{selectPage(index);setPrintOpen(false);}}/></section>}
-  <dialog ref={previewDialog} className={'dm-preview-dialog'+(shareOpen?' is-sharing':'')} onCancel={()=>setShowPreview(false)} onClose={()=>{setShowPreview(false);setShareOpen(false)}} aria-label="Prévia do álbum"><header><h2>{project.name}</h2><button className="dm-icon dm-preview-close" aria-label="Fechar prévia" onClick={()=>setShowPreview(false)}><X size={20}/></button></header>
+  <dialog ref={previewDialog} className={'dm-preview-dialog dm-pv'+(shareOpen?' is-sharing':'')} onCancel={()=>setShowPreview(false)} onClose={()=>{setShowPreview(false);setShareOpen(false)}} aria-label="Pré-view do álbum">
+   <header className="dm-pv-head">
+    <h2 className="dm-pv-title" aria-label="Pré-view">
+     <span className="dm-pv-eye" aria-hidden="true"><Eye size={30} strokeWidth={2.2}/></span>
+     <span className="dm-pv-word" aria-hidden="true">{[...'PRÉ-VIEW'].map((ch,k)=><b key={k} style={{'--k':k} as CSSProperties}>{ch}</b>)}<i/></span>
+    </h2>
+    <button type="button" className="dm-fx-close" aria-label="Fechar pré-view" onClick={()=>setShowPreview(false)}><X size={22} strokeWidth={2.2}/></button>
+   </header>
    <div className="dm-preview-body">{showPreview&&<AlbumFlipbook project={project} urls={urls} index={previewPage} onChange={setPreviewPage}/>}
     {shareOpen&&<aside className="dm-share-sheet" aria-label="Enviar para o cliente aprovar"><button type="button" className="dm-icon dm-share-close" aria-label="Fechar" onClick={()=>setShareOpen(false)}><X size={16}/></button><ApprovalPanel project={project} busy={busy} onGoToPage={page=>setPreviewPage(page)}/></aside>}
    </div>
-   <div className="dm-preview-checkout"><button type="button" className={'dm-button dm-share-toggle'+(shareOpen?' active':'')} aria-expanded={shareOpen} onClick={()=>setShareOpen(v=>!v)}><Send size={16}/>Enviar para o cliente aprovar</button><button className="dm-button primary dm-preview-order" disabled={busy||!!projectPrintError||!project.cartItemId} onClick={()=>void continueOrder()}>Continuar para o pedido <ArrowRight size={16}/></button></div></dialog>
-  {focusOpen&&selectedPhoto&&urls[selectedPhoto.id]&&<PhotoFocus key={selectedPhoto.id+'-'+activePage+'-'+slotIndex} photo={selectedPhoto} url={urls[selectedPhoto.id]} slot={slot} width={spread?frameGeometry(spreadRectangles(spread)[slotIndex]||spreadRectangles(spread)[0],{...currentSpec,widthMm:currentSpec.widthMm*(activePage<0?.5:1)},activePage>=0,spread.spacing).image.w:currentSpec.widthMm} height={spread?frameGeometry(spreadRectangles(spread)[slotIndex]||spreadRectangles(spread)[0],{...currentSpec,widthMm:currentSpec.widthMm*(activePage<0?.5:1)},activePage>=0,spread.spacing).image.h:currentSpec.heightMm} onApply={updateSlot} onClose={()=>setFocusOpen(false)}/>}
+   <div className="dm-pv-actions">
+    <button type="button" className={'dm-pv-btn dm-pv-send'+(shareOpen?' active':'')} aria-expanded={shareOpen} onClick={()=>setShareOpen(v=>!v)}><span className="dm-pv-btn-icon"><Send size={20}/></span><span className="dm-pv-btn-text">Enviar para o cliente aprovar</span></button>
+    <button type="button" className="dm-pv-btn dm-pv-buy" disabled={busy||!!projectPrintError||!project.cartItemId} onClick={()=>void continueOrder()}><span className="dm-pv-btn-icon"><ShoppingBag size={20}/></span><span className="dm-pv-btn-text">Finalizar compra</span><ArrowRight className="dm-pv-btn-arrow" size={20}/></button>
+   </div>
+  </dialog>
+  {buildShow&&<BuildShow state={buildShow} urls={urls}/>}
+  {focusOpen&&selectedPhoto&&urls[selectedPhoto.id]&&<PhotoFocus key={selectedPhoto.id+'-'+activePage+'-'+slotIndex} photo={selectedPhoto} url={urls[selectedPhoto.id]} slot={slot} width={spread?frameGeometry(spreadRectangles(spread)[slotIndex]||spreadRectangles(spread)[0],{...currentSpec,widthMm:currentSpec.widthMm*(activePage<0?.5:1)},activePage>=0,spread.spacing).image.w:currentSpec.widthMm} height={spread?frameGeometry(spreadRectangles(spread)[slotIndex]||spreadRectangles(spread)[0],{...currentSpec,widthMm:currentSpec.widthMm*(activePage<0?.5:1)},activePage>=0,spread.spacing).image.h:currentSpec.heightMm} findSubject={fresh=>photoSubject(selectedPhoto,fresh)} onApply={updateSlot} onClose={()=>setFocusOpen(false)}/>}
  </div>;
 }
